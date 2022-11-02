@@ -1,9 +1,9 @@
 # Computer Graphics 203.3710
 ## Students Team data
 
-Name: 
+Name: Yusra Rayyan
 
-Student Number: 
+Student Number: 212896534
 
 
 Name: 
