@@ -37,12 +37,12 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 	
 	double x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
-	int dx = x2 - x1, 
-		dy = y2 - y1, 
-		p = 2 * dy - dx , 
-		x = x1, 
+	int dx = x2 - x1,
+		dy = y2 - y1,
+		p = 2 * dy - dx,
+		x = x1,
 		y = y1;
-	while (x < x2) // does not inter!!!!!!!
+	while (x < x2)
 	{
 		if (p >= 0)
 		{
