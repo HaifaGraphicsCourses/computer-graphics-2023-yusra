@@ -35,6 +35,30 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 {
 	// TODO: Implement bresenham algorithm
 	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+	
+	double x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
+	int dx = x2 - x1, 
+		dy = y2 - y1, 
+		p = 2 * dy - dx , 
+		x = x1, 
+		y = y1;
+	while (x < x2) // does not inter!!!!!!!
+	{
+		if (p >= 0)
+		{
+			PutPixel(x, y, color);
+			y = y + 1;
+			p = p + 2 * dy - 2 * dx;
+		}
+		else
+		{
+			PutPixel(x, y, color);
+			p = p + 2 * dy;
+		}
+		x = x + 1;
+	}
+
+
 }
 
 void Renderer::CreateBuffers(int w, int h)
@@ -173,6 +197,10 @@ void Renderer::Render(const Scene& scene)
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
+	glm::ivec2 p1 = glm::ivec2(0.0f, 0.0f);
+	glm::ivec2 p2 = glm::ivec2(1000.0f, 1005.0f);
+	glm::vec3 color = glm::vec3(10.0f, 0.0f, 0.0f);
+	DrawLine(p1, p2, color);
 	// draw circle
 
 }
