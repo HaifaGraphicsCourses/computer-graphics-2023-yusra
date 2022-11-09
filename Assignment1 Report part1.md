@@ -8,7 +8,11 @@ The code for drawing a circle in funtion Renderer::Render.
 
 ###   Bresenham’s algorith
 
-
+void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color)
+{
+	// TODO: Implement bresenham algorithm
+	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+	
 	double x0 = p1.x, y0 = p1.y, x1 = p2.x, y1 = p2.y;
 	int dx = x1 - x0, dy = y1 - y0, D = 2 * dy - dx, x = x0, y = y0, yi = 1, xi = 1, m;
 	if (dx == 0) m = 200; // so we wont have something undefined
@@ -206,13 +210,47 @@ The code for drawing a circle in funtion Renderer::Render.
 	}
 
 
+	// algorethem from the enternet with some changes
+	/*double x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
+	int dx = x2 - x1,
+		dy = y2 - y1,
+		p = 2 * dy - dx,
+		x = x1,
+		y = y1;
+	while (x <= x2)
+	{
+		if (p >= 0)
+		{
+			PutPixel(x, y, color);
+			y = y + 1;
+			p = p + 2 * dy - 2 * dx;
+		}
+		else
+		{
+			PutPixel(x, y, color);
+			p = p + 2 * dy;
+		}
+		x = x + 1;
+	}*/
+	
+	// algorethem from the slides
+	/*double x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
+	int x = x1, y = y1, e = -1 * (x2 - x1), dx = x2 - x1,dy = y2 - y1;
+	while (x <= x2)
+	{
+		e = 2 * dy * x + 2 * dx * y - 1;
+		if (e > 0)
+		{
+			y = y + 1; e = e - 2 * dx;
+		}
+		PutPixel(x, y, color);
+		x = x + 1; e = e + 2 * dy;
+	}*/
 
+}
 
 
 ### The result after drawing the circle:
-![2022-11-09.jpg](https://www.dropbox.com/s/u00tk1coozsmt1o/2022-11-09.jpg?dl=0&raw=1)
-
-
 
 
 
