@@ -60,6 +60,7 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 			else
 				D = D + 2 * dy;
 		}
+		// plotLineHigh
 		if (dx < 0)
 		{
 			xi = -1;
@@ -128,9 +129,6 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 						D = D + 2 * dy;
 				}
 			}
-
-
-
 		}
 	}
 	else if (abs(y1 - y0) < abs(x1 - x0))
