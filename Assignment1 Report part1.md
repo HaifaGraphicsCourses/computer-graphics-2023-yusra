@@ -12,6 +12,7 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 {
 	// TODO: Implement bresenham algorithm
 	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+	
 	double x0 = p1.x, y0 = p1.y, x1 = p2.x, y1 = p2.y;
 	int dx = x1 - x0, dy = y1 - y0, D = 2 * dy - dx, x = x0, y = y0, yi = 1, xi = 1, m;
 	if (dx == 0) m = 200; // so we wont have something undefined
