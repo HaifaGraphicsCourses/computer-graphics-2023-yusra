@@ -250,9 +250,6 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 
 
 ### The result after drawing the circle:
-![2022-11-09.jpg](https://www.dropbox.com/s/u00tk1coozsmt1o/2022-11-09.jpg?dl=0&raw=1)
-
-
 
 
 
