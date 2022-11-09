@@ -37,70 +37,105 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 	// TODO: Implement bresenham algorithm
 	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 	double x0 = p1.x, y0 = p1.y, x1 = p2.x, y1 = p2.y;
-	int dx = x1 - x0,
-		dy = y1 - y0,
-		D = 2 * dy - dx,
-		x = x0,
-		y = y0,
-		yi = 1,
-		xi = 1, m, val = 0;
-	if (dx == 0) m = 200;
-	else { m = dy / dx; };
-	if (m<1 && m > -1)
+	int dx = x1 - x0, dy = y1 - y0, D = 2 * dy - dx, x = x0, y = y0, yi = 1, xi = 1, m;
+	if (dx == 0) m = 200; // so we wont have something undefined
+	else { m = dy / dx; }; // calcutaleing the Incline
+	if (m < 1 && m > -1) // the cases is -1 < Incline < 1
 	{
-		
-		if (dx > 0)
-		{
-			if (dy < 0) {
-				yi = -1;
-				dy = -dy;
-			}
-			D = (2 * dy) - dx;
-			y = y0;
-			for (int x = x0; x <= x1; x++)
-			{
-				//val = -1; notes for me
-				PutPixel(x, y, color);
-				if (D > 0)
-				{
-					y = y + yi;
-					D = D + (2 * (dy - dx));
-				}
-				else
-					D = D + 2 * dy;
-				
-			}
-			//if (val == -1) cnt1++; notes for me
+		//plotLineLow
+		if (dy < 0) {
+			yi = -1;
+			dy = -dy;
 		}
-		else {
-			if (dy > 0)
+		D = (2 * dy) - dx;
+		y = y0;
+		for (int x = x0; x <= x1; x++)
+		{
+			PutPixel(x, y, color);
+			if (D > 0)
 			{
-				if (dx < 0)
-				{
-					xi = -1;
-					dx = -dx;
+				y = y + yi;
+				D = D + (2 * (dy - dx));
+			}
+			else
+				D = D + 2 * dy;
+		}
+		if (dx < 0)
+		{
+			xi = -1;
+			dx = -dx;
+		}
+		D = (2 * dx) - dy;
+		x = x0;
+		for (int y = y0; y <= y1; y++)
+		{
+			PutPixel(x, y, color);
+			if (D > 0)
+			{
+				x = x + xi;
+				D = D + (2 * (dx - dy));
+			}
+			else
+				D = D + 2 * dx;
+		}
+		if (dy > 0)
+		{
+
+			if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
+			{
+				dx = x0 - x1;
+				dy = y0 - y1;
+				yi = 1;
+				if (dy < 0) {
+					yi = -1;
+					dy = -dy;
 				}
-				D = (2 * dx) - dy;
-				x = x0;
-				for (int y = y0; y <= y1; y++)
+				D = (2 * dy) - dx;
+				y = y1;
+				cnt3++;
+				for (int x = x1; x <= x0; x++)
 				{
-					// val = -2; notes for me
 					PutPixel(x, y, color);
 					if (D > 0)
 					{
-						x = x + xi;
-						D = D + (2 * (dx - dy));
+						y = y + yi;
+						D = D + (2 * (dy - dx));
 					}
 					else
-						D = D + 2 * dx;
+						D = D + 2 * dy;
 				}
-				//if (val == -2) cnt2++; notes for me
 			}
+			else // plotLineLow(x0, y0, x1, y1)
+			{
+				dx = x1 - x0;
+				dy = y1 - y0;
+				yi = 1;
+				if (dy < 0) {
+					yi = -1;
+					dy = -dy;
+				}
+				D = (2 * dy) - dx;
+				y = y0;
+				for (int x = x0; x <= x1; x++)
+				{
+					PutPixel(x, y, color);
+					if (D > 0)
+					{
+						y = y + yi;
+						D = D + (2 * (dy - dx));
+					}
+					else
+						D = D + 2 * dy;
+				}
+			}
+
+
+
 		}
 	}
 	else if (abs(y1 - y0) < abs(x1 - x0))
 	{
-		if (x0 < x1)
+		if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
 		{
 			dx = x0 - x1;
 			dy = y0 - y1;
@@ -110,11 +145,10 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 				dy = -dy;
 			}
 			D = (2 * dy) - dx;
-			y = y0;
+			y = y1;
 			cnt3++;
-			for (int x = x0; x <= x1; x++)
+			for (int x = x1; x <= x0; x++)
 			{
-				// val = -3;notes for me
 				PutPixel(x, y, color);
 				if (D > 0)
 				{
@@ -124,9 +158,8 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 				else
 					D = D + 2 * dy;
 			}
-			//if (val == -3) cnt3++; notes for me
 		}
-		else
+		else // plotLineLow(x0, y0, x1, y1)
 		{
 			dx = x1 - x0;
 			dy = y1 - y0;
@@ -139,7 +172,6 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 			y = y0;
 			for (int x = x0; x <= x1; x++)
 			{
-				val = -4;
 				PutPixel(x, y, color);
 				if (D > 0)
 				{
@@ -149,11 +181,10 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 				else
 					D = D + 2 * dy;
 			}
-			//if (val == -4) cnt4++; notes for me
 		}
 	}
-	else if (abs(y1 - y0) >= abs(x1 - x0)) {
-		if (y0 > y1)
+	else {
+		if (y0 > y1) // plotLineHigh(x1, y1, x0, y0)
 		{
 			dx = x0 - x1;
 			dy = y0 - y1;
@@ -164,10 +195,9 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 				dx = -dx;
 			}
 			D = (2 * dx) - dy;
-			x = x0;
-			for (int y = y0; y <= y1; y++)
+			x = x1;
+			for (int y = y1; y <= y0; y++)
 			{
-				// val = -5;notes for me
 				PutPixel(x, y, color);
 				if (D > 0)
 				{
@@ -177,9 +207,8 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 				else
 					D = D + 2 * dx;
 			}
-			//if (val == -5) cnt5++; notes for me
 		}
-		else
+		else // plotLineHigh(x0, y0, x1, y1)
 		{
 			dx = x1 - x0;
 			dy = y1 - y0;
@@ -193,7 +222,6 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 			x = x0;
 			for (int y = y0; y <= y1; y++)
 			{
-				//val = -6; notes for me
 				PutPixel(x, y, color);
 				if (D > 0)
 				{
@@ -203,22 +231,11 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 				else
 					D = D + 2 * dx;
 			}
-			//if (val == -6) cnt6++; notes for me
 		}
-
-	}
-	if (val == 0)
-	{
-		val = -10;
 	}
 
-	
-					
-	
-					
-	
 
-
+	// algorethem from the enternet with some changes
 	/*double x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
 	int dx = x2 - x1,
 		dy = y2 - y1,
@@ -241,6 +258,7 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 		x = x + 1;
 	}*/
 	
+	// algorethem from the slides
 	/*double x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
 	int x = x1, y = y1, e = -1 * (x2 - x1), dx = x2 - x1,dy = y2 - y1;
 	while (x <= x2)
@@ -392,25 +410,18 @@ void Renderer::Render(const Scene& scene)
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
-	 glm::ivec2 p1 = glm::ivec2(500.0f, 300.0f);
+	// points
+	glm::ivec2 p1 = glm::ivec2(500.0f, 300.0f),p2;
 	int x0 = p1.x, y0 = p1.y;
+	// the color = red :)
 	glm::vec3 color = glm::vec3(10.0f, 0.0f, 0.0f);
-	glm::ivec2 p2, p3, p4,p5,p11;
 	int a = 360, r = 200;
-	
+	// draw circle
 	for (int i = 0; i < 360; i++)
 	{
 		p2 = glm::ivec2(x0 - r * sin(2 * M_PI * i / a), y0 - r * cos(2 * M_PI * i / a));
 		DrawLine(p1, p2, color);
-		DrawLine(p2, p1, color);
 	}
-	int count = cnt1 + cnt2 + cnt3 + cnt4 + cnt5 + cnt6;
-	if (count == 360)
-	{
-		count = -1;
-	}
-	// draw circle
-
 }
 
 int Renderer::GetViewportWidth() const
