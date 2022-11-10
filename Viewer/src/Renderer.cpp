@@ -415,7 +415,7 @@ void Renderer::Render(const Scene& scene)
 	glm::vec3 color = glm::vec3(10.0f, 0.0f, 0.0f);
 	int a = 360, r = 200;
 	// draw circle
-	/*for (int i = 0; i < 360; i++)
+	for (int i = 0; i < 360; i++)
 	{
 		p2 = glm::ivec2(x0 - r * sin(2 * M_PI * i / a), y0 - r * cos(2 * M_PI * i / a));
 		DrawLine(p1, p2, color);
@@ -450,9 +450,9 @@ void Renderer::Render(const Scene& scene)
 	DrawLine(d, top, pyramid_color);
 	DrawLine(h, top, pyramid_color);
 	DrawLine(g, top, pyramid_color);
-	DrawLine(c, top, pyramid_color);*/
+	DrawLine(c, top, pyramid_color);
 
-	// trying to darw a cat:
+	// trying to darw a cat: just for fun :)
 	// the face coordinates
 
 	int Face[29][2] = { {301,7},{409,60},{613,343},{1015,432},{1203,293},{1379,259},{1408,325},{1384,448},
