@@ -212,6 +212,12 @@ The code for drawing a circle in funtion Renderer::Render.
 ### The result after drawing the circle:
 ![2022-11-09.jpg](https://www.dropbox.com/s/u00tk1coozsmt1o/2022-11-09.jpg?dl=0&raw=1)
 
+### the creative part:
+ - I drew a house and tried drawing a cat.
+ 
+![cat.png](https://www.dropbox.com/s/bprg73po82ioz68/cat.png?dl=1)
+![house.png](https://www.dropbox.com/s/4yu653mb51ytcth/house.png?dl=1)
+ 
 
 
 
