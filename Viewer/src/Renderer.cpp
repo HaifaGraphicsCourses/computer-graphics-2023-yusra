@@ -409,13 +409,13 @@ void Renderer::Render(const Scene& scene)
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
 	// points
-	glm::ivec2 p1 = glm::ivec2(700.0f, 500.0f),p2;
+	glm::ivec2 p1 = glm::ivec2(700.0f, 500.0f), p2;
 	int x0 = p1.x, y0 = p1.y;
 	// the color = red :)
 	glm::vec3 color = glm::vec3(10.0f, 0.0f, 0.0f);
 	int a = 360, r = 200;
 	// draw circle
-	for (int i = 0; i < 360; i++)
+	/*for (int i = 0; i < 360; i++)
 	{
 		p2 = glm::ivec2(x0 - r * sin(2 * M_PI * i / a), y0 - r * cos(2 * M_PI * i / a));
 		DrawLine(p1, p2, color);
@@ -433,7 +433,7 @@ void Renderer::Render(const Scene& scene)
 		g = glm::ivec2(450.0f, 450.0f),
 		h = glm::ivec2(150.0f, 450.0f),
 		top = glm::ivec2(255.0f, 600.0f);
-	// dtawing cube:	
+	// dtawing cube:
 	DrawLine(_a, d, cube_color);
 	DrawLine(_a, b, cube_color);
 	DrawLine(_a, e, cube_color);
@@ -450,9 +450,73 @@ void Renderer::Render(const Scene& scene)
 	DrawLine(d, top, pyramid_color);
 	DrawLine(h, top, pyramid_color);
 	DrawLine(g, top, pyramid_color);
-	DrawLine(c, top, pyramid_color);
+	DrawLine(c, top, pyramid_color);*/
+
+	// trying to darw a cat:
+	// the face coordinates
+
+	int Face[29][2] = { {301,7},{409,60},{613,343},{1015,432},{1203,293},{1379,259},{1408,325},{1384,448},
+		{1384,448},{1314,645},{1321,687},{1290,758},{1314,978},{1133,1266},{991,1342},{815,1345},{826,1371},
+		{650,1358},{482,1253},{338,1112},{225,994},{183,855},{178,752},{220,613},{194,493},{215,390},{204,306},
+		{207,183},{259,26} };
+	glm::vec2 cat_cor1, cat_cor2;
+	glm::vec3 cat_color = glm::vec3(50.0f, 0.0f, 10.0f);
+	for (int i = 0; i < 28; i++)
+	{
+		cat_cor1 = glm::vec2(Face[i][0] / 2, Face[i][1] / 2);
+		cat_cor2 = glm::vec2(Face[i + 1][0] / 2, Face[i + 1][1] / 2);
+		DrawLine(cat_cor1, cat_cor2, cat_color);
+	}
+	DrawLine(cat_cor1, glm::vec2(Face[0][0] / 2, Face[0][1] / 2), cat_color);
+	int right_eye[9][2] = { {417,660},{451,603},{532,598},{584,626},{634,679},{548,760},{479,742},{451,710}, {417,660} };
+	for (int i = 0; i < 8; i++)
+	{
+		cat_cor1 = glm::vec2(right_eye[i][0] / 2, right_eye[i][1] / 2);
+		cat_cor2 = glm::vec2(right_eye[i + 1][0] / 2, right_eye[i + 1][1] / 2);
+		DrawLine(cat_cor1, cat_cor2, cat_color);
+	}
+	int left_eye[11][2] = { {973,815},{965,760},{999,718},{1046,697},{1112,700},{1164,737},{1175,786},
+		{1133,836},{1080,844},{1022,831},{975,818} };
+	for (int i = 0; i < 10; i++)
+	{
+		cat_cor1 = glm::vec2(left_eye[i][0] / 2, left_eye[i][1] / 2);
+		cat_cor2 = glm::vec2(left_eye[i + 1][0] / 2, left_eye[i + 1][1] / 2);
+		DrawLine(cat_cor1, cat_cor2, cat_color);
+	}
+	int nose[13][2] = { {689,915},{729,897},{786,894},{839,915},{860,939},{881,962},{839,988},{813,1009},
+		{779,1025},{747,996},{721,973},{702,941},{692,915} };
+	for (int i = 0; i < 12; i++)
+	{
+		cat_cor1 = glm::vec2(nose[i][0] / 2, nose[i][1] / 2);
+		cat_cor2 = glm::vec2(nose[i + 1][0] / 2, nose[i + 1][1] / 2);
+		DrawLine(cat_cor1, cat_cor2, cat_color);
+	}
+	int mouth1[8][2] = { {758,1093},{726,1109},{684,1133},{640,1154},{574,1177},{514,1169},{493,1138},{464,1109} };
+	for (int i = 0; i < 7; i++)
+	{
+		cat_cor1 = glm::vec2(mouth1[i][0] / 2, mouth1[i][1] / 2);
+		cat_cor2 = glm::vec2(mouth1[i + 1][0] / 2, mouth1[i + 1][1] / 2);
+		DrawLine(cat_cor1, cat_cor2, cat_color);
+	}
+	int mouth2[9][2] = { {760,1099},{786,1117},{818,1148},{849,1175},{878,1203 }, { 910,1224 },
+	{ 944,1245 }, { 988,1232 }, { 1007,1211 } };
+	for (int i = 0; i < 8; i++)
+	{
+		cat_cor1 = glm::vec2(mouth2[i][0] / 2, mouth2[i][1] / 2);
+		cat_cor2 = glm::vec2(mouth2[i + 1][0] / 2, mouth2[i + 1][1] / 2);
+		DrawLine(cat_cor1, cat_cor2, cat_color);
+	}
+	int mouth3[6][2] = { {629,1172},{676,1169},{729,1172},{784,1172},{828,1193},{870,1209} };
+	for (int i = 0; i < 5; i++)
+	{
+		cat_cor1 = glm::vec2(mouth3[i][0] / 2, mouth3[i][1] / 2);
+		cat_cor2 = glm::vec2(mouth3[i + 1][0] / 2, mouth3[i + 1][1] / 2);
+		DrawLine(cat_cor1, cat_cor2, cat_color);
+	}
 
 }
+
+
 
 int Renderer::GetViewportWidth() const
 {
