@@ -409,7 +409,7 @@ void Renderer::Render(const Scene& scene)
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
 	// points
-	glm::ivec2 p1 = glm::ivec2(500.0f, 300.0f),p2;
+	glm::ivec2 p1 = glm::ivec2(700.0f, 500.0f),p2;
 	int x0 = p1.x, y0 = p1.y;
 	// the color = red :)
 	glm::vec3 color = glm::vec3(10.0f, 0.0f, 0.0f);
@@ -420,6 +420,38 @@ void Renderer::Render(const Scene& scene)
 		p2 = glm::ivec2(x0 - r * sin(2 * M_PI * i / a), y0 - r * cos(2 * M_PI * i / a));
 		DrawLine(p1, p2, color);
 	}
+
+	// trying to make a cube:
+	glm::vec3 cube_color = glm::vec3(0.0f, 0.0f, 100.0f);
+	glm::vec3 pyramid_color = glm::vec3(50.0f, 0.0f, 10.0f);
+	glm::ivec2 _a = glm::ivec2(0.0f, 0.0f),
+		b = glm::ivec2(300.0f, 0.0f),
+		c = glm::ivec2(300.0f, 300.0f),
+		d = glm::ivec2(0.0f, 300.0f),
+		e = glm::ivec2(150.0f, 150.0f),
+		f = glm::ivec2(450.0f, 150.0f),
+		g = glm::ivec2(450.0f, 450.0f),
+		h = glm::ivec2(150.0f, 450.0f),
+		top = glm::ivec2(255.0f, 600.0f);
+	// dtawing cube:	
+	DrawLine(_a, d, cube_color);
+	DrawLine(_a, b, cube_color);
+	DrawLine(_a, e, cube_color);
+	DrawLine(d, c, cube_color);
+	DrawLine(d, h, cube_color);
+	DrawLine(c, b, cube_color);
+	DrawLine(c, g, cube_color);
+	DrawLine(h, g, cube_color);
+	DrawLine(h, e, cube_color);
+	DrawLine(g, f, cube_color);
+	DrawLine(e, f, cube_color);
+	DrawLine(f, b, cube_color);
+	// drawing pyramid in top of the cube to get a houe:)
+	DrawLine(d, top, pyramid_color);
+	DrawLine(h, top, pyramid_color);
+	DrawLine(g, top, pyramid_color);
+	DrawLine(c, top, pyramid_color);
+
 }
 
 int Renderer::GetViewportWidth() const
