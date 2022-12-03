@@ -70,9 +70,65 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 			std::cout << "Found unknown line Type \"" << lineType << "\"";
 		}
 	}
-	std::vector<glm::vec3> scale_vertices;
-	glm::ivec3 scale_vec = glm::ivec3(2.0f, 2.0f, 2.0f), temp;
 
+	// print
+	// printing the faces = > does not work !!!!
+	/*for (auto i = 0; i < faces.size(); i++)
+	{
+		std::cout << faces[i].GetNormalIndex(i);
+	}*/
+	// printing the verstecses 
+	for (auto i = 0; i < vertices.size(); i++)
+	{
+		std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
+	}
+	
+	//printing the faces. For every face we print his the 3 vertecses:
+	auto pos = faces.begin();
+	for (auto i = 0 ; i < faces.size() &&  pos != faces.end(); i++ , pos++)
+	{
+		if(faces[i].GetVertexIndex(0) != NULL)
+			std::cout << "( " << vertices[faces[i].GetVertexIndex(0)].x << " , " << vertices[faces[i].GetVertexIndex(0)].y << " , " << vertices[faces[i].GetVertexIndex(0)].z << " )" << "\n";
+		if (faces[i].GetVertexIndex(1) != NULL)
+			std::cout << "( " << vertices[faces[i].GetVertexIndex(1)].x << " , " << vertices[faces[i].GetVertexIndex(1)].y << " , " << vertices[faces[i].GetVertexIndex(1)].z << " )" << "\n";
+		if (faces[i].GetVertexIndex(2) != NULL	)
+			std::cout << "( " << vertices[faces[i].GetVertexIndex(2)].x << " , " << vertices[faces[i].GetVertexIndex(2)].y << " , " << vertices[faces[i].GetVertexIndex(2)].z << " )" << "\n";
+		std::cout << "\n";
+
+
+	}
+
+	// scale:
+	// first we will biuld the matrix:
+	/*
+	*	Sx 0  0  0     x     Sx * x
+	*	0  Sy 0  0  *  y  =	 Sy * y
+	*	0  0  Sz 0     z     Sz * z
+	*	0  0  0  1     w        w
+	*/
+	 
+	std::vector<glm::vec3> scale_vertices = Scale_3D(glm::ivec3(2.0f, 2.0f, 2.0f), vertices);
+
+	// Translate:
+	// first we will biuld the matrix:
+	/*
+	*	1  0  0  Tx     x     Tx + x
+	*	0  1  0  Ty  *  y  =  Ty + y
+	*	0  0  1  Tz     z     Tz + z
+	*	0  0  0  1      w        w
+	*/
+
+	std::vector<glm::vec3> scale_vertices = Translate_3D(glm::ivec3(2.0f, 2.0f, 2.0f), vertices);
+
+
+
+	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath));
+}
+
+std::vector<glm::vec3> Utils::Scale_3D(glm::vec3 scale_vec, std::vector<glm::vec3> vertices)
+{
+	std::vector<glm::vec3> scale_vertices;
+	glm::ivec3 temp;
 	for (auto i = 0; i < vertices.size(); i++)
 	{
 		temp = glm::ivec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
@@ -82,53 +138,24 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		std::cout << scale_vertices[i].x << ' ' << scale_vertices[i].y << ' ' << scale_vertices[i].z << "\n";
 
 	}
-
-	// print
-	// printing the faces = > does not work !!!!
-	/*for (auto i = 0; i < faces.size(); i++)
-	{
-		std::cout << faces[i].GetNormalIndex(i);
-	}*/
-	// printing the verstecses 
-	//for (auto i = 0; i < vertices.size(); i++)
-	//{
-	//	std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
-	//}
-	
-	// printing the faces. For every face we print his the 3 vertecses:
-	//auto pos = faces.begin();
-	//for (auto i = 0 ; i < faces.size() &&  pos != faces.end(); i++ , pos++)
-	//{
-	//	if(faces[i].GetVertexIndex(0) != NULL)
-	//		std::cout << "( " << vertices[faces[i].GetVertexIndex(0)].x << " , " << vertices[faces[i].GetVertexIndex(0)].y << " , " << vertices[faces[i].GetVertexIndex(0)].z << " )" << "\n";
-	//	if (faces[i].GetVertexIndex(1) != NULL)
-	//		std::cout << "( " << vertices[faces[i].GetVertexIndex(1)].x << " , " << vertices[faces[i].GetVertexIndex(1)].y << " , " << vertices[faces[i].GetVertexIndex(1)].z << " )" << "\n";
-	//	if (faces[i].GetVertexIndex(2) != NULL	)
-	//		std::cout << "( " << vertices[faces[i].GetVertexIndex(2)].x << " , " << vertices[faces[i].GetVertexIndex(2)].y << " , " << vertices[faces[i].GetVertexIndex(2)].z << " )" << "\n";
-	//	std::cout << "\n";
-
-
-	//}
-
-	// scale:
-	// first we will biuld the matrix:
-	/*
-	*	x' 0  0  0     x     x' * x
-	*	0  y' 0  0  x  y  =	 y' * y
-	*	0  0  z' 0     z     z' * z
-	*	0  0  0  1     w        w
-	*/
-
-
-
-
-	
-	
-
-
-	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath));
+	return scale_vertices;
 }
 
+std::vector<glm::vec3> Utils::Translate_3D(glm::vec3 translate_vec, std::vector<glm::vec3> vertices)
+{
+	std::vector<glm::vec3> translate_vertices;
+	glm::ivec3 temp;
+	for (auto i = 0; i < vertices.size(); i++)
+	{
+		temp = glm::ivec3(vertices[i].x + translate_vec.x, vertices[i].y + translate_vec.y, vertices[i].z + translate_vec.z);
+		translate_vertices[i] = temp;
+		std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
+		std::cout << '\n';
+		std::cout << translate_vertices[i].x << ' ' << translate_vertices[i].y << ' ' << translate_vertices[i].z << "\n";
+
+	}
+	return translate_vertices;
+}
 
 
 
