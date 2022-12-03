@@ -18,6 +18,7 @@
  */
 bool show_demo_window = false;
 bool show_another_window = false;
+bool show_scale_traslate_window = false;
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 
 /**
@@ -124,6 +125,11 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	if (frameBufferWidth != renderer.GetViewportWidth() || frameBufferHeight != renderer.GetViewportHeight())
 	{
 		// TODO: Set new aspect ratio
+		//shared_ptr<MeshModel> m1 = Utils::LoadMeshModel("Users\yusra\OneDrive\Documents\GitHub\computer-graphics-2023-yusra\Data\banana.obj");
+		//shared_ptr<MeshModel> m2 = Utils::LoadMeshModel("Users\yusra\OneDrive\Documents\GitHub\computer-graphics-2023-yusra\Data\cow.obj");
+
+		//scene.AddModel(m1);
+		//scene.AddModel(m2);
 	}
 
 	if (!io.WantCaptureKeyboard)
@@ -178,7 +184,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		{
 			if (ImGui::MenuItem("Open", "CTRL+O"))
 			{
-				nfdchar_t* outPath = NULL;
+				nfdchar_t* outPath = "NULL";
 				nfdresult_t result = NFD_OpenDialog("obj;", NULL, &outPath);
 				if (result == NFD_OKAY)
 				{
@@ -244,6 +250,24 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::Text("Hello from another window!");
 		if (ImGui::Button("Close Me"))
 			show_another_window = false;
+		ImGui::End();
+	}
+
+	if (show_scale_traslate_window)
+		ImGui::ShowDemoWindow(&show_scale_traslate_window);
+
+	//  --- SCALE & TRASLATE ---
+	{
+		static float s = 0.0f, t = 0.0f;
+
+		ImGui::Begin("SCALE & TRASLATE");                          // Create a window called "Hello, world!" and append into it.
+
+		ImGui::SliderFloat("Scale", &s, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::SliderFloat("Traslate", &t, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+
+		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
 }
