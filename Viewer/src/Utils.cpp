@@ -70,6 +70,18 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 			std::cout << "Found unknown line Type \"" << lineType << "\"";
 		}
 	}
+	std::vector<glm::vec3> scale_vertices;
+	glm::ivec3 scale_vec = glm::ivec3(2.0f, 2.0f, 2.0f), temp;
+
+	for (auto i = 0; i < vertices.size(); i++)
+	{
+		temp = glm::ivec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
+		scale_vertices[i] = temp;
+		std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
+		std::cout << '\n';
+		std::cout << scale_vertices[i].x << ' ' << scale_vertices[i].y << ' ' << scale_vertices[i].z << "\n";
+
+	}
 
 	// print
 	// printing the faces = > does not work !!!!
@@ -78,25 +90,38 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		std::cout << faces[i].GetNormalIndex(i);
 	}*/
 	// printing the verstecses 
-	for (auto i = 0; i < vertices.size(); i++)
-	{
-		std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
-	}
+	//for (auto i = 0; i < vertices.size(); i++)
+	//{
+	//	std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
+	//}
 	
 	// printing the faces. For every face we print his the 3 vertecses:
-	auto pos = faces.begin();
-	for (auto i = 0 ; i < faces.size() &&  pos != faces.end(); i++ , pos++)
-	{
-		if(faces[i].GetVertexIndex(0) != NULL)
-			std::cout << "( " << vertices[faces[i].GetVertexIndex(0)].x << " , " << vertices[faces[i].GetVertexIndex(0)].y << " , " << vertices[faces[i].GetVertexIndex(0)].z << " )" << "\n";
-		if (faces[i].GetVertexIndex(1) != NULL)
-			std::cout << "( " << vertices[faces[i].GetVertexIndex(1)].x << " , " << vertices[faces[i].GetVertexIndex(1)].y << " , " << vertices[faces[i].GetVertexIndex(1)].z << " )" << "\n";
-		if (faces[i].GetVertexIndex(2) != NULL	)
-			std::cout << "( " << vertices[faces[i].GetVertexIndex(2)].x << " , " << vertices[faces[i].GetVertexIndex(2)].y << " , " << vertices[faces[i].GetVertexIndex(2)].z << " )" << "\n";
-		std::cout << "\n";
+	//auto pos = faces.begin();
+	//for (auto i = 0 ; i < faces.size() &&  pos != faces.end(); i++ , pos++)
+	//{
+	//	if(faces[i].GetVertexIndex(0) != NULL)
+	//		std::cout << "( " << vertices[faces[i].GetVertexIndex(0)].x << " , " << vertices[faces[i].GetVertexIndex(0)].y << " , " << vertices[faces[i].GetVertexIndex(0)].z << " )" << "\n";
+	//	if (faces[i].GetVertexIndex(1) != NULL)
+	//		std::cout << "( " << vertices[faces[i].GetVertexIndex(1)].x << " , " << vertices[faces[i].GetVertexIndex(1)].y << " , " << vertices[faces[i].GetVertexIndex(1)].z << " )" << "\n";
+	//	if (faces[i].GetVertexIndex(2) != NULL	)
+	//		std::cout << "( " << vertices[faces[i].GetVertexIndex(2)].x << " , " << vertices[faces[i].GetVertexIndex(2)].y << " , " << vertices[faces[i].GetVertexIndex(2)].z << " )" << "\n";
+	//	std::cout << "\n";
 
 
-	}
+	//}
+
+	// scale:
+	// first we will biuld the matrix:
+	/*
+	*	x' 0  0  0     x     x' * x
+	*	0  y' 0  0  x  y  =	 y' * y
+	*	0  0  z' 0     z     z' * z
+	*	0  0  0  1     w        w
+	*/
+
+
+
+
 	
 	
 
@@ -104,208 +129,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath));
 }
 
-/*void Utils::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color)
-{
-	// TODO: Implement bresenham algorithm
-	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-	double x0 = p1.x, y0 = p1.y, x1 = p2.x, y1 = p2.y;
-	int dx = x1 - x0, dy = y1 - y0, D = 2 * dy - dx, x = x0, y = y0, yi = 1, xi = 1, m;
-	if (dx == 0) m = 200; // so we wont have something undefined
-	else { m = dy / dx; }; // calcutaleing the Incline
-	if (m < 1 && m > -1) // the cases is -1 < Incline < 1
-	{
-		//plotLineLow
-		if (dy < 0) {
-			yi = -1;
-			dy = -dy;
-		}
-		D = (2 * dy) - dx;
-		y = y0;
-		for (int x = x0; x <= x1; x++)
-		{
-			PutPixel(x, y, color);
-			if (D > 0)
-			{
-				y = y + yi;
-				D = D + (2 * (dy - dx));
-			}
-			else
-				D = D + 2 * dy;
-		}
-		// plotLineHigh
-		if (dx < 0)
-		{
-			xi = -1;
-			dx = -dx;
-		}
-		D = (2 * dx) - dy;
-		x = x0;
-		for (int y = y0; y <= y1; y++)
-		{
-			PutPixel(x, y, color);
-			if (D > 0)
-			{
-				x = x + xi;
-				D = D + (2 * (dx - dy));
-			}
-			else
-				D = D + 2 * dx;
-		}
-		if (dy > 0)
-		{
 
-			if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
-			{
-				dx = x0 - x1;
-				dy = y0 - y1;
-				yi = 1;
-				if (dy < 0) {
-					yi = -1;
-					dy = -dy;
-				}
-				D = (2 * dy) - dx;
-				y = y1;
-				cnt3++;
-				for (int x = x1; x <= x0; x++)
-				{
-					PutPixel(x, y, color);
-					if (D > 0)
-					{
-						y = y + yi;
-						D = D + (2 * (dy - dx));
-					}
-					else
-						D = D + 2 * dy;
-				}
-			}
-			else // plotLineLow(x0, y0, x1, y1)
-			{
-				dx = x1 - x0;
-				dy = y1 - y0;
-				yi = 1;
-				if (dy < 0) {
-					yi = -1;
-					dy = -dy;
-				}
-				D = (2 * dy) - dx;
-				y = y0;
-				for (int x = x0; x <= x1; x++)
-				{
-					PutPixel(x, y, color);
-					if (D > 0)
-					{
-						y = y + yi;
-						D = D + (2 * (dy - dx));
-					}
-					else
-						D = D + 2 * dy;
-				}
-			}
-		}
-	}
-	else if (abs(y1 - y0) < abs(x1 - x0))
-	{
-		if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
-		{
-			dx = x0 - x1;
-			dy = y0 - y1;
-			yi = 1;
-			if (dy < 0) {
-				yi = -1;
-				dy = -dy;
-			}
-			D = (2 * dy) - dx;
-			y = y1;
-			cnt3++;
-			for (int x = x1; x <= x0; x++)
-			{
-				PutPixel(x, y, color);
-				if (D > 0)
-				{
-					y = y + yi;
-					D = D + (2 * (dy - dx));
-				}
-				else
-					D = D + 2 * dy;
-			}
-		}
-		else // plotLineLow(x0, y0, x1, y1)
-		{
-			dx = x1 - x0;
-			dy = y1 - y0;
-			yi = 1;
-			if (dy < 0) {
-				yi = -1;
-				dy = -dy;
-			}
-			D = (2 * dy) - dx;
-			y = y0;
-			for (int x = x0; x <= x1; x++)
-			{
-				PutPixel(x, y, color);
-				if (D > 0)
-				{
-					y = y + yi;
-					D = D + (2 * (dy - dx));
-				}
-				else
-					D = D + 2 * dy;
-			}
-		}
-	}
-	else {
-		if (y0 > y1) // plotLineHigh(x1, y1, x0, y0)
-		{
-			dx = x0 - x1;
-			dy = y0 - y1;
-			xi = 1;
-			if (dx < 0)
-			{
-				xi = -1;
-				dx = -dx;
-			}
-			D = (2 * dx) - dy;
-			x = x1;
-			for (int y = y1; y <= y0; y++)
-			{
-				PutPixel(x, y, color);
-				if (D > 0)
-				{
-					x = x + xi;
-					D = D + (2 * (dx - dy));
-				}
-				else
-					D = D + 2 * dx;
-			}
-		}
-		else // plotLineHigh(x0, y0, x1, y1)
-		{
-			dx = x1 - x0;
-			dy = y1 - y0;
-			xi = 1;
-			if (dx < 0)
-			{
-				xi = -1;
-				dx = -dx;
-			}
-			D = (2 * dx) - dy;
-			x = x0;
-			for (int y = y0; y <= y1; y++)
-			{
-				PutPixel(x, y, color);
-				if (D > 0)
-				{
-					x = x + xi;
-					D = D + (2 * (dx - dy));
-				}
-				else
-					D = D + 2 * dx;
-			}
-		}
-	}
-
-
-}*/
 
 
 std::string Utils::GetFileName(const std::string& filePath)
