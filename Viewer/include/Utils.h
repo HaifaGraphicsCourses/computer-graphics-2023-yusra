@@ -10,4 +10,5 @@ public:
 	static glm::vec2 Vec2fFromStream(std::istream& issLine);
 	static std::shared_ptr<MeshModel> LoadMeshModel(const std::string& filePath);
 	static std::string GetFileName(const std::string& filePath);
+	//static void Utils::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color);
 };
