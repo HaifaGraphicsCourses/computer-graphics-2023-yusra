@@ -1,10 +1,12 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <algorithm>
-
+#include <sstream>
+#include <iostream>
 #include "Renderer.h"
 #include "InitShader.h"
-
+#include "Utils.h"
+using namespace std;
 #define INDEX(width,x,y,c) ((x)+(y)*(width))*3+(c)
 #define Z_INDEX(width,x,y) ((x)+(y)*(width))
 
@@ -407,9 +409,48 @@ void Renderer::Render(const Scene& scene)
 {
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
-	int half_height = viewport_height / 2;
+	int half_height = viewport_height / 2;	
+
+	
+
+
+	// HW2
+	glm::ivec2 p1, p2, p3;
+	auto s = scene.GetModelCount();
+	if (s > 0)
+	{
+		auto Mesh = scene.GetModel(0);
+		glm::vec3 color = glm::vec3(0.0f, 10.0f, 20.0f);
+		for (int i = 0; i < Mesh.GetFacesCount(); i++)
+		{
+			auto face = Mesh.GetFace(i);
+			//std::cout << "( " << 1000*Mesh.GetVertices(face.GetVertexIndex(0) - 1).x/ Mesh.GetVertices(face.GetVertexIndex(0) - 1).z << "\n";
+			p1 = glm::ivec2(Mesh.GetVertices(face.GetVertexIndex(0) - 1).x, Mesh.GetVertices(face.GetVertexIndex(0) - 1).y);
+			p2 = glm::ivec2(Mesh.GetVertices(face.GetVertexIndex(1) - 1).x, Mesh.GetVertices(face.GetVertexIndex(1) - 1).y);
+			p3 = glm::ivec2(Mesh.GetVertices(face.GetVertexIndex(2) - 1).x, Mesh.GetVertices(face.GetVertexIndex(2) - 1).y);
+
+			DrawLine(p1, p2, color);
+			DrawLine(p2, p3, color);
+			DrawLine(p3, p1, color);
+
+		}
+	}
+	
+
+
+
+}
+
+
+/// Scale:
+
+
+
+void HW1()
+{
 	// points
-	glm::ivec2 p1 = glm::ivec2(700.0f, 500.0f), p2;
+	// --- ALL THE FOLLOWING ARE FROM HW1 --- 
+	/*glm::ivec2 p1 = glm::ivec2(700.0f, 500.0f), p2;
 	int x0 = p1.x, y0 = p1.y;
 	// the color = red :)
 	glm::vec3 color = glm::vec3(10.0f, 0.0f, 0.0f);
@@ -513,8 +554,10 @@ void Renderer::Render(const Scene& scene)
 		cat_cor2 = glm::vec2(mouth3[i + 1][0] / 2, mouth3[i + 1][1] / 2);
 		DrawLine(cat_cor1, cat_cor2, cat_color);
 	}
-
+	*/
 }
+
+
 
 
 
