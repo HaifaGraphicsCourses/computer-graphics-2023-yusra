@@ -109,26 +109,65 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	*	0  0  0  1      w        w
 	*/
 	
+	/// <summary>
+	/// what we did:
+	/// we first did traslate to make all the values positive or equal to 0, 
+	/// after that we used scale to make the values up to 1000
+	/// </summary>
 	
 	/*Translations*/
 	// ** Scale **
-	glm::ivec3 scale_vec = glm::vec3(100.0f, 100.0f, 100.0f);
-	for (auto i = 0; i < vertices.size(); i++)
+	glm::ivec3 scale_vec = glm::vec3(vertices[0].x, vertices[0].y, vertices[0].z);
+	glm::ivec3 trans_vec = glm::vec3(vertices[0].x, vertices[0].y, vertices[0].z);
+	for (int i = 0; i < vertices.size(); i++)
 	{
-		vertices[i] = glm::ivec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
-		std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
-		std::cout << '\n';
+		// min x
+		if (trans_vec.x > vertices[i].x)
+			trans_vec.x = vertices[i].x;
+		// min y
+		if (trans_vec.y > vertices[i].y)
+			trans_vec.y = vertices[i].y;
+		// min z
+		if (trans_vec.z > vertices[i].z)
+			trans_vec.z = vertices[i].z;
 	}
+	float min = trans_vec.x;
+	if (trans_vec.y < min)
+		min = trans_vec.y;
+	if (trans_vec.z < min)
+		min = trans_vec.z;
+	if (min < 0)
+		min *= (-1);
+	trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
+
 	// ** Translate **
-	glm::ivec3 trans_vec = glm::vec3(1000.0f, 1000.0f, 1000.0f);
 	for (auto i = 0; i < vertices.size(); i++)
 	{
 		vertices[i] = glm::ivec3(vertices[i].x + trans_vec.x, vertices[i].y + trans_vec.y, vertices[i].z + trans_vec.z);
-		std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
-		std::cout << '\n';
 	}
 
-
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		// max x
+		if (scale_vec.x < vertices[i].x)
+			scale_vec.x = vertices[i].x;
+		// max y
+		if (scale_vec.y < vertices[i].y)
+			scale_vec.y = vertices[i].y;
+		// max z
+		if (scale_vec.z < vertices[i].z)
+			scale_vec.z = vertices[i].z;
+	}
+	float max = scale_vec.x;
+	if (scale_vec.y > max)
+		min = scale_vec.y;
+	if (scale_vec.z > max)
+		min = scale_vec.z;
+	scale_vec.x = 1000 / max; scale_vec.y = 1000 / scale_vec.y; scale_vec.z = 1000 / max;
+	for (auto i = 0; i < vertices.size(); i++)
+	{
+		vertices[i] = glm::ivec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
+	}
 
 
 
