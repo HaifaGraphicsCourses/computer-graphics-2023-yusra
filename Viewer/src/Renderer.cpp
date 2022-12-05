@@ -434,20 +434,24 @@ void Renderer::Render(const Scene& scene)
 	*/
 
 	auto s = scene.GetModelCount();
-	glm::ivec2 p1, p2, p3;
+	glm::fvec2 p1, p2, p3;
 	if (s > 0)
 	{
-		auto Mesh = scene.GetModel(0);
-		glm::ivec3 vec;
+		//std::cout << "HELLOOO" <<"\n";
+		auto Mesh = scene.GetActiveModel();
+		//std::cout << "HELLOOO 999" <<"\n";
+		glm::fvec3 vec;
 		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
 		{
-			vec = glm::ivec3(Mesh.GetVertices(i).x / Mesh.GetVertices(i).z, Mesh.GetVertices(i).y / Mesh.GetVertices(i).z, 1);
+			
+			vec = glm::fvec3((float)(Mesh.GetVertices(i).x) / Mesh.GetVertices(i).z, (float)(Mesh.GetVertices(i).y) / Mesh.GetVertices(i).z, 1.0f);
+			//std::cout << "HELLOOO" << Mesh.GetVertices(i).x << "\n";
 			Mesh.SetVertices(vec, i);
 
 		}
 
 		// now we scale:
-		// ** Scale **
+		//// ** Scale **
 		glm::ivec3 scale_vec = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
 		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
 		{
@@ -465,23 +469,21 @@ void Renderer::Render(const Scene& scene)
 		if (scale_vec.z > max)
 			max = scale_vec.z;
 		//std::cout << "MAXX_RENEDER" << max << "  ,,  " << 1000 / max << "\n";
-		scale_vec.x = 250 / max; scale_vec.y = 250 / max; scale_vec.z = 250 / max;
+		scale_vec.x = 500 / max; scale_vec.y = 500 / max; scale_vec.z = 500 / max;
 		for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 		{
 			Mesh.SetVertices(glm::ivec3(Mesh.GetVertices(i).x * scale_vec.x, Mesh.GetVertices(i).y * scale_vec.y, 1), i);
 		}
 
 		glm::vec3 color = glm::vec3(10.0f, 10.0f, 20.0f);
+		//std::cout << Mesh.GetFacesCount() << "\n";
 		for (int i = 0; i < Mesh.GetFacesCount(); i++)
 		{
 			auto face = Mesh.GetFace(i);
 			//std::cout << "( " << Mesh.GetVertices(face.GetVertexIndex(0) - 1).x << " , " << Mesh.GetVertices(face.GetVertexIndex(0) - 1).y << "\n";
-			p1 = glm::ivec2(Mesh.GetVertices(face.GetVertexIndex(0) - 1).x, Mesh.GetVertices(face.GetVertexIndex(0) - 1).y);
-			p2 = glm::ivec2(Mesh.GetVertices(face.GetVertexIndex(1) - 1).x, Mesh.GetVertices(face.GetVertexIndex(1) - 1).y);
-			p3 = glm::ivec2(Mesh.GetVertices(face.GetVertexIndex(2) - 1).x, Mesh.GetVertices(face.GetVertexIndex(2) - 1).y);
-			/*p1 = glm::ivec2(vertices[face.GetVertexIndex(0) - 1].x, vertices[face.GetVertexIndex(0) - 1].y);
-			p2 = glm::ivec2(vertices[face.GetVertexIndex(1) - 1].x, vertices[face.GetVertexIndex(1) - 1].y);
-			p2 = glm::ivec2(vertices[face.GetVertexIndex(2) - 1].x, vertices[face.GetVertexIndex(2) - 1].y);*/
+			p1 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(0) - 1).x, Mesh.GetVertices(face.GetVertexIndex(0) - 1).y);
+			p2 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(1) - 1).x, Mesh.GetVertices(face.GetVertexIndex(1) - 1).y);
+			p3 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(2) - 1).x, Mesh.GetVertices(face.GetVertexIndex(2) - 1).y);
 			DrawLine(p1, p2, color);
 			DrawLine(p2, p3, color);
 			DrawLine(p3, p1, color);
