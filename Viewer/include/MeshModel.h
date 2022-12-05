@@ -11,6 +11,9 @@ public:
 	const Face& GetFace(int index) const;
 	int GetFacesCount() const;
 	const std::string& GetModelName() const;
+	glm::fvec3 MeshModel::GetVertices(int index);
+	void MeshModel::SetVertices(glm::fvec3 vec, int index);
+	int MeshModel::RetVerticesSize();
 
 private:
 	std::vector<Face> faces;
