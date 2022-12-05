@@ -10,6 +10,4 @@ public:
 	static glm::vec2 Vec2fFromStream(std::istream& issLine);
 	static std::shared_ptr<MeshModel> LoadMeshModel(const std::string& filePath);
 	static std::string GetFileName(const std::string& filePath);
-	static std::vector<glm::vec3> Utils::Scale_3D(glm::vec3 scale_vec, std::vector<glm::vec3> vertices);
-	static std::vector<glm::vec3> Utils::Translate_3D(glm::vec3 translate_vec, std::vector<glm::vec3> vertices);
 };
