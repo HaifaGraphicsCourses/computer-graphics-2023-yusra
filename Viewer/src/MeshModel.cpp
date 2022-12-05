@@ -27,12 +27,12 @@ const std::string& MeshModel::GetModelName() const
 	return model_name;
 }
 
-glm::ivec3 MeshModel::GetVertices(int index)
+glm::fvec3 MeshModel::GetVertices(int index)
 {
 	return vertices[index];
 }
 
-void MeshModel::SetVertices(glm::ivec3 vec , int index)
+void MeshModel::SetVertices(glm::fvec3 vec , int index)
 {
 	vertices[index]= vec;
 }
