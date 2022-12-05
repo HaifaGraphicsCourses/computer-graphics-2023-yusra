@@ -78,19 +78,19 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 
 	// print
 	// printing the verstecses 
-	//for (auto i = 0; i < vertices.size(); i++)
-	//{
-	//	std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
-	//}
-	//
-	//////printing the faces. For every face we print his the 3 vertecses:
-	//for (auto i = 0 ; i < faces.size(); i++)
-	//{
-	//	std::cout << "( " << vertices[faces[i].GetVertexIndex(0)-1].x << " , " << vertices[faces[i].GetVertexIndex(0)-1].y << " , " << vertices[faces[i].GetVertexIndex(0)-1].z << " )" << "\n";
-	//	std::cout << "( " << vertices[faces[i].GetVertexIndex(1)-1].x << " , " << vertices[faces[i].GetVertexIndex(1)-1].y << " , " << vertices[faces[i].GetVertexIndex(1)-1].z << " )" << "\n";
-	//	std::cout << "( " << vertices[faces[i].GetVertexIndex(2)-1].x << " , " << vertices[faces[i].GetVertexIndex(2)-1].y << " , " << vertices[faces[i].GetVertexIndex(2)-1].z << " )" << "\n";
-	//	std::cout << "\n";
-	//}
+	for (auto i = 0; i < vertices.size(); i++)
+	{
+		std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
+	}
+	
+	////printing the faces. For every face we print his the 3 vertecses:
+	for (auto i = 0 ; i < faces.size(); i++)
+	{
+		std::cout << "( " << vertices[faces[i].GetVertexIndex(0)-1].x << " , " << vertices[faces[i].GetVertexIndex(0)-1].y << " , " << vertices[faces[i].GetVertexIndex(0)-1].z << " )" << "\n";
+		std::cout << "( " << vertices[faces[i].GetVertexIndex(1)-1].x << " , " << vertices[faces[i].GetVertexIndex(1)-1].y << " , " << vertices[faces[i].GetVertexIndex(1)-1].z << " )" << "\n";
+		std::cout << "( " << vertices[faces[i].GetVertexIndex(2)-1].x << " , " << vertices[faces[i].GetVertexIndex(2)-1].y << " , " << vertices[faces[i].GetVertexIndex(2)-1].z << " )" << "\n";
+		std::cout << "\n";
+	}
 
 	// scale:
 	// first we will biuld the matrix:
@@ -116,7 +116,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	/// </summary>
 	
 	/*Translations*/
-	// ** Scale **
+	// ** Translate **
 	glm::ivec3 scale_vec = glm::vec3(vertices[0].x, vertices[0].y, vertices[0].z);
 	glm::ivec3 trans_vec = glm::vec3(vertices[0].x, vertices[0].y, vertices[0].z);
 	for (int i = 0; i < vertices.size(); i++)
@@ -140,12 +140,12 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		min *= (-1);
 	trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
 
-	// ** Translate **
 	for (auto i = 0; i < vertices.size(); i++)
 	{
 		vertices[i] = glm::ivec3(vertices[i].x + trans_vec.x, vertices[i].y + trans_vec.y, vertices[i].z + trans_vec.z);
 	}
-
+	std::cout << "MINN_UTI" << min << "\n";
+	// ** Scale ** 
 	for (int i = 0; i < vertices.size(); i++)
 	{
 		// max x
@@ -160,10 +160,11 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	}
 	float max = scale_vec.x;
 	if (scale_vec.y > max)
-		min = scale_vec.y;
+		max = scale_vec.y;
 	if (scale_vec.z > max)
-		min = scale_vec.z;
-	scale_vec.x = 1000 / max; scale_vec.y = 1000 / scale_vec.y; scale_vec.z = 1000 / max;
+		max = scale_vec.z;
+//	std::cout << "MAXX_Uti" << max << "  ,,  " << (max * (1000 / max)) << "\n";
+	scale_vec.x = 1000 / max; scale_vec.y = 1000 / max; scale_vec.z = 1000 / max;
 	for (auto i = 0; i < vertices.size(); i++)
 	{
 		vertices[i] = glm::ivec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
@@ -174,36 +175,6 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath));
 }
 
-//std::vector<glm::vec3> Scale_3D(glm::vec3 scale_vec, std::vector<glm::vec3> vertices)
-//{
-//	std::vector<glm::vec3> scale_vertices;
-//	glm::ivec3 temp;
-//	for (auto i = 0; i < vertices.size(); i++)
-//	{
-//		temp = glm::ivec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
-//		scale_vertices[i] = temp;
-//		std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
-//		std::cout << '\n';
-//		std::cout << scale_vertices[i].x << ' ' << scale_vertices[i].y << ' ' << scale_vertices[i].z << "\n";
-//	}
-//	return scale_vertices;
-//}
-//
-//std::vector<glm::vec3> Utils::Translate_3D(glm::vec3 translate_vec, std::vector<glm::vec3> vertices)
-//{
-//	std::vector<glm::vec3> translate_vertices;
-//	glm::ivec3 temp;
-//	for (auto i = 0; i < vertices.size(); i++)
-//	{
-//		temp = glm::ivec3(vertices[i].x + translate_vec.x, vertices[i].y + translate_vec.y, vertices[i].z + translate_vec.z);
-//		translate_vertices[i] = temp;
-//		std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
-//		std::cout << '\n';
-//		std::cout << translate_vertices[i].x << ' ' << translate_vertices[i].y << ' ' << translate_vertices[i].z << "\n";
-//
-//	}
-//	return translate_vertices;
-//}
 
 
 
