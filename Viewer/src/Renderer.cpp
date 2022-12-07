@@ -2,7 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <sstream>
-#include <iostream>
+#include <iostream>	
 #include "Renderer.h"
 #include "InitShader.h"
 #include "Utils.h"
@@ -428,8 +428,48 @@ void Renderer::Render(const Scene& scene)
 			Mesh.SetVertices(vec, i);
 		}
 
+
+		// Rotate:
+		glm::fvec3 rotate_vec = glm::vec3(0.0f, 0.0f, 1.0f);
+		float degree = 75.0f;
+		float radian = degree * (M_PI / 180);
+		float cs = cos(radian);
+		float sn = sin(radian);
+		// now we have to rotate
+		for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+		{
+			rotate_vec.x = Mesh.GetVertices(i).x * cs - Mesh.GetVertices(i).y * sn;
+			rotate_vec.y = Mesh.GetVertices(i).x * sn + Mesh.GetVertices(i).y * cs;
+			Mesh.SetVertices(glm::fvec3(rotate_vec.x, rotate_vec.y, 1), i);
+		}
+		/// after the rotate some of the values might be negative so we need to do translate.
+		glm::fvec3 trans_vec = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
+		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+		{
+			// min x
+			if (trans_vec.x > Mesh.GetVertices(i).x)
+				trans_vec.x = Mesh.GetVertices(i).x;
+			// min y
+			if (trans_vec.y > Mesh.GetVertices(i).y)
+				trans_vec.y = Mesh.GetVertices(i).y;
+			// min z                                 Notive that we do not need max z sincde all Zs  are 1.
+			/*if (trans_vec.z > Mesh.GetVertices(i).z)
+				trans_vec.z = Mesh.GetVertices(i).z;*/
+		}
+		float min = trans_vec.x;
+		if (trans_vec.y < min)
+			min = trans_vec.y;
+		if (trans_vec.z < min)
+			min = trans_vec.z;
+		if (min < 0)
+		{
+			min *= (-1.0f);
+			trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
+			Translate(Mesh, trans_vec);
+		}
+		/// 
 		/// before we scale we find the max, so we can get all the coordinate to be [0, 1000]
-		glm::ivec3 scale_vec = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
+		glm::fvec3 scale_vec = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
 		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
 		{
 			// max x
@@ -449,7 +489,8 @@ void Renderer::Render(const Scene& scene)
 		if (scale_vec.z > max)
 			max = scale_vec.z;
 		scale_vec.x = 500 / max; scale_vec.y = 500 / max; scale_vec.z = 500 / max;
-		Renderer::Scale(Mesh, scale_vec);
+		Scale(Mesh, scale_vec);
+
 
 		glm::vec3 color = glm::vec3(10.0f, 10.0f, 20.0f);
 		for (int i = 0; i < Mesh.GetFacesCount(); i++)
@@ -482,7 +523,7 @@ void Renderer::Scale(MeshModel& Mesh, glm::fvec3 scale_vec)
 {
 	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
-		Mesh.SetVertices(glm::ivec3(Mesh.GetVertices(i).x * scale_vec.x, Mesh.GetVertices(i).y * scale_vec.y, 1), i);
+		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * scale_vec.x, Mesh.GetVertices(i).y * scale_vec.y, 1), i);
 	}
 
 }
@@ -499,7 +540,7 @@ void Renderer::Translate(MeshModel& Mesh, glm::fvec3 translate_vec)
 {
 	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
-		Mesh.SetVertices(glm::ivec3(Mesh.GetVertices(i).x * translate_vec.x, Mesh.GetVertices(i).y * translate_vec.y, 1), i);
+		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x + translate_vec.x, Mesh.GetVertices(i).y + translate_vec.y, 1), i);
 	}
 }
 
