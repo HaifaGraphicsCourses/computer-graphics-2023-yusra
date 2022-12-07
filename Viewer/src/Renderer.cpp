@@ -416,42 +416,19 @@ void Renderer::Render(const Scene& scene)
 
 	// HW2
 	
-	// scale:
-	// first we will biuld the matrix:
-	/*
-	*	Sx 0  0  0     x     Sx * x
-	*	0  Sy 0  0  *  y  =	 Sy * y
-	*	0  0  Sz 0     z     Sz * z
-	*	0  0  0  1     w        w
-	*/
-	// Translate:
-	// first we will biuld the matrix:
-	/*
-	*	1  0  0  Tx     x     Tx + x
-	*	0  1  0  Ty  *  y  =  Ty + y
-	*	0  0  1  Tz     z     Tz + z
-	*	0  0  0  1      w        w
-	*/
-
 	auto s = scene.GetModelCount();
 	glm::fvec2 p1, p2, p3;
 	if (s > 0)
 	{
-		//std::cout << "HELLOOO" <<"\n";
 		auto Mesh = scene.GetActiveModel();
-		//std::cout << "HELLOOO 999" <<"\n";
 		glm::fvec3 vec;
-		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+		for (int i = 0; i < Mesh.RetVerticesSize(); i++)  // (x/y, z/y, 1)
 		{
-			
 			vec = glm::fvec3((float)(Mesh.GetVertices(i).x) / Mesh.GetVertices(i).z, (float)(Mesh.GetVertices(i).y) / Mesh.GetVertices(i).z, 1.0f);
-			//std::cout << "HELLOOO" << Mesh.GetVertices(i).x << "\n";
 			Mesh.SetVertices(vec, i);
-
 		}
 
-		// now we scale:
-		//// ** Scale **
+		/// before we scale we find the max, so we can get all the coordinate to be [0, 1000]
 		glm::ivec3 scale_vec = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
 		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
 		{
@@ -461,6 +438,9 @@ void Renderer::Render(const Scene& scene)
 			// max y
 			if (scale_vec.y < Mesh.GetVertices(i).y)
 				scale_vec.y = Mesh.GetVertices(i).y;
+			// max z                                     Notive that we do not need max z sincde all Zs  are 1.
+			/*if (scale_vec.z < Mesh.GetVertices(i).z)
+				scale_vec.z = Mesh.GetVertices(i).z;*/
 
 		}
 		float max = scale_vec.x;
@@ -468,15 +448,10 @@ void Renderer::Render(const Scene& scene)
 			max = scale_vec.y;
 		if (scale_vec.z > max)
 			max = scale_vec.z;
-		//std::cout << "MAXX_RENEDER" << max << "  ,,  " << 1000 / max << "\n";
 		scale_vec.x = 500 / max; scale_vec.y = 500 / max; scale_vec.z = 500 / max;
-		for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
-		{
-			Mesh.SetVertices(glm::ivec3(Mesh.GetVertices(i).x * scale_vec.x, Mesh.GetVertices(i).y * scale_vec.y, 1), i);
-		}
+		Renderer::Scale(Mesh, scale_vec);
 
 		glm::vec3 color = glm::vec3(10.0f, 10.0f, 20.0f);
-		//std::cout << Mesh.GetFacesCount() << "\n";
 		for (int i = 0; i < Mesh.GetFacesCount(); i++)
 		{
 			auto face = Mesh.GetFace(i);
@@ -494,8 +469,41 @@ void Renderer::Render(const Scene& scene)
 	
 }
 
+/// ojay here we have (x/z, y/z, 1) 
+// scale:
+// first we will biuld the matrix:
+/*
+*	Sx 0  0  0     x     Sx * x
+*	0  Sy 0  0  *  y  =	 Sy * y
+*	0  0  Sz 0     z     Sz * z
+*	0  0  0  1     w        w
+*/
+void Renderer::Scale(MeshModel& Mesh, glm::fvec3 scale_vec)
+{
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		Mesh.SetVertices(glm::ivec3(Mesh.GetVertices(i).x * scale_vec.x, Mesh.GetVertices(i).y * scale_vec.y, 1), i);
+	}
 
-/// Scale and Translate after getting (x/z, y/z)
+}
+
+// Translate:
+// first we will biuld the matrix:
+/*
+*	1  0  0  Tx     x     Tx + x
+*	0  1  0  Ty  *  y  =  Ty + y
+*	0  0  1  Tz     z     Tz + z
+*	0  0  0  1      w        w
+*/
+void Renderer::Translate(MeshModel& Mesh, glm::fvec3 translate_vec)
+{
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		Mesh.SetVertices(glm::ivec3(Mesh.GetVertices(i).x * translate_vec.x, Mesh.GetVertices(i).y * translate_vec.y, 1), i);
+	}
+}
+
+
 
 
 
