@@ -13,6 +13,8 @@ public:
 	void ClearColorBuffer(const glm::vec3& color);
 	int GetViewportWidth() const;
 	int GetViewportHeight() const;
+	void Renderer::Scale(MeshModel& Mesh, glm::fvec3 scale_vec);
+	void Renderer::Translate(MeshModel& Mesh, glm::fvec3 translate_vec);
 	
 
 private:
