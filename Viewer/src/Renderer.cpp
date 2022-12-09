@@ -430,11 +430,24 @@ void Renderer::Render(const Scene& scene)
 
 
 		// Rotate:
+		// first we will biuld the matrix:
+		/*
+		*	cosa -sina  0  0     x     x * cosa - y * sina
+		*	sina  cosa  0  0  *  y  =  x * sina + x * cosa
+		*	0       0   1  0     z        z
+		*	0       0   0  1     w        w
+		*/
 		glm::fvec3 rotate_vec = glm::vec3(0.0f, 0.0f, 1.0f);
-		float degree = 75.0f;
+		float degree = 45.0f;
 		float radian = degree * (M_PI / 180);
 		float cs = cos(radian);
 		float sn = sin(radian);
+		float R[4][4] = {
+			{cs, -1 * sn, 0, 0},
+			{sn, cs, 0, 0},
+			{0, 0, 1, 0},
+			{0, 0, 0, 1}
+		};
 		// now we have to rotate
 		for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 		{
@@ -443,6 +456,11 @@ void Renderer::Render(const Scene& scene)
 			Mesh.SetVertices(glm::fvec3(rotate_vec.x, rotate_vec.y, 1), i);
 		}
 		/// after the rotate some of the values might be negative so we need to do translate.
+		float T[4][4] = {
+			{1, 0, 0, 0},
+			{0, 1, 0, 0},
+			{0, 0, 1, 0},
+			{0, 0, 0, 1} };
 		glm::fvec3 trans_vec = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
 		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
 		{
@@ -466,9 +484,16 @@ void Renderer::Render(const Scene& scene)
 			min *= (-1.0f);
 			trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
 			Translate(Mesh, trans_vec);
+			// we need to change the traslate matrux T:
+			T[0][3] = min; T[1][2] = min; T[2][3] = min;
 		}
 		/// 
 		/// before we scale we find the max, so we can get all the coordinate to be [0, 1000]
+		float S[4][4] = {
+		   { 1, 0, 0, 0 },
+		   { 0, 1, 0, 0 },
+		   { 0, 0, 1, 0 },
+		   { 0, 0, 0, 1 } }; 
 		glm::fvec3 scale_vec = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
 		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
 		{
@@ -488,9 +513,49 @@ void Renderer::Render(const Scene& scene)
 			max = scale_vec.y;
 		if (scale_vec.z > max)
 			max = scale_vec.z;
-		scale_vec.x = 500 / max; scale_vec.y = 500 / max; scale_vec.z = 500 / max;
+		scale_vec.x = 600 / max; scale_vec.y = 600 / max; scale_vec.z = 600 / max;
 		Scale(Mesh, scale_vec);
+		// now we need to change the scale matrix
+		S[0][0] = 600/max; S[1][1] = 600/max; S[2][2] = 600/max;
+		// the world transformation matrix ( model matrix) is :
+		// M= SRT
+		// S = scale matrix, R = rotate matrix, T = translate matrix 
+		float M[4][4], ST[4][4];
+		// Multiplying scale matrix and the traslate matrix and putting the result in ST
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				int sum = 0;
+				for (int k = 0; k < 3; ++k) {
+					sum += S[i][k] * T[k][j];
+				}
+				ST[i][j] = sum;
+			}
+		}
+		// Multiplying ST and teh rotatle matrix 
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				int sum = 0;
+				for (int k = 0; k < 3; ++k) {
+					sum += ST[i][k] * R[k][j];
+				}
+				M[i][j] = sum;
+			}
+		}
+		// Now we need to multiply M * (x, y, z)
+		// each time we multipy one coordinate with M
+		// M3x3 mul M3*1 = M3*1
+		// we define a vec (3*1) that each line is the sum for each line in M
+		/*glm::fvec3 M_v;
+		M_v.x = M[0][0] + M[0][1] + M[0][2];
+		M_v.y = M[1][0] + M[1][1] + M[1][2];
+		M_v.z = M[2][0] + M[2][1] + M[2][2];
+		for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+		{
+			std::cout << "before: " << Mesh.GetVertices(i).x << " , " << Mesh.GetVertices(i).y << " , " << Mesh.GetVertices(i).z << "\n";
+			Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M_v.x, Mesh.GetVertices(i).y * M_v.y, Mesh.GetVertices(i).z* M_v.z), i);
+			std::cout << "after: " << Mesh.GetVertices(i).x << " , " << Mesh.GetVertices(i).y << " , " << Mesh.GetVertices(i).z << "\n";
 
+		}*/
 
 		glm::vec3 color = glm::vec3(10.0f, 10.0f, 20.0f);
 		for (int i = 0; i < Mesh.GetFacesCount(); i++)
