@@ -259,14 +259,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 	//  --- SCALE & TRASLATE & Rotate ---
 	{
-		static float s = 0.0f, t = 0.0f, r = 0.0f;
+		static float s = 1.0f, t = 0.0f, r = 0.0f;
 
 		ImGui::Begin("TRANSFORMATION");                          // Create a window called "Hello, world!" and append into it.
 
-		ImGui::SliderFloat("Scale", &s, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::SliderFloat("Traslate", &t, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::SliderFloat("Rotate", &r, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-
+		ImGui::SliderFloat("Scale", &s, 1.0f, 100.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::SliderFloat("Traslate", &t, 0.0f, 100.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::SliderFloat("Rotate", &r, 0.0f, 360.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		transformation_window = false;
 		ImGui::End();
 	}
 }
