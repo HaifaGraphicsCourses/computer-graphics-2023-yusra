@@ -15,6 +15,10 @@ public:
 	int GetViewportHeight() const;
 	void Renderer::Scale(MeshModel& Mesh, glm::fvec3 scale_vec);
 	void Renderer::Translate(MeshModel& Mesh, glm::fvec3 translate_vec);
+	void Renderer::Rotate(MeshModel& Mesh, float degree);
+	void Renderer::DrawTriangle(MeshModel& Mesh);
+	void Renderer::FixPoints(MeshModel& Mesh);
+
 	
 
 private:
