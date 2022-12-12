@@ -22,7 +22,8 @@ using namespace std;
  */
 bool show_demo_window = false;
 bool show_another_window = false;
-bool transformation_window = false;
+bool LOCALtransformation_window = false;
+bool WORLDtransformation_window = false;
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 
 /**
@@ -254,19 +255,51 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::End();
 	}
 
-	if (transformation_window)
-		ImGui::ShowDemoWindow(&transformation_window);
+	if (LOCALtransformation_window)
+		ImGui::ShowDemoWindow(&LOCALtransformation_window);
 
-	//  --- SCALE & TRASLATE & Rotate ---
+	//  --- SCALE & TRASLATE & Rotate ---  LOCAL
 	{
 		static float s = 1.0f, t = 0.0f, r = 0.0f;
 
-		ImGui::Begin("TRANSFORMATION");                          // Create a window called "Hello, world!" and append into it.
+		ImGui::Begin("LOCAL TRANSFORMATION");                          // Create a window called "Hello, world!" and append into it.
 
-		ImGui::SliderFloat("Scale", &s, 1.0f, 100.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::SliderFloat("Traslate", &t, 0.0f, 100.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::SliderFloat("Rotate", &r, 0.0f, 360.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		transformation_window = false;
+		ImGui::SliderFloat("Scale", &s, 1.0f, 100.0f); 
+		if(scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetOBJScale(s);
+		
+		ImGui::SliderFloat("Translate", &t, 0.0f, 100.0f);  
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetOBJTranslate(t);
+		
+		ImGui::SliderFloat("Rotate", &r, 0.0f, 360.0f); 
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetOBJRotate(r);
+		LOCALtransformation_window = false;
+		ImGui::End();
+	}
+
+	if (WORLDtransformation_window)
+		ImGui::ShowDemoWindow(&WORLDtransformation_window);
+
+	//  --- SCALE & TRASLATE & Rotate ---  WORLD
+	{
+		static float s = 1.0f, t = 0.0f, r = 0.0f;
+
+		ImGui::Begin("WORLD TRANSFORMATION");                          // Create a window called "Hello, world!" and append into it.
+
+		ImGui::SliderFloat("Scale", &s, 1.0f, 100.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetWORLDScale(s);
+
+		ImGui::SliderFloat("Translate", &t, 0.0f, 100.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetWORLDTranslate(t);
+
+		ImGui::SliderFloat("Rotate", &r, 0.0f, 360.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetWORLDRotate(r);
+		WORLDtransformation_window = false;
 		ImGui::End();
 	}
 }
