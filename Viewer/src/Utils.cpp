@@ -78,21 +78,9 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 
 	// print
 	// printing the verstecses 
-	//for (auto i = 0; i < vertices.size(); i++)
-	//{
-	//	std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
-	//}
-	//
-	//////printing the faces. For every face we print his the 3 vertecses:
-	//for (auto i = 0 ; i < faces.size(); i++)
-	//{
-	//	std::cout << "( " << vertices[faces[i].GetVertexIndex(0)-1].x << " , " << vertices[faces[i].GetVertexIndex(0)-1].y << " , " << vertices[faces[i].GetVertexIndex(0)-1].z << " )" << "\n";
-	//	std::cout << "( " << vertices[faces[i].GetVertexIndex(1)-1].x << " , " << vertices[faces[i].GetVertexIndex(1)-1].y << " , " << vertices[faces[i].GetVertexIndex(1)-1].z << " )" << "\n";
-	//	std::cout << "( " << vertices[faces[i].GetVertexIndex(2)-1].x << " , " << vertices[faces[i].GetVertexIndex(2)-1].y << " , " << vertices[faces[i].GetVertexIndex(2)-1].z << " )" << "\n";
-	//	std::cout << "\n";
-	//}
-
-	Print_Vertices(vertices);
+	//Print_Vertices(vertices);
+	//printing the faces. For every face we print his the 3 vertecses:
+	//Print_Faces(vertices, faces);
 
 	// scale:
 	// first we will biuld the matrix:
@@ -114,7 +102,6 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	// what we did:
 	// we first did traslate to make all the values positive or equal to 0, 
 	// after that we used scale to make the values up to 1000
-
 	
 	/*Translations*/
 	// ** Translate **
