@@ -13,11 +13,14 @@ public:
 	void ClearColorBuffer(const glm::vec3& color);
 	int GetViewportWidth() const;
 	int GetViewportHeight() const;
-	void Renderer::Scale(MeshModel& Mesh, glm::fvec3 scale_vec);
-	void Renderer::Translate(MeshModel& Mesh, glm::fvec3 translate_vec);
-	void Renderer::Rotate(MeshModel& Mesh, float degree);
-	void Renderer::DrawTriangle(MeshModel& Mesh);
-	void Renderer::FixPoints(MeshModel& Mesh);
+	void Scale(MeshModel& Mesh, glm::fvec3 scale_vec);
+	void Translate(MeshModel& Mesh, glm::fvec3 translate_vec);
+	void Rotate(MeshModel& Mesh, float degree);
+	void DrawTriangle(MeshModel& Mesh);
+	void FixPoints(MeshModel& Mesh);
+	void worldMat(MeshModel& Mesh);
+	void Transformation(MeshModel& Mesh);
+	//void udateModelTranform(glm::mat4x4 Transform, MeshModel& Mesh);
 
 	
 
