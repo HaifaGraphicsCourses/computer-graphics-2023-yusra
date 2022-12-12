@@ -416,131 +416,159 @@ void Renderer::Render(const Scene& scene)
 
 	// HW2
 	
-	auto cnt = scene.GetModelCount();
-	while (cnt > 0)
+	//auto cnt = scene.GetModelCount();
+	for (int i = 0; i < scene.GetModelCount(); i++)
 	{
-		auto Mesh = scene.GetModel(cnt - 1);
-		cnt--;
+		auto Mesh = scene.GetModel(i);
 		FixPoints(Mesh);
-		
-		//rotate;
-		float radian = 0.0f * (M_PI / 180);
-		float cs = cos(radian);
-		float sn = sin(radian);
-		float R[3][3] = {
-				{cs, -1 * sn, 0},
-				{sn, cs, 0},
-				{0, 0, 1} };
-
-		float inv_R[3][3] = {
-				{cs, sn, 0},
-				{-1*sn, cs, 0},
-				{0, 0, 1} };
-
-		//translate:
-		float T[3][3] = {
-			{1, 0, 200.0f},
-			{0, 1, 30.0f},
-			{0, 0, 1} };
-
-		float inv_T[3][3] = {
-			{1, 0, -200.0f},
-			{0, 1, -30.0f},
-			{0, 0, 1} };
-
-		//scale
-		float S[3][3] = {
-		   { 0.5f, 0, 0 },
-		   { 0, 0.5f, 0 },
-		   { 0, 0, 1} };
-
-		float inv_S[3][3] = {
-		   { 1/0.5f, 0, 0 },
-		   { 0, 1/0.5f, 0 },
-		   { 0, 0, 1} };
-		
-		// the world transformation matrix ( model matrix) is :
-		// M= SRT
-		// S = scale matrix, R = rotate matrix, T = translate matrix 
-		float M[3][3], SR[3][3];
-		// Multiplying scale matrix and the traslate matrix and putting the result in ST
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				float sum = 0.0f;
-				for (int k = 0; k <3; k++) {
-					sum += S[i][k] * R[k][j];
-				}
-				SR[i][j] = sum;
-				//std::cout << SR[i][j] << "  ";
-			}
-		}
-		// Multiplying SR and teh rotatle matrix 
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				float sum = 0.0f;
-				for (int k = 0; k < 3; k++) {
-					sum += SR[i][k] * T[k][j];
-				}
-				M[i][j] = sum;
-				//std::cout << M[i][j] << "  ";
-			}
-			//std::cout << "\n";
-		}
-
-		/// inverse 
-		float inv_M[3][3], invTR[3][3];
- 
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				float sum = 0.0f;
-				for (int k = 0; k < 3; k++) {
-					sum += inv_T[i][k] * inv_R[k][j];
-				}
-				invTR[i][j] = sum;
-				//std::cout << SR[i][j] << "  ";
-			}
-		}
-		// Multiplying INVERSE TR and teh rotatle matrix 
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				float sum = 0.0f;
-				for (int k = 0; k < 3; k++) {
-					sum += invTR[i][k] * inv_S[k][j];
-				}
-				inv_M[i][j] = sum;
-				//std::cout << inv_M[i][j] << "  ";
-			}
-			//std::cout << "\n";
-		}
-		// Now we need to multiply M * (x, y, z)
-		// each time we multipy one coordinate with M
-		for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+		Mesh.SetworldTransform();
+		// before drawing it we net to multipy to get the trasformation
+		Transformation(Mesh);
+		/*glm::mat4 m = Mesh.GetTranslate();
+		for (int r=0; r < 4; r++)
 		{
-			Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y* M[0][1] + M[0][2],
-				Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
-
-		}
-
-
-		///
-
+			for (int c=0; c < 4; c++)
+			{
+				cout << m[r][c] << "   ";
+			}
+			cout <<  "\n";
+		}*/
 		DrawTriangle(Mesh);
-
-
-		for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
-		{
-			Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * inv_M[0][0] + Mesh.GetVertices(i).y * inv_M[0][1] + inv_M[0][2],
-				Mesh.GetVertices(i).x * inv_M[1][0] + Mesh.GetVertices(i).y * inv_M[1][1] + M[1][2], 1), i);
-
-		}
-
-
-		///
-		DrawTriangle(Mesh);
-
 	}
 	
 	
+}
+
+
+void Renderer::Transformation(MeshModel& Mesh)
+{
+	glm::mat4 M = Mesh.GetworldTransform();
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + M[0][2],
+			Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
+	}
+}
+
+void Renderer::worldMat(MeshModel& Mesh)
+{
+	FixPoints(Mesh);
+
+	//rotate;
+	float radian = 0.0f * (M_PI / 180);
+	float cs = cos(radian);
+	float sn = sin(radian);
+	float R[3][3] = {
+			{cs, -1 * sn, 0},
+			{sn, cs, 0},
+			{0, 0, 1} };
+
+	float inv_R[3][3] = {
+			{cs, sn, 0},
+			{-1 * sn, cs, 0},
+			{0, 0, 1} };
+
+	//translate:
+	float T[3][3] = {
+		{1, 0, 200.0f},
+		{0, 1, 30.0f},
+		{0, 0, 1} };
+
+	float inv_T[3][3] = {
+		{1, 0, -200.0f},
+		{0, 1, -30.0f},
+		{0, 0, 1} };
+
+	//scale
+	float S[3][3] = {
+	   { 0.5f, 0, 0 },
+	   { 0, 0.5f, 0 },
+	   { 0, 0, 1} };
+
+	float inv_S[3][3] = {
+	   { 1 / 0.5f, 0, 0 },
+	   { 0, 1 / 0.5f, 0 },
+	   { 0, 0, 1} };
+
+	// the world transformation matrix ( model matrix) is :
+	// M= SRT
+	// S = scale matrix, R = rotate matrix, T = translate matrix 
+	float M[3][3], SR[3][3];
+	// Multiplying scale matrix and the traslate matrix and putting the result in ST
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += S[i][k] * R[k][j];
+			}
+			SR[i][j] = sum;
+			//std::cout << SR[i][j] << "  ";
+		}
+	}
+	// Multiplying SR and teh rotatle matrix 
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += SR[i][k] * T[k][j];
+			}
+			M[i][j] = sum;
+			//std::cout << M[i][j] << "  ";
+		}
+		//std::cout << "\n";
+	}
+
+	/// inverse 
+	float inv_M[3][3], invTR[3][3];
+
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += inv_T[i][k] * inv_R[k][j];
+			}
+			invTR[i][j] = sum;
+			//std::cout << SR[i][j] << "  ";
+		}
+	}
+	// Multiplying INVERSE TR and teh rotatle matrix 
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += invTR[i][k] * inv_S[k][j];
+			}
+			inv_M[i][j] = sum;
+			//std::cout << inv_M[i][j] << "  ";
+		}
+		//std::cout << "\n";
+	}
+	// Now we need to multiply M * (x, y, z)
+	// each time we multipy one coordinate with M
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + M[0][2],
+			Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
+
+	}
+
+
+	///
+
+	DrawTriangle(Mesh);
+
+
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * inv_M[0][0] + Mesh.GetVertices(i).y * inv_M[0][1] + inv_M[0][2],
+			Mesh.GetVertices(i).x * inv_M[1][0] + Mesh.GetVertices(i).y * inv_M[1][1] + M[1][2], 1), i);
+
+	}
+
+
+	///
+	DrawTriangle(Mesh);
+
 }
 
 void Renderer::DrawTriangle(MeshModel& Mesh)
