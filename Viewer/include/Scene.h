@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "MeshModel.h"
 
+
 using namespace std;
 
 class Scene {
@@ -27,11 +28,15 @@ public:
 
 	void SetActiveModelIndex(int index);
 	int GetActiveModelIndex() const;
+
+	//void Draw();
+
+
+
 	
 private:
 	vector<shared_ptr<MeshModel>> mesh_models;
 	vector<shared_ptr<Camera>> cameras;
-
 	int active_camera_index;
 	int active_model_index;
 };
