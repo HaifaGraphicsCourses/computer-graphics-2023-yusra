@@ -78,11 +78,11 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 
 	// print
 	// printing the verstecses 
-	//std::cout << "\n" << " ** VERTICES ** " << "\n";
-	//Print_Vertices(vertices);
+	std::cout << "\n" << " ** VERTICES ** " << "\n";
+	Print_Vertices(vertices);
 	//printing the faces. For every face we print his the 3 vertecses:
-	//std::cout << "\n" << " ** Faces ** " << "\n";
-	//Print_Faces(vertices, faces);
+	std::cout << "\n" << " ** Faces ** " << "\n";
+	Print_Faces(vertices, faces);
 
 	// scale:
 	// first we will biuld the matrix:
@@ -168,7 +168,7 @@ void Utils::Print_Vertices(std::vector<glm::vec3> vertices)
 {
 	for (auto i = 0; i < vertices.size(); i++)
 	{
-		std::cout << vertices[i].x << ' ' << vertices[i].y << ' ' << vertices[i].z << "\n";
+		std::cout << vertices[i].x << "  ,  " << vertices[i].y << "  ,  " << vertices[i].z << "\n";
 	}
 }
 
