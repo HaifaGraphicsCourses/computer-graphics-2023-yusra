@@ -260,21 +260,39 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 	//  --- SCALE & TRASLATE & Rotate ---  LOCAL
 	{
-		static float s = 1.0f, t = 0.0f, r = 0.0f;
+		static float s_x = 1.0f, s_y = 1.0f, s_z = 1.0f, t_x = 0.0f, t_y = 0.0f, t_z = 0.0f, r_x = 0.0f, r_y = 0.0f, r_z = 0.0f;
 
 		ImGui::Begin("LOCAL TRANSFORMATION");                          // Create a window called "Hello, world!" and append into it.
 
-		ImGui::SliderFloat("Scale", &s, 1.0f, 100.0f); 
-		if(scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJScale(s);
-		
-		ImGui::SliderFloat("Translate", &t, 0.0f, 100.0f);  
+		ImGui::SliderFloat("Scale X", &s_x, 1.0f, 100.0f); 
 		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJTranslate(t);
-		
-		ImGui::SliderFloat("Rotate", &r, 0.0f, 360.0f); 
+			scene.GetActiveModel().SetOBJScale(s_x, 0);
+		ImGui::SliderFloat("Scale Y", &s_y, 1.0f, 100.0f);
 		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJRotate(r);
+			scene.GetActiveModel().SetOBJScale(s_y, 1);
+		ImGui::SliderFloat("Scale Z", &s_z, 1.0f, 100.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetOBJScale(s_z, 2);
+		
+		ImGui::SliderFloat("Translate X", &t_x, 0.0f, 100.0f);  
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetOBJTranslate(t_x, 0);
+		ImGui::SliderFloat("Translate Y", &t_y, 0.0f, 100.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetOBJTranslate(t_y, 1);
+		ImGui::SliderFloat("Translate Z", &t_z, 0.0f, 100.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetOBJTranslate(t_z, 2);
+		
+		ImGui::SliderFloat("Rotate X", &r_x, 0.0f, 360.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetOBJRotate_X(r_x);
+		ImGui::SliderFloat("Rotate Y", &r_y, 0.0f, 360.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetOBJRotate_Y(r_y);
+		ImGui::SliderFloat("Rotate Z", &r_z, 0.0f, 360.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetOBJRotate_Z(r_z);
 		LOCALtransformation_window = false;
 		ImGui::End();
 	}
@@ -284,21 +302,39 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 	//  --- SCALE & TRASLATE & Rotate ---  WORLD
 	{
-		static float s = 1.0f, t = 0.0f, r = 0.0f;
+		static float s_x = 1.0f, s_y = 1.0f, s_z = 1.0f, t_x = 0.0f, t_y = 0.0f, t_z = 0.0f, r_x = 0.0f, r_y = 0.0f, r_z = 0.0f;
 
 		ImGui::Begin("WORLD TRANSFORMATION");                          // Create a window called "Hello, world!" and append into it.
 
-		ImGui::SliderFloat("Scale", &s, 1.0f, 100.0f);
+		ImGui::SliderFloat("Scale X", &s_x, 1.0f, 100.0f);
 		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetWORLDScale(s);
+			scene.GetActiveModel().SetWORLDScale(s_x,0);
+		ImGui::SliderFloat("Scale Y", &s_y, 1.0f, 100.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetWORLDScale(s_y,1);
+		ImGui::SliderFloat("Scale Z", &s_z, 1.0f, 100.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetWORLDScale(s_z, 2);
 
-		ImGui::SliderFloat("Translate", &t, 0.0f, 100.0f);
+		ImGui::SliderFloat("Translate X", &t_x, 0.0f, 100.0f);
 		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetWORLDTranslate(t);
+			scene.GetActiveModel().SetWORLDTranslate(t_x,0);
+		ImGui::SliderFloat("Translate Y", &t_y, 0.0f, 100.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetWORLDTranslate(t_y, 1);
+		ImGui::SliderFloat("Translate Z", &t_z, 0.0f, 100.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetWORLDTranslate(t_z, 2);
 
-		ImGui::SliderFloat("Rotate", &r, 0.0f, 360.0f);
+		ImGui::SliderFloat("Rotate X", &r_x, 0.0f, 360.0f);
 		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetWORLDRotate(r);
+			scene.GetActiveModel().SetWORLDRotate_X(r_x);
+		ImGui::SliderFloat("Rotate Y", &r_y, 0.0f, 360.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetWORLDRotate_Y(r_y);
+		ImGui::SliderFloat("Rotate Z", &r_z, 0.0f, 360.0f);
+		if (scene.GetModelCount() > 0)
+			scene.GetActiveModel().SetWORLDRotate_Z(r_z);
 		WORLDtransformation_window = false;
 		ImGui::End();
 	}
