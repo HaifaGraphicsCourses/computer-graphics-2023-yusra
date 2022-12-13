@@ -19,10 +19,19 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
-	Rotate_obj = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	Rotate_obj_x = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	Rotate_obj_y = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	Rotate_obj_z = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	
 	Scale_world = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
@@ -31,10 +40,19 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
-	Rotate_world = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	Rotate_world_x = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	Rotate_world_y = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	Rotate_world_z= { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	
 	objectTransform = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
@@ -52,82 +70,104 @@ MeshModel::~MeshModel()
 }
 
 
-
+// ** OBJECT \ LOCAL TRANSFORMATION MATRICSES ** 
 glm::mat4 MeshModel::GetOBJScale()
 {
 	return Scale_obj;
 }
-void MeshModel::SetOBJScale(float s)
+void MeshModel::SetOBJScale(float s, int index)
 {
-	Scale_obj[0][0] = s; Scale_obj[1][1] = s; Scale_obj[2][2] = 1; Scale_obj[3][3] = 1;
+	Scale_obj[index][index] = s;
 }
 
 glm::mat4 MeshModel::GetOBJTranslate()
 {
 	return Translate_obj;
 }
-void MeshModel::SetOBJTranslate(float t)
+void MeshModel::SetOBJTranslate(float t, int index)
 {
-	Translate_obj[0][3] = t; Translate_obj[1][3] = t; Translate_obj[2][2] = 1; Translate_obj[3][3] = 1;
+	Translate_obj[index][2] = t; 
 }
 
-glm::mat4 MeshModel::GetOBJRotate()
+glm::mat4 MeshModel::GetOBJRotate_X()
 {
-	return Rotate_obj;
+	return Rotate_obj_x;
 }
-void MeshModel::SetOBJRotate(float d)
+void MeshModel::SetOBJRotate_X(float d)
 {
 	float r = d * (M_PI / 180);
-	Rotate_obj[0][0] = cos(r); Rotate_obj[0][1] = -1 * sin(r);
-	Rotate_obj[1][0] = sin(r); Rotate_obj[1][1] = cos(r);
-	Rotate_obj[2][2] = 1; Rotate_obj[3][3] = 1;
+	Rotate_obj_x[1][1] = cos(r); Rotate_obj_x[1][2] = -1 * sin(r);
+	Rotate_obj_x[2][1] = sin(r); Rotate_obj_x[2][2] = cos(r);
 }
 
-glm::mat4 MeshModel::GetWORLDScale()
+glm::mat4 MeshModel::GetOBJRotate_Y()
 {
-	return Scale_world;
+	return Rotate_obj_y;
 }
-void MeshModel::SetWORLDScale(float s)
-{
-	Scale_world[0][0] = s; Scale_world[1][1] = s; Scale_world[2][2] = 1; Scale_world[3][3] = 1;
-}
-
-glm::mat4 MeshModel::GetWORLDTranslate()
-{
-	return Translate_world;
-}
-
-void MeshModel::SetWORLDTranslate(float t)
-{
-	Translate_world[0][3] = t; Translate_world[1][3] = t; Translate_world[2][2] = 1; Translate_world[3][3] = 1;
-}
-
-glm::mat4 MeshModel::GetWORLDRotate()
-{
-	return Rotate_world;
-}
-
-void MeshModel::SetWORLDRotate(float d)
+void MeshModel::SetOBJRotate_Y(float d)
 {
 	float r = d * (M_PI / 180);
-	Rotate_world[0][0] = cos(r); Rotate_world[0][1] = -1 * sin(r);
-	Rotate_world[1][0] = sin(r); Rotate_world[1][1] = cos(r);
-	Rotate_world[2][2] = 1; Rotate_world[3][3] = 1;
+	Rotate_obj_z[0][0] = cos(r); Rotate_obj_z[0][2] = sin(r);
+	Rotate_obj_z[2][0] = -1 * sin(r); Rotate_obj_z[2][2] = cos(r);
 }
 
+glm::mat4 MeshModel::GetOBJRotate_Z()
+{
+	return Rotate_obj_z;
+}
+void MeshModel::SetOBJRotate_Z(float d)
+{
+	float r = d * (M_PI / 180);
+	Rotate_obj_z[0][0] = cos(r); Rotate_obj_z[0][1] = -1 * sin(r);
+	Rotate_obj_z[1][0] = sin(r); Rotate_obj_z[1][1] = cos(r);
+}
+
+glm::mat4 MeshModel::Mul_RotateMat_OBJ()
+{
+	glm::mat4  XY = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } },
+		XYZ = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };;
+
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += Rotate_obj_x[i][k] * Rotate_obj_y[k][j];
+			}
+			XY[i][j] = sum;
+		}
+	}
+
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += XY[i][k] * Rotate_obj_z[k][j];
+			}
+			XYZ[i][j] = sum;
+
+		}
+	}
+	return XYZ;
+
+}
 
 glm::mat4 MeshModel::GetobjectTransform()
 {
 	return objectTransform;
 }
-
 void MeshModel::SetobjectTransform()
 {
-	glm::mat4  SR= { { 1.0f, 0.0f, 0.0f, 0.0f },
+	glm::mat4  SR = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } };
-	
+	{ 0.0f, 0.0f, 0.0f, 1.0f } }, Rotate_obj = Mul_RotateMat_OBJ();
+
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			float sum = 0.0f;
@@ -137,7 +177,7 @@ void MeshModel::SetobjectTransform()
 			SR[i][j] = sum;
 		}
 	}
-	
+
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			float sum = 0.0f;
@@ -145,11 +185,100 @@ void MeshModel::SetobjectTransform()
 				sum += SR[i][k] * Translate_obj[k][j];
 			}
 			objectTransform[i][j] = sum;
-			
+
 		}
 	}
 
 }
+
+
+// ** WORLD \ LOCAL TRANSFORMATION MATRICSES ** 
+
+glm::mat4 MeshModel::GetWORLDScale()
+{
+	return Scale_world;
+}
+void MeshModel::SetWORLDScale(float s, int index)
+{
+	Scale_world[index][index] = s;
+}
+
+glm::mat4 MeshModel::GetWORLDTranslate()
+{
+	return Translate_world;
+}
+void MeshModel::SetWORLDTranslate(float t,int index)
+{
+	Translate_world[index][2] = t;
+}
+
+glm::mat4 MeshModel::GetWORLDRotate_X()
+{
+	return Rotate_world_x;
+}
+void MeshModel::SetWORLDRotate_X(float d)
+{
+	float r = d * (M_PI / 180);
+	Rotate_world_x[1][1] = cos(r); Rotate_world_x[1][2] = -1 * sin(r);
+	Rotate_world_x[2][1] = sin(r); Rotate_world_x[2][2] = cos(r);
+}
+
+glm::mat4 MeshModel::GetWORLDRotate_Y()
+{
+	return Rotate_world_y;
+}
+void MeshModel::SetWORLDRotate_Y(float d)
+{
+	float r = d * (M_PI / 180);
+	Rotate_world_z[0][0] = cos(r); Rotate_world_z[0][2] = sin(r);
+	Rotate_world_z[2][0] = -1 * sin(r); Rotate_world_z[2][2] = cos(r);
+}
+
+glm::mat4 MeshModel::GetWORLDRotate_Z()
+{
+	return Rotate_world_z;
+}
+void MeshModel::SetWORLDRotate_Z(float d)
+{
+	float r = d * (M_PI / 180);
+	Rotate_world_z[0][0] = cos(r); Rotate_world_z[0][1] = -1 * sin(r);
+	Rotate_world_z[1][0] = sin(r); Rotate_world_z[1][1] = cos(r);
+}
+
+glm::mat4 MeshModel::Mul_RotateMat_World()
+{
+	glm::mat4  XY = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } },
+		XYZ = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };;
+
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += Rotate_world_x[i][k] * Rotate_world_y[k][j];
+			}
+			XY[i][j] = sum;
+		}
+	}
+
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += XY[i][k] * Rotate_world_z[k][j];
+			}
+			XYZ[i][j] = sum;
+
+		}
+	}
+	return XYZ;
+	
+}	
 
 glm::mat4x4 MeshModel::GetworldTransform()
 {
@@ -157,13 +286,10 @@ glm::mat4x4 MeshModel::GetworldTransform()
 }
 void MeshModel::SetworldTransform()
 {
-	SetobjectTransform();
-
 	glm::mat4  SR = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } }, M;
-
+	{ 0.0f, 0.0f, 0.0f, 1.0f } }, Rotate_world=Mul_RotateMat_World();
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			float sum = 0.0f;
@@ -173,34 +299,49 @@ void MeshModel::SetworldTransform()
 			SR[i][j] = sum;
 		}
 	}
-
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			float sum = 0.0f;
 			for (int k = 0; k < 3; k++) {
 				sum += SR[i][k] * Translate_world[k][j];
 			}
-			M[i][j] = sum;
-
-		}
-	}
-
-	//worldTransform * objectTransform
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 3; k++) {
-				sum += M[i][k] * objectTransform[k][j];
-			}
 			worldTransform[i][j] = sum;
 
 		}
 	}
+
+}
+
+glm::mat4x4 matrix_mul(glm::mat4x4 m1, glm::mat4x4 m2)
+{
+	glm::mat4x4 ret;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += m1[i][k] * m2[k][j];
+			}
+			ret[i][j] = sum;
+		}
+	}
+	return ret;
 }
 
 glm::mat4x4 MeshModel::GetTransformation()
 {
-	return worldTransform*objectTransform;
+	SetobjectTransform();
+	SetworldTransform();
+	glm::mat4x4 trans;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += worldTransform[i][k] * objectTransform[k][j];
+			}
+			trans[i][j] = sum;
+		}
+	}
+	return trans;
 
 }
 
@@ -218,7 +359,6 @@ const std::string& MeshModel::GetModelName() const
 {
 	return model_name;
 }
-
 
 glm::fvec3 MeshModel::GetVertices(int index)
 {
