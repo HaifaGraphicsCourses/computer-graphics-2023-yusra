@@ -411,28 +411,13 @@ void Renderer::Render(const Scene& scene)
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;	
 
-	
-
-
 	// HW2
-	
-	//auto cnt = scene.GetModelCount();
 	for (int i = 0; i < scene.GetModelCount(); i++)
 	{
 		auto Mesh = scene.GetModel(i);
 		FixPoints(Mesh);
-		Mesh.SetworldTransform();
 		// before drawing it we net to multipy to get the trasformation
 		Transformation(Mesh);
-		/*glm::mat4 m = Mesh.GetTranslate();
-		for (int r=0; r < 4; r++)
-		{
-			for (int c=0; c < 4; c++)
-			{
-				cout << m[r][c] << "   ";
-			}
-			cout <<  "\n";
-		}*/
 		DrawTriangle(Mesh);
 	}
 	
@@ -442,12 +427,82 @@ void Renderer::Render(const Scene& scene)
 
 void Renderer::Transformation(MeshModel& Mesh)
 {
-	glm::mat4 M = Mesh.GetworldTransform();
+	glm::mat4 M = Mesh.GetTransformation();
 	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
 		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + M[0][2],
 			Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
 	}
+}
+
+void Renderer::DrawTriangle(MeshModel& Mesh)
+{
+	glm::vec3 color = glm::vec3(10.0f, 10.0f, 20.0f);
+	glm::fvec2 p1, p2, p3;
+	for (int i = 0; i < Mesh.GetFacesCount(); i++)
+	{
+		auto face = Mesh.GetFace(i);
+		//std::cout << "( " << Mesh.GetVertices(face.GetVertexIndex(0) - 1).x << " , " << Mesh.GetVertices(face.GetVertexIndex(0) - 1).y << "\n";
+		p1 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(0) - 1).x, Mesh.GetVertices(face.GetVertexIndex(0) - 1).y);
+		p2 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(1) - 1).x, Mesh.GetVertices(face.GetVertexIndex(1) - 1).y);
+		p3 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(2) - 1).x, Mesh.GetVertices(face.GetVertexIndex(2) - 1).y);
+		DrawLine(p1, p2, color);
+		DrawLine(p2, p3, color);
+		DrawLine(p3, p1, color);
+
+	}
+}
+
+void Renderer::FixPoints(MeshModel& Mesh)
+{
+	glm::fvec3 vec;
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)  // (x/y, z/y, 1)
+	{
+		vec = glm::fvec3((float)(Mesh.GetVertices(i).x) / Mesh.GetVertices(i).z, (float)(Mesh.GetVertices(i).y) / Mesh.GetVertices(i).z, 1.0f);
+		Mesh.SetVertices(vec, i);
+	}
+
+	glm::fvec3 trans_vec = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// min x
+		if (trans_vec.x > Mesh.GetVertices(i).x)
+			trans_vec.x = Mesh.GetVertices(i).x;
+		// min y
+		if (trans_vec.y > Mesh.GetVertices(i).y)
+			trans_vec.y = Mesh.GetVertices(i).y;
+	}
+	float min = trans_vec.x;
+	if (trans_vec.y < min)
+		min = trans_vec.y;
+	if (trans_vec.z < min)
+		min = trans_vec.z;
+	if (min < 0)
+	{
+		min *= (-1.0f);
+		trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
+		Translate(Mesh, trans_vec);
+	}
+	/// 
+
+	glm::fvec3 scale_vec = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// max x
+		if (scale_vec.x < Mesh.GetVertices(i).x)
+			scale_vec.x = Mesh.GetVertices(i).x;
+		// max y
+		if (scale_vec.y < Mesh.GetVertices(i).y)
+			scale_vec.y = Mesh.GetVertices(i).y;
+
+	}
+	float max = scale_vec.x;
+	if (scale_vec.y > max)
+		max = scale_vec.y;
+	if (scale_vec.z > max)
+		max = scale_vec.z;
+	scale_vec.x = 600 / max; scale_vec.y = 600 / max; scale_vec.z = 600 / max;
+	Scale(Mesh, scale_vec);
 }
 
 void Renderer::worldMat(MeshModel& Mesh)
@@ -571,78 +626,6 @@ void Renderer::worldMat(MeshModel& Mesh)
 
 }
 
-void Renderer::DrawTriangle(MeshModel& Mesh)
-{
-	glm::vec3 color = glm::vec3(10.0f, 10.0f, 20.0f);
-	glm::fvec2 p1, p2, p3;
-	for (int i = 0; i < Mesh.GetFacesCount(); i++)
-	{
-		auto face = Mesh.GetFace(i);
-		//std::cout << "( " << Mesh.GetVertices(face.GetVertexIndex(0) - 1).x << " , " << Mesh.GetVertices(face.GetVertexIndex(0) - 1).y << "\n";
-		p1 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(0) - 1).x, Mesh.GetVertices(face.GetVertexIndex(0) - 1).y);
-		p2 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(1) - 1).x, Mesh.GetVertices(face.GetVertexIndex(1) - 1).y);
-		p3 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(2) - 1).x, Mesh.GetVertices(face.GetVertexIndex(2) - 1).y);
-		DrawLine(p1, p2, color);
-		DrawLine(p2, p3, color);
-		DrawLine(p3, p1, color);
-
-	}
-}
-
-void Renderer::FixPoints(MeshModel& Mesh)
-{
-	glm::fvec3 vec;
-	for (int i = 0; i < Mesh.RetVerticesSize(); i++)  // (x/y, z/y, 1)
-	{
-		vec = glm::fvec3((float)(Mesh.GetVertices(i).x) / Mesh.GetVertices(i).z, (float)(Mesh.GetVertices(i).y) / Mesh.GetVertices(i).z, 1.0f);
-		Mesh.SetVertices(vec, i);
-	}
-
-	glm::fvec3 trans_vec = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
-	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		// min x
-		if (trans_vec.x > Mesh.GetVertices(i).x)
-			trans_vec.x = Mesh.GetVertices(i).x;
-		// min y
-		if (trans_vec.y > Mesh.GetVertices(i).y)
-			trans_vec.y = Mesh.GetVertices(i).y;
-	}
-	float min = trans_vec.x;
-	if (trans_vec.y < min)
-		min = trans_vec.y;
-	if (trans_vec.z < min)
-		min = trans_vec.z;
-	if (min < 0)
-	{
-		min *= (-1.0f);
-		trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
-		Translate(Mesh, trans_vec);
-	}
-	/// 
-
-	glm::fvec3 scale_vec = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
-	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		// max x
-		if (scale_vec.x < Mesh.GetVertices(i).x)
-			scale_vec.x = Mesh.GetVertices(i).x;
-		// max y
-		if (scale_vec.y < Mesh.GetVertices(i).y)
-			scale_vec.y = Mesh.GetVertices(i).y;
-
-	}
-	float max = scale_vec.x;
-	if (scale_vec.y > max)
-		max = scale_vec.y;
-	if (scale_vec.z > max)
-		max = scale_vec.z;
-	scale_vec.x = 600 / max; scale_vec.y = 600 / max; scale_vec.z = 600 / max;
-	Scale(Mesh, scale_vec);
-}
-
-
-
 /// okay here we have (x/z, y/z, 1) 
 // scale:
 // first we will biuld the matrix:
@@ -677,7 +660,7 @@ void Renderer::Translate(MeshModel& Mesh, glm::fvec3 translate_vec)
 	}
 }
 
-// Rotate:
+// Rotate Z:
 /*
 *	cosa -sina  0  0     x     x * cosa - y * sina
 *	sina  cosa  0  0  *  y  =  x * sina + x * cosa
@@ -699,10 +682,6 @@ void Renderer::Rotate(MeshModel& Mesh, float degree)
 		Mesh.SetVertices(glm::fvec3(rotate_vec.x, rotate_vec.y, 1), i);
 	}
 }
-
-
-
-
 
 
 void HW1()
