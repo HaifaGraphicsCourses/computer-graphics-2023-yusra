@@ -2368,6 +2368,43 @@ To get the transformation we multiply:
  - Translating in the WORLD frame and then Rotating in the LOCAL frame
  
     > ![tw_ro.png](https://dub01pap003files.storage.live.com/y4mSHddYc9gxSdT7GI0ybQdaT6nuEUqmw_JuXVkV8K2XEy-XdVxjZE_dqh-okLYiDmtm6S1j1_BZCQSC0BUDnwWUwRy4UP6Pz4y8P_A3ltJZmR8lMR4zfJDFGk6d7bWv-PouBgdFTzzYoKQxrgixbJ7_L4B9zlT1yaebtNs9cKWE_r-4E_KUz32m5lyaN9l7vzk?width=1280&height=758&cropmode=none)
+### 7.
+- we will use :
+- W = +y traslate
+- S = -y traslate
+-  A = -x traslate
+-  D = +x traslate
+
+ >the code: 
+
+        if (io.KeysDown[87]) // w = +y traslate
+		{
+			if (scene.GetModelCount() > 0)
+				scene.GetActiveModel().SetOBJTranslate(t_y_w++, 1);
+		}
+		if (io.KeysDown[83]) // S = -y traslate
+		{
+			if (scene.GetModelCount() > 0)
+				scene.GetActiveModel().SetOBJTranslate(t_y_w--, 1);
+		}
+		if (io.KeysDown[65]) // A = -x traslate
+		{
+			if (scene.GetModelCount() > 0)
+				scene.GetActiveModel().SetOBJTranslate(t_x_w--, 0);
+		}
+		if (io.KeysDown[68]) // D = +x traslate
+		{
+			if (scene.GetModelCount() > 0)
+				scene.GetActiveModel().SetOBJTranslate(t_x_w++, 0);
+		}
+		
+ > picture: 
+ 
+ ![begin.png](https://ams03pap003files.storage.live.com/y4mLLsYG4eimXL_4ZgCEryngQLkeCea8Uadxo94ltlgcFP_lizVOKnJCaESKpSU5-GCHV0Hb1NuNgRqhK-w8N1E6FPOHtGpD_9zq1M-W34PPCJn57LgWSDAYmJPuxdLINnhd-0S3u6HEKI9OZDYzh9XoEiCzvaL7OrtPmV9CWe-2gjlkTsH9EJS4qLb83GAkT8h?width=1285&height=759&cropmode=none)
+ 
+ ![after.png](https://ams03pap003files.storage.live.com/y4mqnGuGHOy7iJ42nLU276eXn2gqeoUYL0x_JrSC8_6qHwtpTv56fFDEx_TRncu5gCXy4RXFJFtIoc7xRaIe26Shxd0AVkBWWxogQwWfPzLZQrXKRuhcJUP_v3afahGvhi-v4MCZHLUJDE50iXQyVfFuuYwrJQWkzUIwaEIBDzyJdKicKz2KcyNPOizcVD8ZZ2g?width=1284&height=753&cropmode=none)
+
+
 
 
 
