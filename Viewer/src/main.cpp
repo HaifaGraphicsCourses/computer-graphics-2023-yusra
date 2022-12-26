@@ -75,16 +75,16 @@ int main(int argc, char **argv)
 	
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
-    while (!glfwWindowShouldClose(window))
-    {
-        glfwPollEvents();
+	while (!glfwWindowShouldClose(window))
+	{
+		glfwPollEvents();
 		StartFrame();
 		DrawImguiMenus(io, scene);
 		RenderFrame(window, scene, renderer, io);
-    }
+	}
 
 	Cleanup(window);
-    return 0;
+	return 0;
 }
 
 static void GlfwErrorCallback(int error, const char* description)
@@ -273,12 +273,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (LOCALtransformation_window)
 		{
 
-			ImGui::SliderFloat("LOCAL Scale X", &s_x_o, 1.0f, 100.0f);
-			ImGui::SliderFloat("LOCAL Scale Y", &s_y_o, 1.0f, 100.0f);
+			ImGui::SliderFloat("LOCAL Scale X", &s_x_o, 1.0f, 200.0f);
+			ImGui::SliderFloat("LOCAL Scale Y", &s_y_o, 1.0f, 200.0f);
 			ImGui::SliderFloat("LOCAL Scale Z", &s_z_o, 1.0f, 100.0f);
-			ImGui::SliderFloat("LOCAL Translate X", &t_x_o, 0.0f, 100.0f);
-			ImGui::SliderFloat("LOCAL Translate Y", &t_y_o, 0.0f, 100.0f);
-			ImGui::SliderFloat("LOCAL Translate Z", &t_z_o, 0.0f, 100.0f);
+			ImGui::SliderFloat("LOCAL Translate X", &t_x_o, -50.0f, 50.0f);
+			ImGui::SliderFloat("LOCAL Translate Y", &t_y_o, -200.0f, 200.0f);
+			ImGui::SliderFloat("LOCAL Translate Z", &t_z_o, -50.0f, 50.0f);
 			ImGui::SliderFloat("LOCAL Rotate X", &r_x_o, 0.0f, 360.0f);
 			ImGui::SliderFloat("LOCAL Rotate Y", &r_y_o, 0.0f, 360.0f);
 			ImGui::SliderFloat("LOCAL Rotate Z", &r_z_o, 0.0f, 360.0f);
@@ -303,12 +303,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (WORLDtransformation_window)
 		{
 
-			ImGui::SliderFloat("WORLD Scale X", &s_x_w, 1.0f, 100.0f);
-			ImGui::SliderFloat("WORLD Scale Y", &s_y_w, 1.0f, 100.0f);
-			ImGui::SliderFloat("WORLD Scale Z", &s_z_w, 1.0f, 100.0f);
-			ImGui::SliderFloat("WORLD Translate X", &t_x_w, 0.0f, 100.0f);
-			ImGui::SliderFloat("WORLD Translate Y", &t_y_w, 0.0f, 100.0f);
-			ImGui::SliderFloat("WORLD Translate Z", &t_z_w, 0.0f, 100.0f);
+			ImGui::SliderFloat("WORLD Scale X", &s_x_w, 1.0f, 200.0f);
+			ImGui::SliderFloat("WORLD Scale Y", &s_y_w, 1.0f, 200.0f);
+			ImGui::SliderFloat("WORLD Scale Z", &s_z_w, 1.0f, 200.0f);
+			ImGui::SliderFloat("WORLD Translate X", &t_x_w, -200.0f, 200.0f);
+			ImGui::SliderFloat("WORLD Translate Y", &t_y_w, -200.0f, 200.0f);
+			ImGui::SliderFloat("WORLD Translate Z", &t_z_w, -200.0f, 200.0f);
 			ImGui::SliderFloat("WORLD Rotate X", &r_x_w, 0.0f, 360.0f);
 			ImGui::SliderFloat("WORLD Rotate Y", &r_y_w, 0.0f, 360.0f);
 			ImGui::SliderFloat("WORLD Rotate Z", &r_z_w, 0.0f, 360.0f);
