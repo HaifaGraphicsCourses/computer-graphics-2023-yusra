@@ -24,13 +24,18 @@ bool show_demo_window = false;
 bool show_another_window = false;
 bool LOCALtransformation_window = false;
 bool WORLDtransformation_window = false;
+bool CAMERA_Orthographic_window = false;
+bool CAMERA_window = false;
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
-static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f, 
-			t_x_o = 0.0f, t_y_o = 0.0f, t_z_o = 0.0f, 
+static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
+			t_x_o = 0.0f, t_y_o = 0.0f, t_z_o = 0.0f,
 			r_x_o = 0.0f, r_y_o = 0.0f, r_z_o = 0.0f,
-			s_x_w = 1.0f, s_y_w = 1.0f, s_z_w = 1.0f, 
-			t_x_w = 0.0f, t_y_w = 0.0f, t_z_w = 0.0f, 
-			r_x_w = 0.0f, r_y_w = 0.0f, r_z_w = 0.0f;
+			s_x_w = 1.0f, s_y_w = 1.0f, s_z_w = 1.0f,
+			t_x_w = 0.0f, t_y_w = 0.0f, t_z_w = 0.0f,
+			r_x_w = 0.0f, r_y_w = 0.0f, r_z_w = 0.0f,
+			l = 0.0f, r = 0.0f, Zf = 0.0f, Zn = 0.0f, top = 0.0f, botton = 0.0f,
+			t_x_c = 0.0f, t_y_c = 0.0f, t_z_c = 0.0f,
+			r_x_c = 0.0f, r_y_c = 0.0f, r_z_c = 0.0f;
 
 
 
@@ -324,6 +329,52 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			//	WORLDtransformation_window = false;
 
 		}
+		ImGui::Checkbox("Camera", &CAMERA_window);
+		//  --- SCALE & TRASLATE & Rotate ---  WORLD
+		if (CAMERA_window)
+		{
+			ImGui::SliderFloat("CAMERA Translate X", &t_x_c, 0.0f, 100.0f);
+			ImGui::SliderFloat("CAMERA Translate Y", &t_y_c, 0.0f, 100.0f);
+			ImGui::SliderFloat("CAMERA Translate Z", &t_z_c, 0.0f, 100.0f);
+			ImGui::SliderFloat("CAMERA Rotate X", &r_x_c, 0.0f, 360.0f);
+			ImGui::SliderFloat("CAMERA Rotate Y", &r_y_c, 0.0f, 360.0f);
+			ImGui::SliderFloat("CAMERA Rotate Z", &r_z_c, 0.0f, 360.0f);
+
+			if (scene.GetModelCount() > 0)
+			{
+				scene.GetActiveModel().SetWORLDTranslate(t_x_c, 0);
+				scene.GetActiveModel().SetWORLDTranslate(t_y_c, 1);
+				scene.GetActiveModel().SetWORLDTranslate(t_z_c, 2);
+				scene.GetActiveModel().SetWORLDRotate_X(r_x_c);
+				scene.GetActiveModel().SetWORLDRotate_Y(r_y_c);
+				scene.GetActiveModel().SetWORLDRotate_Z(r_z_c);
+			}
+
+			//	WORLDtransformation_window = false;
+
+		}
+
+		ImGui::Checkbox("ORTHOGRAPHIC", &CAMERA_Orthographic_window);
+		//  --- SCALE & TRASLATE & Rotate ---  WORLD
+		if (CAMERA_Orthographic_window)
+		{
+
+			ImGui::SliderFloat("Left", &l, 1.0f, 100.0f);
+			ImGui::SliderFloat("Right", &r, 1.0f, 100.0f);
+			ImGui::SliderFloat("Top", &top, 1.0f, 100.0f);
+			ImGui::SliderFloat("Botton", &botton, 0.0f, 100.0f);
+			ImGui::SliderFloat("Near", &Zn, 0.0f, 100.0f);
+			ImGui::SliderFloat("Far", &Zf, 0.0f, 100.0f);
+
+
+			if (scene.GetModelCount() > 0)
+			{
+				scene.GetActiveCamera().SetOrthographicProjectionMatrix(botton, top, l, r, Zn, Zf);
+			}
+
+			//	WORLDtransformation_window = false;
+
+		}
 
 		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
@@ -350,88 +401,4 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			show_another_window = false;
 		ImGui::End();
 	}
-
-	/*if (LOCALtransformation_window)
-		ImGui::ShowDemoWindow(&LOCALtransformation_window);
-
-	//  --- SCALE & TRASLATE & Rotate ---  LOCAL
-	{
-		//static float s_x = 1.0f, s_y = 1.0f, s_z = 1.0f, t_x = 0.0f, t_y = 0.0f, t_z = 0.0f, r_x = 0.0f, r_y = 0.0f, r_z = 0.0f;
-
-		ImGui::Begin("LOCAL TRANSFORMATION");                          // Create a window called "Hello, world!" and append into it.
-
-		ImGui::SliderFloat("Scale X", &s_x, 1.0f, 100.0f); 
-		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJScale(s_x, 0);
-		ImGui::SliderFloat("Scale Y", &s_y, 1.0f, 100.0f);
-		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJScale(s_y, 1);
-		ImGui::SliderFloat("Scale Z", &s_z, 1.0f, 100.0f);
-		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJScale(s_z, 2);
-		
-		ImGui::SliderFloat("Translate X", &t_x, 0.0f, 100.0f);  
-		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJTranslate(t_x, 0);
-		ImGui::SliderFloat("Translate Y", &t_y, 0.0f, 100.0f);
-		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJTranslate(t_y, 1);
-		ImGui::SliderFloat("Translate Z", &t_z, 0.0f, 100.0f);
-		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJTranslate(t_z, 2);
-		
-		ImGui::SliderFloat("Rotate X", &r_x, 0.0f, 360.0f);
-		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJRotate_X(r_x);
-		ImGui::SliderFloat("Rotate Y", &r_y, 0.0f, 360.0f);
-		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJRotate_Y(r_y);
-		ImGui::SliderFloat("Rotate Z", &r_z, 0.0f, 360.0f);
-		if (scene.GetModelCount() > 0)
-			scene.GetActiveModel().SetOBJRotate_Z(r_z);
-		LOCALtransformation_window = false;
-		ImGui::End();
-	}*/
-
-	//if (WORLDtransformation_window)
-	//	ImGui::ShowDemoWindow(&WORLDtransformation_window);
-
-	////  --- SCALE & TRASLATE & Rotate ---  WORLD
-	//{
-	//	static float s_x = 1.0f, s_y = 1.0f, s_z = 1.0f, t_x = 0.0f, t_y = 0.0f, t_z = 0.0f, r_x = 0.0f, r_y = 0.0f, r_z = 0.0f;
-
-	//	//ImGui::Begin("WORLD TRANSFORMATION");                          // Create a window called "Hello, world!" and append into it.
-
-	//	ImGui::SliderFloat("Scale X", &s_x, 1.0f, 100.0f);
-	//	if (scene.GetModelCount() > 0)
-	//		scene.GetActiveModel().SetWORLDScale(s_x,0);
-	//	ImGui::SliderFloat("Scale Y", &s_y, 1.0f, 100.0f);
-	//	if (scene.GetModelCount() > 0)
-	//		scene.GetActiveModel().SetWORLDScale(s_y,1);
-	//	ImGui::SliderFloat("Scale Z", &s_z, 1.0f, 100.0f);
-	//	if (scene.GetModelCount() > 0)
-	//		scene.GetActiveModel().SetWORLDScale(s_z, 2);
-
-	//	ImGui::SliderFloat("Translate X", &t_x, 0.0f, 100.0f);
-	//	if (scene.GetModelCount() > 0)
-	//		scene.GetActiveModel().SetWORLDTranslate(t_x,0);
-	//	ImGui::SliderFloat("Translate Y", &t_y, 0.0f, 100.0f);
-	//	if (scene.GetModelCount() > 0)
-	//		scene.GetActiveModel().SetWORLDTranslate(t_y, 1);
-	//	ImGui::SliderFloat("Translate Z", &t_z, 0.0f, 100.0f);
-	//	if (scene.GetModelCount() > 0)
-	//		scene.GetActiveModel().SetWORLDTranslate(t_z, 2);
-
-	//	ImGui::SliderFloat("Rotate X", &r_x, 0.0f, 360.0f);
-	//	if (scene.GetModelCount() > 0)
-	//		scene.GetActiveModel().SetWORLDRotate_X(r_x);
-	//	ImGui::SliderFloat("Rotate Y", &r_y, 0.0f, 360.0f);
-	//	if (scene.GetModelCount() > 0)
-	//		scene.GetActiveModel().SetWORLDRotate_Y(r_y);
-	//	ImGui::SliderFloat("Rotate Z", &r_z, 0.0f, 360.0f);
-	//	if (scene.GetModelCount() > 0)
-	//		scene.GetActiveModel().SetWORLDRotate_Z(r_z);
-	//	WORLDtransformation_window = false;
-	//	//ImGui::End();
-	//}
 }
