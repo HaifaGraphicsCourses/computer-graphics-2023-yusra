@@ -415,7 +415,7 @@ void Renderer::Render(const Scene& scene)
 	for (int i = 0; i < scene.GetModelCount(); i++)
 	{
 		auto Mesh = scene.GetModel(i);
-		FixPoints(Mesh);
+		//FixPoints(Mesh);
 		// before drawing it we net to multipy to get the trasformation
 		Transformation(Mesh);
 		DrawTriangle(Mesh);
