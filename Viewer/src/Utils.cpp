@@ -78,11 +78,11 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 
 	// print
 	// printing the verstecses 
-	std::cout << "\n" << " ** VERTICES ** " << "\n";
-	Print_Vertices(vertices);
+	//std::cout << "\n" << " ** VERTICES ** " << "\n";
+	//Print_Vertices(vertices);
 	//printing the faces. For every face we print his the 3 vertecses:
-	std::cout << "\n" << " ** Faces ** " << "\n";
-	Print_Faces(vertices, faces);
+	//std::cout << "\n" << " ** Faces ** " << "\n";
+	//Print_Faces(vertices, faces);
 
 	// scale:
 	// first we will biuld the matrix:
@@ -133,7 +133,6 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 
 		for (auto i = 0; i < vertices.size(); i++)
 		{
-			float x = vertices[i].x + min, y=vertices[i].y + min, z= vertices[i].z + min;
 			vertices[i] = glm::fvec3(vertices[i].x + min, vertices[i].y + min, vertices[i].z + min);
 		}
 	}
@@ -155,7 +154,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		max = scale_vec.y;
 	if (scale_vec.z > max)
 		max = scale_vec.z;
-	scale_vec.x = 1000 / max; scale_vec.y = 1000 / max; scale_vec.z = 1000 / max;
+	scale_vec.x = 100 / max; scale_vec.y = 100 / max; scale_vec.z = 100 / max;
 	for (auto i = 0; i < vertices.size(); i++)
 	{
 		vertices[i] = glm::fvec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
