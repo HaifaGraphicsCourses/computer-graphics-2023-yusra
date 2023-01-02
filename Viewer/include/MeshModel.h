@@ -57,8 +57,13 @@ public:
 
 	glm::fvec3 FindMax();
 	glm::fvec3 FindMin();
-	glm::fvec3 GetMaxVec();
-	glm::fvec3 GetMinVec();
+	
+	glm::fvec3 GetMax();
+	glm::fvec3 GetMin();
+	void SetMax(glm::fvec3 m);
+	void SetMin(glm::fvec3 m);
+
+	void BoundingBox();
 
 
 
