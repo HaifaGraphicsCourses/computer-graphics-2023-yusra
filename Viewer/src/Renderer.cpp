@@ -6,6 +6,12 @@
 #include "Renderer.h"
 #include "InitShader.h"
 #include "Utils.h"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include <glm/gtx/transform.hpp>
+#include <glm/ext.hpp>
+#include <glm/ext/matrix_transform.hpp>
+using namespace std;
 using namespace std;
 #define INDEX(width,x,y,c) ((x)+(y)*(width))*3+(c)
 #define Z_INDEX(width,x,y) ((x)+(y)*(width))
@@ -417,8 +423,32 @@ void Renderer::Render( Scene& scene)
 	{
 		auto Mesh = scene.GetModel(i);
 		//auto Cam = scene.GetActiveCamera();
+
+		glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
+		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+		{
+			// max x
+			if (max.x < Mesh.GetVertices(i).x)
+				max.x = Mesh.GetVertices(i).x;
+			// max y
+			if (max.y < Mesh.GetVertices(i).y)
+				max.y = Mesh.GetVertices(i).y;
+		}
+		glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
+		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+		{
+			// min x
+			if (min.x > Mesh.GetVertices(i).x)
+				min.x = Mesh.GetVertices(i).x;
+			// min y
+			if (min.y > Mesh.GetVertices(i).y)
+				min.y = Mesh.GetVertices(i).y;
+		}
+		glm::fvec2 A = glm::fvec2(min.x, max.y), B = glm::fvec2(max.x, max.y),
+			C = glm::fvec2(min.x, min.y), D = glm::fvec2(max.x, min.y);
+		Mesh.SetMax(max); Mesh.SetMin(min);
 		Transformation(Mesh);
-		DrawTriangle(Mesh);
+		//DrawTriangle(Mesh);
 		DrawBoundingBox(Mesh);
 		/// we need to multipy Orth x trasformation.
 		//glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
@@ -459,46 +489,47 @@ void Renderer::Transformation(MeshModel& Mesh)
 
 void Renderer::DrawBoundingBox(MeshModel& Mesh)
 {
-	/*
-	*  A   B
-	*
-	*  C   D
-	*
-	* A = (MIN X, MAX Y)
-	* B = (MAX X, MAX Y)
-	* C = (MIN X, MIN Y)
-	* D = (MAX X, MIN Y)
-	*
-	*/
-	//glm::fvec3 max = Mesh.FindMax(), min= Mesh.FindMin();
-	//glm::fvec3 max = Mesh.GetMaxVec();
-	//glm::fvec3 min = Mesh.GetMinVec();
+
 	glm::vec3 color = glm::vec3(20.0f, 10.0f, 20.0f);
-	glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
-	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	//glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
+	//for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	//{
+	//	// max x
+	//	if (max.x < Mesh.GetVertices(i).x)
+	//		max.x = Mesh.GetVertices(i).x;
+	//	// max y
+	//	if (max.y < Mesh.GetVertices(i).y)
+	//		max.y = Mesh.GetVertices(i).y;
+
+	//}
+	//glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
+	//for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	//{
+	//	// min x
+	//	if (min.x > Mesh.GetVertices(i).x)
+	//		min.x = Mesh.GetVertices(i).x;
+	//	// min y
+	//	if (min.y > Mesh.GetVertices(i).y)
+	//		min.y = Mesh.GetVertices(i).y;
+	//}
+
+	glm::fvec3 min = Mesh.GetMin();  glm::fvec3 max = Mesh.GetMax();
+	glm::fvec2 A = glm::fvec2(min.x, max.y), B = glm::fvec2(max.x, max.y),
+		C = glm::fvec2(min.x, min.y), D = glm::fvec2(max.x, min.y);
+	glm::mat4 M = Mesh.GetTransformation();
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
-		// max x
-		if (max.x < Mesh.GetVertices(i).x)
-			max.x = Mesh.GetVertices(i).x;
-		// max y
-		if (max.y < Mesh.GetVertices(i).y)
-			max.y = Mesh.GetVertices(i).y;
+		A= glm::fvec2(A.x * M[0][0] + A.y * M[0][1] + M[0][2],A.x * M[1][0] + A.y * M[1][1] + M[1][2]);
+		B = glm::fvec2(B.x * M[0][0] + B.y * M[0][1] + M[0][2], B.x * M[1][0] + B.y * M[1][1] + M[1][2]);
+		C = glm::fvec2(C.x * M[0][0] + C.y * M[0][1] + M[0][2], C.x * M[1][0] + C.y * M[1][1] + M[1][2]);
+		D = glm::fvec2(D.x * M[0][0] + D.y * M[0][1] + M[0][2], D.x * M[1][0] + D.y * M[1][1] + M[1][2]);
 
 	}
-	glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
-	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		// min x
-		if (min.x > Mesh.GetVertices(i).x)
-			min.x = Mesh.GetVertices(i).x;
-		// min y
-		if (min.y > Mesh.GetVertices(i).y)
-			min.y = Mesh.GetVertices(i).y;
-	}
-	DrawLine(glm::fvec2(min.x, max.y), glm::fvec2(max.x, max.y), color); // A B
-	DrawLine(glm::fvec2(min.x, max.y), glm::fvec2(min.x, min.y), color); // A C
-	DrawLine(glm::fvec2(min.x, min.y), glm::fvec2(max.x, min.y), color); // C D
-	DrawLine(glm::fvec2(max.x, min.y), glm::fvec2(max.x, max.y), color); // D B
+	
+	DrawLine(A, B, color); // A B
+	DrawLine(A, C, color); // A C
+	DrawLine(C, D, color); // C D
+	DrawLine(D, B, color); // D B
 }
 
 
