@@ -405,22 +405,41 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 	}
 }
 
-void Renderer::Render(const Scene& scene)
+void Renderer::Render( Scene& scene)
 {
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;	
-
-	// HW2
 	
-	for (int i = 0; i < scene.GetModelCount() && i<scene.GetCameraCount(); i++)
+	// HW2
+	//auto Cam = scene.GetCamera(1);
+	for (int i = 0; i < scene.GetModelCount(); i++)
 	{
 		auto Mesh = scene.GetModel(i);
-		//auto Cam = scene.GetCamera(i);
-		/// we need to multipy Orth x trasformation.
-		glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
-		//glm::mat4x4 camera_orth = Cam.GetOrthMat();
+		//auto Cam = scene.GetActiveCamera();
+		Transformation(Mesh);
 		DrawTriangle(Mesh);
+		DrawBoundingBox(Mesh);
+		/// we need to multipy Orth x trasformation.
+		//glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
+		//glm::mat4x4 camera_orth = Cam.GetOrthMat();
+		//glm::mat4x4 M;
+		//for (int i = 0; i < 3; i++) {
+		//	for (int j = 0; j < 3; j++) {
+		//		float sum = 0.0f;
+		//		for (int k = 0; k < 3; k++) {
+		//			sum += mesh_transformation[i][k] * camera_orth[k][j];
+		//		}
+		//		M[i][j] = sum;
+		//	}
+		//}
+		//for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+		//{
+		//	Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + M[0][2],
+		//		Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
+		//}
+		//DrawTriangle(Mesh);
+
 		
 	}
 	
@@ -438,9 +457,55 @@ void Renderer::Transformation(MeshModel& Mesh)
 	}
 }
 
+void Renderer::DrawBoundingBox(MeshModel& Mesh)
+{
+	/*
+	*  A   B
+	*
+	*  C   D
+	*
+	* A = (MIN X, MAX Y)
+	* B = (MAX X, MAX Y)
+	* C = (MIN X, MIN Y)
+	* D = (MAX X, MIN Y)
+	*
+	*/
+	//glm::fvec3 max = Mesh.FindMax(), min= Mesh.FindMin();
+	//glm::fvec3 max = Mesh.GetMaxVec();
+	//glm::fvec3 min = Mesh.GetMinVec();
+	glm::vec3 color = glm::vec3(20.0f, 10.0f, 20.0f);
+	glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// max x
+		if (max.x < Mesh.GetVertices(i).x)
+			max.x = Mesh.GetVertices(i).x;
+		// max y
+		if (max.y < Mesh.GetVertices(i).y)
+			max.y = Mesh.GetVertices(i).y;
+
+	}
+	glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// min x
+		if (min.x > Mesh.GetVertices(i).x)
+			min.x = Mesh.GetVertices(i).x;
+		// min y
+		if (min.y > Mesh.GetVertices(i).y)
+			min.y = Mesh.GetVertices(i).y;
+	}
+	DrawLine(glm::fvec2(min.x, max.y), glm::fvec2(max.x, max.y), color); // A B
+	DrawLine(glm::fvec2(min.x, max.y), glm::fvec2(min.x, min.y), color); // A C
+	DrawLine(glm::fvec2(min.x, min.y), glm::fvec2(max.x, min.y), color); // C D
+	DrawLine(glm::fvec2(max.x, min.y), glm::fvec2(max.x, max.y), color); // D B
+}
+
+
+
 void Renderer::DrawTriangle(MeshModel& Mesh)
 {
-	glm::vec3 color = glm::vec3(10.0f, 10.0f, 20.0f);
+	glm::vec3 color = glm::vec3(200.0f, 10.0f, 0.0f);
 	glm::fvec2 p1, p2, p3;
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
