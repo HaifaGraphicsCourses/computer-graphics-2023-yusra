@@ -25,7 +25,9 @@ bool show_another_window = false;
 bool LOCALtransformation_window = false;
 bool WORLDtransformation_window = false;
 bool CAMERA_Orthographic_window = false;
+bool CAMERA_Perspective_window = false;
 bool window = false;
+bool Viewing_window = false;
 bool CAMERA_window = false;
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
@@ -34,9 +36,13 @@ static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 			s_x_w = 1.0f, s_y_w = 1.0f, s_z_w = 1.0f,
 			t_x_w = 0.0f, t_y_w = 0.0f, t_z_w = 0.0f,
 			r_x_w = 0.0f, r_y_w = 0.0f, r_z_w = 0.0f,
-			l = 0.0f, r = 0.0f, Zf = 0.0f, Zn = 0.0f, top = 0.0f, botton = 0.0f,
+			l = 0.0f, r = 0.0f, Zf_o = 0.0f, Zn_o = 0.0f, top = 0.0f, botton = 0.0f,
 			t_x_c = 0.0f, t_y_c = 0.0f, t_z_c = 0.0f,
-			r_x_c = 0.0f, r_y_c = 0.0f, r_z_c = 0.0f;
+			r_x_c = 0.0f, r_y_c = 0.0f, r_z_c = 0.0f,
+			Zn_p = 0.0f, Zf_p = 0.0f, fov = 0.0f,
+			eyeX = 0.0f, eyeY = 0.0f, eyeZ = 0.0f,
+			atX = 0.0f, atY = 0.0f, atZ = 0.0f,
+			upX = 0.0f, upY = 0.0f, upZ = 0.0f;
 
 int Width = 1280, Height = 720;
 
@@ -358,6 +364,27 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		}
 
+		ImGui::Checkbox("Viewing", &Viewing_window);
+		//  --- LOOK AT ---  
+		if (Viewing_window)
+		{
+			ImGui::SliderFloat("eyeX", &eyeX, 0.0f, 100.0f);
+			ImGui::SliderFloat("eyeY", &eyeY, 0.0f, 100.0f);
+			ImGui::SliderFloat("eyeZ", &eyeZ, 0.0f, 100.0f);
+			ImGui::SliderFloat("atX", &atX, 0.0f, 100.0f);
+			ImGui::SliderFloat("atY", &atY, 0.0f, 100.0f);
+			ImGui::SliderFloat("atZ", &atZ, 0.0f, 100.0f);
+			ImGui::SliderFloat("upX", &upX, 0.0f, 100.0f);
+			ImGui::SliderFloat("upY", &upY, 0.0f, 100.0f);
+			ImGui::SliderFloat("upZ", &upZ, 0.0f, 100.0f);
+
+			glm::fvec3 eye = glm::fvec3(eyeX, eyeY, eyeZ);
+			glm::fvec3 at = glm::fvec3(atX, atY, atZ);
+			glm::fvec3 up = glm::fvec3(upX, upY, upZ);
+			//scene.GetActiveCamera().SetCameraLookAt(eye, at, up);
+
+		}
+
 		ImGui::Checkbox("ORTHOGRAPHIC", &CAMERA_Orthographic_window);
 		//  --- ORTHOGRAPHIC
 		if (CAMERA_Orthographic_window)
@@ -366,15 +393,26 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("Right", &r, 1.0f, 100.0f);
 			ImGui::SliderFloat("Top", &top, 1.0f, 100.0f);
 			ImGui::SliderFloat("Botton", &botton, 0.0f, 100.0f);
-			ImGui::SliderFloat("Near", &Zn, 0.0f, 100.0f);
-			ImGui::SliderFloat("Far", &Zf, 0.0f, 100.0f);
+			ImGui::SliderFloat("Near", &Zn_o, 0.0f, 100.0f);
+			ImGui::SliderFloat("Far", &Zf_o, 0.0f, 100.0f);
 
-			if (scene.GetModelCount() > 0)
-			{
-				scene.GetActiveCamera().SetOrthographicProjectionMatrix(botton, top, l, r, Zn, Zf);
-			}
+			//scene.GetActiveCamera().SetOrthographicProjectionMatrix(botton, top, l, r, Zn_o, Zf_o);
 
 		}
+
+		ImGui::Checkbox("PERSPECTIVE", &CAMERA_Perspective_window);
+		//  --- PERSPECTIVE
+		if (CAMERA_Perspective_window)
+		{
+			ImGui::SliderFloat("Fov", &fov, 1.0f, 360.0f);
+			// aspect ???
+			ImGui::SliderFloat("Near", &Zn_p, 0.0f, 100.0f);
+			ImGui::SliderFloat("Far", &Zf_p, 0.0f, 100.0f);
+
+			//scene.GetActiveCamera().SetPerspectiveProjectionMatrix(fov,0.0f, Zn_p, Zf_p);
+
+		}
+		
 
 		ImGui::Checkbox("WINDOW", &window);
 		//  --- WINDOW
