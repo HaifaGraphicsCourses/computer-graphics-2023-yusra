@@ -5,6 +5,12 @@
 #include <algorithm>
 #include <sstream>
 #include <iostream>	
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include <glm/gtx/transform.hpp>
+#include <glm/ext.hpp>
+#include <glm/ext/matrix_transform.hpp>
+using namespace std;
 
 MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name) :
 	faces(faces),
@@ -63,7 +69,6 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 	glm::fvec3 max = glm::fvec3(vertices[0].x, vertices[0].y, vertices[0].z);
 	glm::fvec3 min = glm::fvec3(vertices[0].x, vertices[0].y, vertices[0].z);
-
 }
 
 MeshModel::~MeshModel()
@@ -410,10 +415,34 @@ glm::fvec3 MeshModel::FindMax() {
 	}
 	return max;
 }
-glm::fvec3 MeshModel::GetMaxVec()
+
+glm::fvec3 MeshModel::GetMin()
+{
+	return min;
+}
+glm::fvec3 MeshModel::GetMax()
 {
 	return max;
 }
-glm::fvec3 MeshModel::GetMinVec() {
-	return min;
+
+void MeshModel::SetMin(glm::fvec3 m)
+{
+	min = m;
 }
+void MeshModel::SetMax(glm::fvec3 m)
+{
+	max = m;
+}
+
+//void MeshModel::BoundingBox() {
+//	// find min max
+//	glm::fvec3 max = FindMax();
+//	glm::fvec3 min = FindMin();
+//	// size
+//	glm::fvec3 size = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
+//	// center
+//	glm::fvec3 center = glm::fvec3((max.x - min.x) / 2.0f, (max.y - min.y) / 2.0f, (max.z - min.z) / 2.0f);
+//	glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
+//	// applying the object transforamaion of the box
+//	glm::mat4x4 m = GetTransformation() * transform;
+//}
