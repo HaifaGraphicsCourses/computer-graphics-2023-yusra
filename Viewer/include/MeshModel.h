@@ -55,6 +55,12 @@ public:
 	glm::mat4 Mul_RotateMat_World();
 	glm::mat4 Mul_RotateMat_OBJ();
 
+	glm::fvec3 FindMax();
+	glm::fvec3 FindMin();
+	glm::fvec3 GetMaxVec();
+	glm::fvec3 GetMinVec();
+
+
 
 private:
 	std::vector<Face> faces;
@@ -75,4 +81,7 @@ private:
 	glm::mat4 Rotate_world_x;
 	glm::mat4 Rotate_world_y;
 	glm::mat4 Rotate_world_z;
+
+	glm::fvec3 max;
+	glm::fvec3 min;
 };
