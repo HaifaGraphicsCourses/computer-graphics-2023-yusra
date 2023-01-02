@@ -25,6 +25,7 @@ bool show_another_window = false;
 bool LOCALtransformation_window = false;
 bool WORLDtransformation_window = false;
 bool CAMERA_Orthographic_window = false;
+bool window = false;
 bool CAMERA_window = false;
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
@@ -37,7 +38,7 @@ static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 			t_x_c = 0.0f, t_y_c = 0.0f, t_z_c = 0.0f,
 			r_x_c = 0.0f, r_y_c = 0.0f, r_z_c = 0.0f;
 
-
+int Width = 1280, Height = 720;
 
 /**
  * Function declarations
@@ -79,6 +80,9 @@ int main(int argc, char **argv)
 	{
 		glfwPollEvents();
 		StartFrame();
+		glfwSetWindowSize(window, Width, Height);
+		glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
+		glViewport(0, 0, windowWidth, windowHeight);
 		DrawImguiMenus(io, scene);
 		RenderFrame(window, scene, renderer, io);
 	}
@@ -355,10 +359,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		}
 
 		ImGui::Checkbox("ORTHOGRAPHIC", &CAMERA_Orthographic_window);
-		//  --- SCALE & TRASLATE & Rotate ---  WORLD
+		//  --- ORTHOGRAPHIC
 		if (CAMERA_Orthographic_window)
 		{
-
 			ImGui::SliderFloat("Left", &l, 1.0f, 100.0f);
 			ImGui::SliderFloat("Right", &r, 1.0f, 100.0f);
 			ImGui::SliderFloat("Top", &top, 1.0f, 100.0f);
@@ -366,13 +369,19 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("Near", &Zn, 0.0f, 100.0f);
 			ImGui::SliderFloat("Far", &Zf, 0.0f, 100.0f);
 
-
 			if (scene.GetModelCount() > 0)
 			{
 				scene.GetActiveCamera().SetOrthographicProjectionMatrix(botton, top, l, r, Zn, Zf);
 			}
 
-			//	WORLDtransformation_window = false;
+		}
+
+		ImGui::Checkbox("WINDOW", &window);
+		//  --- WINDOW
+		if (window)
+		{
+			ImGui::SliderInt("Height", &Height, 1, 3000);
+			ImGui::SliderInt("Width", &Width, 1, 3000);
 
 		}
 
