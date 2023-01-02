@@ -42,6 +42,7 @@ int Scene::GetCameraCount() const
 
 Camera& Scene::GetCamera(int index)
 {
+
 	return *cameras[index];
 }
 
