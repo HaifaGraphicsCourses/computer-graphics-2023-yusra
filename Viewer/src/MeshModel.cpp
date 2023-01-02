@@ -284,6 +284,7 @@ glm::mat4x4 MeshModel::GetworldTransform()
 {
 	return worldTransform;
 }
+
 void MeshModel::SetworldTransform()
 {
 	glm::mat4  SR = { { 1.0f, 0.0f, 0.0f, 0.0f },
@@ -373,4 +374,42 @@ void MeshModel::SetVertices(glm::fvec3 vec , int index)
 int MeshModel::RetVerticesSize()
 {
 	return vertices.size();
+}
+
+
+void MeshModel::FindMin()
+{
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		// min x
+		if (min.x > vertices[i].x)
+			min.x = vertices[i].x;
+		// min y
+		if (min.y > vertices[i].y)
+			min.y = vertices[i].y;
+		// min z
+		if (min.z > vertices[i].z)
+			min.z = vertices[i].z;
+	}
+}
+void MeshModel::FindMax() {
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		// max x
+		if (max.x < vertices[i].x)
+			max.x = vertices[i].x;
+		// max y
+		if (max.y < vertices[i].y)
+			max.y = vertices[i].y;
+		// max z
+		if (max.z < vertices[i].z)
+			max.z = vertices[i].z;
+	}
+}
+glm::fvec3 MeshModel::GetMaxVec()
+{
+	return max;
+}
+glm::fvec3 MeshModel::GetMinVec() {
+	return min;
 }
