@@ -12,12 +12,64 @@ using namespace std;
 
 Camera::Camera()
 {
-	
+	Translate_c = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	Rotate_c_x = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	Rotate_c_y = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	Rotate_c_z = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	eye = glm::fvec3(0.0f, 0.0f, 0.0f); 
+	at = glm::fvec3(0.0f, 0.0f, 0.0f);
+	up = glm::fvec3(0.0f, 1.0f, 0.0f);
+
 }
 
 Camera::~Camera()
 {
 	
+}
+
+void Camera::Set_eye(glm::fvec3 e)
+{
+	eye = e;
+}
+glm::fvec3 Camera::Get_eye()
+{
+	return eye;
+}
+void Camera::Set_at(glm::fvec3 a)
+{
+	at = a;
+}
+glm::fvec3 Camera::Get_at()
+{
+	return at;
+}
+void Camera::Set_up(glm::fvec3 u)
+{
+	up = u;
+}
+glm::fvec3 Camera::Get_up() {
+	return up;
+}
+
+void Camera::SetCamera_position(glm::fvec3 c_p)
+{
+	Camera_position = c_p;
+}
+glm::fvec3 Camera::GetCamera_position()
+{
+	return Camera_position;
 }
 
 glm::mat4 Camera::GetCAMERATranslate()
@@ -135,4 +187,25 @@ void Camera::SetOrthographicProjectionMatrix(float b, float t, float l, float r,
     orth_mat[3][1] = -(t + b) / (t - b);
     orth_mat[3][2] = -(f + n) / (f - n);
     orth_mat[3][3] = 1;*/
+}
+glm::mat4x4 Camera::GetOrthMat()
+{
+	return orth_mat;
+}
+glm::mat4 Camera::TransformCamera()
+{
+	glm::mat4  TR = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } }, Rotate_c = Mul_RotateMat_CAMERA();
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += Rotate_c[i][k] * Translate_c[k][j];
+			}
+			TR[i][j] = sum;
+		}
+	}
+	return TR;
 }
