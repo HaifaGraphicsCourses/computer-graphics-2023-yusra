@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 	
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
-	while (!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window)) /////////
 	{
 		glfwPollEvents();
 		StartFrame();
