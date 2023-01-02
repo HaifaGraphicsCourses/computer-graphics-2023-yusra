@@ -28,9 +28,25 @@ Camera::Camera()
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+
+	Camera_position = glm::fvec3(0.0f, 0.0f, 0.0f);
 	eye = glm::fvec3(0.0f, 0.0f, 0.0f); 
 	at = glm::fvec3(0.0f, 0.0f, 0.0f);
 	up = glm::fvec3(0.0f, 1.0f, 0.0f);
+
+	pers_mat = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	orth_mat= { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+
+	projection_transformation = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
 }
 
@@ -188,9 +204,21 @@ void Camera::SetOrthographicProjectionMatrix(float b, float t, float l, float r,
     orth_mat[3][2] = -(f + n) / (f - n);
     orth_mat[3][3] = 1;*/
 }
+
+
+void Camera::SetPerspectiveProjectionMatrix(float fovy, float aspect, float Zn, float Zf)
+{
+	glm::mat4x4 pers_mat = glm::perspective(fovy, aspect, Zn, Zf);
+}
+
 glm::mat4x4 Camera::GetOrthMat()
 {
 	return orth_mat;
+}
+
+glm::mat4x4 Camera::GetPersMat()
+{
+	return pers_mat;
 }
 glm::mat4 Camera::TransformCamera()
 {
