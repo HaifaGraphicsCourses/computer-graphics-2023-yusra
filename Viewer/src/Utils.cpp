@@ -154,7 +154,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		max = scale_vec.y;
 	if (scale_vec.z > max)
 		max = scale_vec.z;
-	scale_vec.x = 100 / max; scale_vec.y = 100 / max; scale_vec.z = 100 / max;
+	scale_vec.x = 500 / max; scale_vec.y = 500 / max; scale_vec.z = 500 / max;
 	for (auto i = 0; i < vertices.size(); i++)
 	{
 		vertices[i] = glm::fvec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
