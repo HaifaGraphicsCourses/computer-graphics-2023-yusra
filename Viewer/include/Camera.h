@@ -28,7 +28,19 @@ public:
 	void SetCAMERARotate_Z(float degree);
 
 	glm::mat4 Mul_RotateMat_CAMERA();
+	glm::mat4 TransformCamera();
 	// traslate and rotate the camera 
+	void SetCamera_position(glm::fvec3 c_p);
+	glm::fvec3 GetCamera_position();
+
+	void Set_eye(glm::fvec3 e);
+	glm::fvec3 Get_eye();
+	void Set_at(glm::fvec3 a);
+	glm::fvec3 Get_at();
+	void Set_up(glm::fvec3 u);
+	glm::fvec3 Get_up();
+
+	glm::mat4x4 GetOrthMat();
 
 private:
 	glm::mat4x4 view_transformation;
@@ -38,4 +50,8 @@ private:
 	glm::mat4 Rotate_c_x;
 	glm::mat4 Rotate_c_y;
 	glm::mat4 Rotate_c_z;
+	glm::fvec3 Camera_position;
+	glm::fvec3 eye;
+	glm::fvec3 at;
+	glm::fvec3 up;
 };
