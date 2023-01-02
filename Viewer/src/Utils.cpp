@@ -158,6 +158,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	for (auto i = 0; i < vertices.size(); i++)
 	{
 		vertices[i] = glm::fvec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
+		
 	}
 
 	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath));
