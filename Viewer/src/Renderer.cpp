@@ -412,13 +412,16 @@ void Renderer::Render(const Scene& scene)
 	int half_height = viewport_height / 2;	
 
 	// HW2
-	for (int i = 0; i < scene.GetModelCount(); i++)
+	
+	for (int i = 0; i < scene.GetModelCount() && i<scene.GetCameraCount(); i++)
 	{
 		auto Mesh = scene.GetModel(i);
-		//FixPoints(Mesh);
-		// before drawing it we net to multipy to get the trasformation
-		Transformation(Mesh);
+		//auto Cam = scene.GetCamera(i);
+		/// we need to multipy Orth x trasformation.
+		glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
+		//glm::mat4x4 camera_orth = Cam.GetOrthMat();
 		DrawTriangle(Mesh);
+		
 	}
 	
 	
