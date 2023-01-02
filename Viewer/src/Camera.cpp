@@ -175,7 +175,7 @@ const glm::mat4x4& Camera::GetViewTransformation() const
 	return view_transformation;
 }
 
-void SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up) 
+void  Camera::SetCameraLookAt(const glm::fvec3& eye, const glm::fvec3& at, const glm::fvec3& up)
 {
     glm::mat4x4 look_at = glm::lookAt(eye, at, up);
 }
