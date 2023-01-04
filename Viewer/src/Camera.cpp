@@ -29,9 +29,9 @@ Camera::Camera()
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
-	Camera_position = glm::fvec3(0.0f, 0.0f, 0.0f);
-	eye = glm::fvec3(0.0f, 0.0f, 0.0f); 
-	at = glm::fvec3(0.0f, 0.0f, 0.0f);
+	Camera_position = glm::fvec3(1.0f, 1.0f, 1.0f);
+	eye = glm::fvec3(1.0f, 1.0f, 1.0f); 
+	at = glm::fvec3(1.0f, 1.0f, 1.0f);
 	up = glm::fvec3(0.0f, 1.0f, 0.0f);
 
 	pers_mat = { { 1.0f, 0.0f, 0.0f, 0.0f },
@@ -48,6 +48,11 @@ Camera::Camera()
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
+	cam_transformation = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+
 }
 
 Camera::~Camera()
@@ -55,14 +60,6 @@ Camera::~Camera()
 	
 }
 
-void Camera::Set_eye(glm::fvec3 e)
-{
-	eye = e;
-}
-glm::fvec3 Camera::Get_eye()
-{
-	return eye;
-}
 void Camera::Set_at(glm::fvec3 a)
 {
 	at = a;
@@ -170,8 +167,13 @@ const glm::mat4x4& Camera::GetProjectionTransformation() const
 	return projection_transformation;
 }
 
-const glm::mat4x4& Camera::GetViewTransformation() const
+const glm::mat4x4& Camera::GetViewTransformation()
 {
+	// multupy position * camrea tranformation
+	TransformCamera();
+	Camera_position = glm::fvec3(Camera_position.x * cam_transformation[0][0] + Camera_position.y * cam_transformation[0][1] + cam_transformation[0][2],
+		Camera_position.x * cam_transformation[1][0] + Camera_position.y * cam_transformation[1][1] + cam_transformation[1][2], 1);
+	view_transformation = glm::lookAt(Camera_position, at, up);
 	return view_transformation;
 }
 
@@ -183,7 +185,7 @@ void  Camera::SetCameraLookAt(const glm::fvec3& eye, const glm::fvec3& at, const
 void Camera::SetOrthographicProjectionMatrix(float b, float t, float l, float r, float Zn, float Zf)
 {
     
-    glm::mat4x4 orth_mat = glm::ortho(l, r, b, t, Zn, Zf);
+    orth_mat = glm::ortho(l, r, b, t, Zn, Zf);
    /* orth_mat[0][0] = 2 / (r - l);
     orth_mat[0][1] = 0;
     orth_mat[0][2] = 0;
@@ -220,20 +222,20 @@ glm::mat4x4 Camera::GetPersMat()
 {
 	return pers_mat;
 }
-glm::mat4 Camera::TransformCamera()
+glm::mat4x4 Camera::GetCamTransformation()
 {
-	glm::mat4  TR = { { 1.0f, 0.0f, 0.0f, 0.0f },
-	{ 0.0f, 1.0f, 0.0f, 0.0f },
-	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } }, Rotate_c = Mul_RotateMat_CAMERA();
+	return cam_transformation;
+}
+void Camera::TransformCamera()
+{
+	glm::mat4x4 Rotate_c = Mul_RotateMat_CAMERA();
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			float sum = 0.0f;
 			for (int k = 0; k < 3; k++) {
 				sum += Rotate_c[i][k] * Translate_c[k][j];
 			}
-			TR[i][j] = sum;
+			cam_transformation[i][j] = sum;
 		}
 	}
-	return TR;
 }
