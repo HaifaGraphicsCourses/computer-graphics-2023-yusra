@@ -36,7 +36,7 @@ static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 			s_x_w = 1.0f, s_y_w = 1.0f, s_z_w = 1.0f,
 			t_x_w = 0.0f, t_y_w = 0.0f, t_z_w = 0.0f,
 			r_x_w = 0.0f, r_y_w = 0.0f, r_z_w = 0.0f,
-			l = 0.0f, r = 0.0f, Zf_o = 0.0f, Zn_o = 0.0f, top = 0.0f, botton = 0.0f,
+			l = -1.0f, r = 1.0f, Zf_o = -1.0f, Zn_o = 1.0f, top = 1.0f, botton = -1.0f,
 			t_x_c = 0.0f, t_y_c = 0.0f, t_z_c = 0.0f,
 			r_x_c = 0.0f, r_y_c = 0.0f, r_z_c = 0.0f,
 			Zn_p = 0.0f, Zf_p = 0.0f, fov = 0.0f,
@@ -76,10 +76,11 @@ int main(int argc, char **argv)
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-
+	
+	//Camera camera = Camera();
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 	Scene scene = Scene();
-	
+	scene.AddCamera(std::make_shared<Camera>());
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
 	while (!glfwWindowShouldClose(window)) /////////
@@ -364,39 +365,38 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		}
 
-		ImGui::Checkbox("Viewing", &Viewing_window);
-		//  --- LOOK AT ---  
-		if (Viewing_window)
-		{
-			ImGui::SliderFloat("eyeX", &eyeX, 0.0f, 100.0f);
-			ImGui::SliderFloat("eyeY", &eyeY, 0.0f, 100.0f);
-			ImGui::SliderFloat("eyeZ", &eyeZ, 0.0f, 100.0f);
-			ImGui::SliderFloat("atX", &atX, 0.0f, 100.0f);
-			ImGui::SliderFloat("atY", &atY, 0.0f, 100.0f);
-			ImGui::SliderFloat("atZ", &atZ, 0.0f, 100.0f);
-			ImGui::SliderFloat("upX", &upX, 0.0f, 100.0f);
-			ImGui::SliderFloat("upY", &upY, 0.0f, 100.0f);
-			ImGui::SliderFloat("upZ", &upZ, 0.0f, 100.0f);
+		//ImGui::Checkbox("Viewing", &Viewing_window);
+		////  --- LOOK AT ---  
+		//if (Viewing_window)
+		//{
+		//	ImGui::SliderFloat("eyeX", &eyeX, 0.0f, 100.0f);
+		//	ImGui::SliderFloat("eyeY", &eyeY, 0.0f, 100.0f);
+		//	ImGui::SliderFloat("eyeZ", &eyeZ, 0.0f, 100.0f);
+		//	ImGui::SliderFloat("atX", &atX, 0.0f, 100.0f);
+		//	ImGui::SliderFloat("atY", &atY, 0.0f, 100.0f);
+		//	ImGui::SliderFloat("atZ", &atZ, 0.0f, 100.0f);
+		//	ImGui::SliderFloat("upX", &upX, 0.0f, 100.0f);
+		//	ImGui::SliderFloat("upY", &upY, 0.0f, 100.0f);
+		//	ImGui::SliderFloat("upZ", &upZ, 0.0f, 100.0f);
 
-			glm::fvec3 eye = glm::fvec3(eyeX, eyeY, eyeZ);
-			glm::fvec3 at = glm::fvec3(atX, atY, atZ);
-			glm::fvec3 up = glm::fvec3(upX, upY, upZ);
-			//scene.GetActiveCamera().SetCameraLookAt(eye, at, up);
+		//	scene.GetActiveCamera().SetCamera_position(glm::fvec3(eyeX, eyeY, eyeZ));
+		//	scene.GetActiveCamera().Set_at(glm::fvec3(atX, atY, atZ));
+		//	scene.GetActiveCamera().Set_up(glm::fvec3(upX, upY, upZ));
 
-		}
+		//}
 
 		ImGui::Checkbox("ORTHOGRAPHIC", &CAMERA_Orthographic_window);
 		//  --- ORTHOGRAPHIC
 		if (CAMERA_Orthographic_window)
 		{
-			ImGui::SliderFloat("Left", &l, 1.0f, 100.0f);
-			ImGui::SliderFloat("Right", &r, 1.0f, 100.0f);
-			ImGui::SliderFloat("Top", &top, 1.0f, 100.0f);
-			ImGui::SliderFloat("Botton", &botton, 0.0f, 100.0f);
-			ImGui::SliderFloat("Near", &Zn_o, 0.0f, 100.0f);
-			ImGui::SliderFloat("Far", &Zf_o, 0.0f, 100.0f);
+			ImGui::SliderFloat("Left", &l, -10.0f, 10.0f);
+			ImGui::SliderFloat("Right", &r, -10.0f, 10.0f);
+			ImGui::SliderFloat("Top", &top, -10.0f, 10.0f);
+			ImGui::SliderFloat("Botton", &botton, -10.0f, 10.0f);
+			ImGui::SliderFloat("Near", &Zn_o, -10.0f, 10.0f);
+			ImGui::SliderFloat("Far", &Zf_o, -10.0f, 10.0f);
 
-			//scene.GetActiveCamera().SetOrthographicProjectionMatrix(botton, top, l, r, Zn_o, Zf_o);
+			scene.GetActiveCamera().SetOrthographicProjectionMatrix(botton, top, l, r, Zn_o, Zf_o);
 
 		}
 
