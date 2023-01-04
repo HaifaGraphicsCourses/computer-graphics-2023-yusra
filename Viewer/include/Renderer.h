@@ -21,6 +21,7 @@ public:
 	void worldMat(MeshModel& Mesh);
 	void Transformation(MeshModel& Mesh);
 	void DrawBoundingBox(MeshModel& Mesh);
+	void Orth(MeshModel& Mesh, Camera& Cam);
 
 	//void udateModelTranform(glm::mat4x4 Transform, MeshModel& Mesh);
 
