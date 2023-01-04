@@ -67,8 +67,10 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+
 	glm::fvec3 max = glm::fvec3(vertices[0].x, vertices[0].y, vertices[0].z);
 	glm::fvec3 min = glm::fvec3(vertices[0].x, vertices[0].y, vertices[0].z);
+	FindMax(); FindMin();
 }
 
 MeshModel::~MeshModel()
