@@ -12,7 +12,7 @@ public:
 	void SetOrthographicProjectionMatrix(float b, float t, float l, float r, float Zn, float Zf);
 	void SetPerspectiveProjectionMatrix(float fovy, float aspect, float Zn, float Zf);
 	const glm::mat4x4& GetProjectionTransformation() const;
-	const glm::mat4x4& GetViewTransformation() const;
+	const glm::mat4x4& GetViewTransformation();
 	void SetTransformation(const glm::mat4x4& transform);
 	void SetProjection(const glm::mat4x4& projection);
 
@@ -29,8 +29,7 @@ public:
 	void SetCAMERARotate_Z(float degree);
 
 	glm::mat4 Mul_RotateMat_CAMERA();
-	glm::mat4 TransformCamera();
-	// traslate and rotate the camera 
+
 	void SetCamera_position(glm::fvec3 c_p);
 	glm::fvec3 GetCamera_position();
 
@@ -43,12 +42,15 @@ public:
 
 	glm::mat4x4 GetOrthMat();
 	glm::mat4x4 GetPersMat();
+	void TransformCamera();
+	glm::mat4x4 GetCamTransformation();
 
 private:
 	glm::mat4x4 view_transformation;
 	glm::mat4x4 projection_transformation;
 	glm::mat4x4	orth_mat;
 	glm::mat4x4 pers_mat;
+	glm::mat4x4 cam_transformation;
 	glm::mat4 Translate_c;
 	glm::mat4 Rotate_c_x;
 	glm::mat4 Rotate_c_y;
