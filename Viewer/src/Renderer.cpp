@@ -422,43 +422,41 @@ void Renderer::Render( Scene& scene)
 	for (int i = 0; i < scene.GetModelCount(); i++)
 	{
 		auto Mesh = scene.GetModel(i);
-		//auto Cam = scene.GetActiveCamera();
+		auto Cam = scene.GetActiveCamera();
 
-		glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
-		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-		{
-			// max x
-			if (max.x < Mesh.GetVertices(i).x)
-				max.x = Mesh.GetVertices(i).x;
-			// max y
-			if (max.y < Mesh.GetVertices(i).y)
-				max.y = Mesh.GetVertices(i).y;
-		}
-		glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
-		for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-		{
-			// min x
-			if (min.x > Mesh.GetVertices(i).x)
-				min.x = Mesh.GetVertices(i).x;
-			// min y
-			if (min.y > Mesh.GetVertices(i).y)
-				min.y = Mesh.GetVertices(i).y;
-		}
-		glm::fvec2 A = glm::fvec2(min.x, max.y), B = glm::fvec2(max.x, max.y),
-			C = glm::fvec2(min.x, min.y), D = glm::fvec2(max.x, min.y);
-		Mesh.SetMax(max); Mesh.SetMin(min);
-		Transformation(Mesh);
-		//DrawTriangle(Mesh);
-		DrawBoundingBox(Mesh);
+		//glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
+		//for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+		//{
+		//	// max x
+		//	if (max.x < Mesh.GetVertices(i).x)
+		//		max.x = Mesh.GetVertices(i).x;
+		//	// max y
+		//	if (max.y < Mesh.GetVertices(i).y)
+		//		max.y = Mesh.GetVertices(i).y;
+		//}
+		//glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
+		//for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+		//{
+		//	// min x
+		//	if (min.x > Mesh.GetVertices(i).x)
+		//		min.x = Mesh.GetVertices(i).x;
+		//	// min y
+		//	if (min.y > Mesh.GetVertices(i).y)
+		//		min.y = Mesh.GetVertices(i).y;
+		//}
+		//glm::fvec2 A = glm::fvec2(min.x, max.y), B = glm::fvec2(max.x, max.y),
+		//	C = glm::fvec2(min.x, min.y), D = glm::fvec2(max.x, min.y);
+		//Mesh.SetMax(max); Mesh.SetMin(min);
+
 		/// we need to multipy Orth x trasformation.
 		//glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
-		//glm::mat4x4 camera_orth = Cam.GetOrthMat();
+		//glm::mat4x4 view_trans = Cam.GetViewTransformation();
 		//glm::mat4x4 M;
 		//for (int i = 0; i < 3; i++) {
 		//	for (int j = 0; j < 3; j++) {
 		//		float sum = 0.0f;
 		//		for (int k = 0; k < 3; k++) {
-		//			sum += mesh_transformation[i][k] * camera_orth[k][j];
+		//			sum += view_trans[i][k] * mesh_transformation[k][j];
 		//		}
 		//		M[i][j] = sum;
 		//	}
@@ -468,7 +466,10 @@ void Renderer::Render( Scene& scene)
 		//	Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + M[0][2],
 		//		Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
 		//}
-		//DrawTriangle(Mesh);
+		
+		Transformation(Mesh);
+		//DrawBoundingBox(Mesh);
+		DrawTriangle(Mesh);
 
 		
 	}
@@ -476,14 +477,33 @@ void Renderer::Render( Scene& scene)
 	
 }
 
-
+void Renderer::Orth(MeshModel& Mesh, Camera& Cam)
+{
+	glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
+	glm::mat4x4 camera_orth = Cam.GetOrthMat();
+	glm::mat4x4 M;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 3; k++) {
+				sum += camera_orth[i][k] * mesh_transformation[k][j];
+			}
+			M[i][j] = sum;
+		}
+	}
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + M[0][2],
+			Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
+	}
+}
 void Renderer::Transformation(MeshModel& Mesh)
 {
 	glm::mat4 M = Mesh.GetTransformation();
 	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
-		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + M[0][2],
-			Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
+		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + Mesh.GetVertices(i).z*M[0][2],
+			Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + Mesh.GetVertices(i).z*M[1][2], 1), i);
 	}
 }
 
