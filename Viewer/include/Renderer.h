@@ -18,11 +18,15 @@ public:
 	void Rotate(MeshModel& Mesh, float degree);
 	void DrawTriangle(MeshModel& Mesh);
 	void FixPoints(MeshModel& Mesh);
-	void worldMat(MeshModel& Mesh);
 	void Transformation(MeshModel& Mesh);
 	void DrawBoundingBox(MeshModel& Mesh);
 	void Orth(MeshModel& Mesh, Camera& Cam);
-
+	void Perspective(MeshModel& Mesh, Camera& Cam);
+	void View(MeshModel& Mesh, Camera& Cam);
+	void DrawAxes(MeshModel& Mesh);
+	void DrawFaceNormals(MeshModel& Mesh);
+	void DrawVertexNormals(MeshModel& Mesh);
+	glm::fvec3 Transform_point(glm::fvec3 a, MeshModel& Mesh);
 	//void udateModelTranform(glm::mat4x4 Transform, MeshModel& Mesh);
 
 	
