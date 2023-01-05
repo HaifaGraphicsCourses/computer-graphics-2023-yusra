@@ -526,7 +526,7 @@ void Renderer::DrawVertexNormals(MeshModel& Mesh)
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::fvec3 p1, p2, p3, n1, n2, n3;
 	glm::fvec2  middle;
-
+	std::vector<glm::fvec3> VNormals=Mesh.VerticesNormals();
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
 		auto face = Mesh.GetFace(i);
@@ -534,9 +534,9 @@ void Renderer::DrawVertexNormals(MeshModel& Mesh)
 		p1 = Mesh.GetVertices(face.GetVertexIndex(0) - 1);
 		p2 = Mesh.GetVertices(face.GetVertexIndex(1) - 1);
 		p3 = Mesh.GetVertices(face.GetVertexIndex(2) - 1);
-		n1 = glm::normalize(p1)+ p1;
-		n2 = glm::normalize(p2) + p2;
-		n3 = glm::normalize(p3) + p3;
+		n1 = glm::normalize(p1) * 20.0f + p1;
+		n2 = glm::normalize(p2) * 20.0f + p2;
+		n3 = glm::normalize(p3) * 20.0f + p3;
 		DrawLine(glm::fvec2(p1.x, p1.y), glm::fvec2(n1.x, n1.y), color);
 		DrawLine(glm::fvec2(p2.x, p2.y), glm::fvec2(n2.x, n2.y), color);
 		DrawLine(glm::fvec2(p3.x, p3.y), glm::fvec2(n3.x, n3.y), color);
