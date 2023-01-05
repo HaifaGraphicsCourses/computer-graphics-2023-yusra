@@ -465,3 +465,18 @@ std::vector<glm::fvec3> MeshModel::BoundingBox()
 
 }
 
+std::vector<glm::fvec3> MeshModel::VerticesNormals()
+{
+	std::vector<glm:: fvec3> VNormals= std::vector< glm::fvec3>(vertices.size());
+	for (int i = 0; i < VNormals.size(); i++)
+		VNormals[i] = glm::fvec3(0.0f);
+	for (int i = 0; i < faces.size(); i++)
+	{
+		VNormals[faces[i].GetVertexIndex(0) - 1] += normals[faces[i].GetVertexIndex(0) - 1];
+		VNormals[faces[i].GetVertexIndex(1) - 1] += normals[faces[i].GetVertexIndex(1) - 1];
+		VNormals[faces[i].GetVertexIndex(2) - 1] += normals[faces[i].GetVertexIndex(2) - 1];
+	}
+	for (int i = 0; i < VNormals.size(); i++)
+		VNormals[i] = glm::normalize(VNormals[i]);
+	return VNormals;
+}
