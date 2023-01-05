@@ -63,7 +63,7 @@ public:
 	void SetMax(glm::fvec3 m);
 	void SetMin(glm::fvec3 m);
 
-	void BoundingBox();
+	std::vector<glm::fvec3> BoundingBox();
 
 
 
