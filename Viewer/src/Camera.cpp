@@ -31,7 +31,7 @@ Camera::Camera()
 
 	Camera_position = glm::fvec3(1.0f, 1.0f, 1.0f);
 	eye = glm::fvec3(1.0f, 1.0f, 1.0f); 
-	at = glm::fvec3(1.0f, 1.0f, 1.0f);
+	at = glm::fvec3(0.0f, 1.0f, 0.0f);
 	up = glm::fvec3(0.0f, 1.0f, 0.0f);
 
 	pers_mat = { { 1.0f, 0.0f, 0.0f, 0.0f },
@@ -49,6 +49,11 @@ Camera::Camera()
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
 	cam_transformation = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+
+	view_transformation = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
@@ -171,8 +176,15 @@ const glm::mat4x4& Camera::GetViewTransformation()
 {
 	// multupy position * camrea tranformation
 	TransformCamera();
-	Camera_position = glm::fvec3(Camera_position.x * cam_transformation[0][0] + Camera_position.y * cam_transformation[0][1] + cam_transformation[0][2],
-		Camera_position.x * cam_transformation[1][0] + Camera_position.y * cam_transformation[1][1] + cam_transformation[1][2], 1);
+	glm::fvec4 p; float x, y, z, w;
+
+	p = glm::fvec4(Camera_position.x, Camera_position.y, Camera_position.z, 1);
+	x = p.x * cam_transformation[0][0] + p.y * cam_transformation[0][1] + p.z * cam_transformation[0][2] + p.w * cam_transformation[0][3];
+	y = p.x * cam_transformation[1][0] + p.y * cam_transformation[1][1] + p.z * cam_transformation[1][2] + p.w * cam_transformation[1][3];
+	z = p.x * cam_transformation[2][0] + p.y * cam_transformation[2][1] + p.z * cam_transformation[2][2] + p.w * cam_transformation[2][3];
+	w = p.x * cam_transformation[3][0] + p.y * cam_transformation[3][1] + p.z * cam_transformation[3][2] + p.w * cam_transformation[3][3];
+	Camera_position = glm::fvec3(x/w, y/w, z/w);
+
 	view_transformation = glm::lookAt(Camera_position, at, up);
 	return view_transformation;
 }
@@ -210,7 +222,8 @@ void Camera::SetOrthographicProjectionMatrix(float b, float t, float l, float r,
 
 void Camera::SetPerspectiveProjectionMatrix(float fovy, float aspect, float Zn, float Zf)
 {
-	glm::mat4x4 pers_mat = glm::perspective(fovy, aspect, Zn, Zf);
+
+	pers_mat = glm::perspective(fovy/180, aspect, Zn, Zf);
 }
 
 glm::mat4x4 Camera::GetOrthMat()
