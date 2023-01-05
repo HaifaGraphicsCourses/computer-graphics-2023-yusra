@@ -423,7 +423,7 @@ void Renderer::Render( Scene& scene)
 	{
 		auto Mesh = scene.GetModel(i);
 		auto Cam = scene.GetActiveCamera();
-
+		//Transformation(Mesh);
 		//glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
 		//for (int i = 0; i < Mesh.RetVerticesSize(); i++)
 		//{
@@ -448,33 +448,129 @@ void Renderer::Render( Scene& scene)
 		//	C = glm::fvec2(min.x, min.y), D = glm::fvec2(max.x, min.y);
 		//Mesh.SetMax(max); Mesh.SetMin(min);
 
-		/// we need to multipy Orth x trasformation.
-		//glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
-		//glm::mat4x4 view_trans = Cam.GetViewTransformation();
-		//glm::mat4x4 M;
-		//for (int i = 0; i < 3; i++) {
-		//	for (int j = 0; j < 3; j++) {
-		//		float sum = 0.0f;
-		//		for (int k = 0; k < 3; k++) {
-		//			sum += view_trans[i][k] * mesh_transformation[k][j];
-		//		}
-		//		M[i][j] = sum;
-		//	}
-		//}
-		//for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
-		//{
-		//	Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + M[0][2],
-		//		Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
-		//}
-		
-		Transformation(Mesh);
+		//Orth(Mesh, Cam);
+		//View(Mesh, Cam);
+		//Perspective(Mesh, Cam);
 		//DrawBoundingBox(Mesh);
+		
+		//DrawAxes(Mesh);
+		Transformation(Mesh);
+		//Transformation(Mesh);
 		DrawTriangle(Mesh);
+		//DrawFaceNormals(Mesh);
+		DrawVertexNormals(Mesh);
 
 		
 	}
 	
 	
+}
+
+
+void Renderer::DrawAxes(MeshModel& Mesh) // max -> trans
+{
+	glm::fvec3 min = Mesh.GetMin(), max = Mesh.GetMax();
+
+	float max_ = max.x;
+	if (max.y > max_)
+		max_ = max.y;
+	if (max.z > max_)
+		max_ = max.z;
+
+	//glm::fvec3 p1 = Transform_point(glm::fvec3(max_, 0.0f, 0.0f), Mesh);
+	//glm::fvec3 p2 = Transform_point(glm::fvec3(0.0f, max_, 0.0f), Mesh);
+	//glm::fvec3 p3 = Transform_point(glm::fvec3(0.0f, 0.0f, max_), Mesh);
+	//
+	glm::fvec2 center = glm::fvec2((max.x + min.x) / 2, (max.y + min.y ) / 2);
+	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
+	DrawLine(center, glm::fvec2(max_, 0.0f), color);
+	DrawLine(center, glm::fvec2(0.0f, max_), color);
+	//DrawLine(center, glm::fvec2(p3.x, p3.y), color);
+
+}
+
+glm::fvec3 Renderer::Transform_point(glm::fvec3 a, MeshModel& Mesh) {
+	glm::mat4 M = Mesh.GetTransformation();
+	glm::fvec4 p = glm::fvec4(a.x, a.y, a.z, 1);
+	p.x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
+	p.y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
+	p.z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
+	p.w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
+	return glm::fvec3(p.x / p.w, p.y / p.w, p.z / p.w);
+}
+void Renderer::DrawFaceNormals(MeshModel& Mesh)
+{
+	glm::vec3 color = glm::vec3(200.0f, 0.0f, 0.0f);
+	glm::fvec3 p1, p2, p3, normal, n1, n2;
+	glm::fvec2  middle;
+
+	for (int i = 0; i < Mesh.GetFacesCount(); i++)
+	{
+		auto face = Mesh.GetFace(i);
+		p1 = Mesh.GetVertices(face.GetVertexIndex(0) - 1);
+		p2 = Mesh.GetVertices(face.GetVertexIndex(1) - 1);
+		p3 = Mesh.GetVertices(face.GetVertexIndex(2) - 1);
+
+		middle = glm::fvec2((p1.x + p2.x + p3.x) / 3, (p1.y + p2.y + p3.y) / 3);
+		normal = glm::cross(p2 - p1, p3 - p1); //normal = normal * 2.0f;
+		glm::fvec2 p;
+		p.x = normal.x / 6.0f + middle.x;
+		p.y = normal.y / 6.0f + middle.y;
+		DrawLine(middle, p, color);
+
+	}
+}
+
+void Renderer::DrawVertexNormals(MeshModel& Mesh)
+{
+	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::fvec3 p1, p2, p3, n1, n2, n3;
+	glm::fvec2  middle;
+
+	for (int i = 0; i < Mesh.GetFacesCount(); i++)
+	{
+		auto face = Mesh.GetFace(i);
+
+		p1 = Mesh.GetVertices(face.GetVertexIndex(0) - 1);
+		p2 = Mesh.GetVertices(face.GetVertexIndex(1) - 1);
+		p3 = Mesh.GetVertices(face.GetVertexIndex(2) - 1);
+		n1 = glm::normalize(p1)+ p1;
+		n2 = glm::normalize(p2) + p2;
+		n3 = glm::normalize(p3) + p3;
+		DrawLine(glm::fvec2(p1.x, p1.y), glm::fvec2(n1.x, n1.y), color);
+		DrawLine(glm::fvec2(p2.x, p2.y), glm::fvec2(n2.x, n2.y), color);
+		DrawLine(glm::fvec2(p3.x, p3.y), glm::fvec2(n3.x, n3.y), color);
+
+	}
+
+}
+
+void Renderer::View(MeshModel& Mesh, Camera& Cam)
+{
+	/// we need to multipy Orth x trasformation.
+	glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
+	glm::mat4x4 view_trans = Cam.GetViewTransformation();
+	glm::mat4x4 M;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 4; k++) {
+				sum += view_trans[i][k] * mesh_transformation[k][j];
+			}
+			M[i][j] = sum;
+		}
+	}
+	glm::fvec4 p; float x, y, z, w;
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		p = glm::fvec4(Mesh.GetVertices(i).x, Mesh.GetVertices(i).y, Mesh.GetVertices(i).z, 1);
+		x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
+		y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
+		z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
+		w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
+		//std::cout << p.z<< "\n";
+		Mesh.SetVertices(glm::fvec3(x, y, z), i);
+	}	
 }
 
 void Renderer::Orth(MeshModel& Mesh, Camera& Cam)
@@ -482,28 +578,67 @@ void Renderer::Orth(MeshModel& Mesh, Camera& Cam)
 	glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
 	glm::mat4x4 camera_orth = Cam.GetOrthMat();
 	glm::mat4x4 M;
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
 			float sum = 0.0f;
-			for (int k = 0; k < 3; k++) {
+			for (int k = 0; k < 4; k++) {
 				sum += camera_orth[i][k] * mesh_transformation[k][j];
 			}
 			M[i][j] = sum;
 		}
 	}
+	glm::fvec4 p; float x, y, z, w;
 	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
-		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + M[0][2],
-			Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
+		p = glm::fvec4(Mesh.GetVertices(i).x, Mesh.GetVertices(i).y, Mesh.GetVertices(i).z, 1);
+		x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
+		y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
+		z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
+		w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
+		//std::cout << p.z<< "\n";
+		Mesh.SetVertices(glm::fvec3(x, y, z), i);
 	}
 }
+
+void Renderer::Perspective(MeshModel& Mesh, Camera& Cam)
+{
+	glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
+	glm::mat4x4 camera_pers = Cam.GetPersMat();
+	glm::mat4x4 M;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			float sum = 0.0f;
+			for (int k = 0; k < 4; k++) {
+				sum += camera_pers[i][k] * mesh_transformation[k][j];
+			}
+			M[i][j] = sum;
+		}
+	}
+	glm::fvec4 p; float x, y, z, w;
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		p = glm::fvec4(Mesh.GetVertices(i).x, Mesh.GetVertices(i).y, Mesh.GetVertices(i).z, 1);
+		x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
+		y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
+		z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
+		w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
+		//std::cout << p.z<< "\n";
+		Mesh.SetVertices(glm::fvec3(x, y, z), i);
+	}
+}
+
 void Renderer::Transformation(MeshModel& Mesh)
 {
 	glm::mat4 M = Mesh.GetTransformation();
+	glm::fvec4 p; float x, y, z, w;
 	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
-		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + Mesh.GetVertices(i).z*M[0][2],
-			Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + Mesh.GetVertices(i).z*M[1][2], 1), i);
+		p = glm::fvec4(Mesh.GetVertices(i).x, Mesh.GetVertices(i).y, Mesh.GetVertices(i).z, 1);
+		x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
+		y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
+		z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
+		w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
+		Mesh.SetVertices(glm::fvec3(x/w, y/w, z/w),i);
 	}
 }
 
@@ -521,35 +656,55 @@ void Renderer::DrawBoundingBox(MeshModel& Mesh)
 	//	if (max.y < Mesh.GetVertices(i).y)
 	//		max.y = Mesh.GetVertices(i).y;
 
-	//}
-	//glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
-	//for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-	//{
-	//	// min x
-	//	if (min.x > Mesh.GetVertices(i).x)
-	//		min.x = Mesh.GetVertices(i).x;
-	//	// min y
-	//	if (min.y > Mesh.GetVertices(i).y)
-	//		min.y = Mesh.GetVertices(i).y;
-	//}
-
-	glm::fvec3 min = Mesh.GetMin();  glm::fvec3 max = Mesh.GetMax();
-	glm::fvec2 A = glm::fvec2(min.x, max.y), B = glm::fvec2(max.x, max.y),
-		C = glm::fvec2(min.x, min.y), D = glm::fvec2(max.x, min.y);
+	glm::vec3 min = Mesh.FindMin(), max = Mesh.FindMax();
+	//std::cout << "min: " << min.x << "  " << min.y << "  " << min.z << "\n";
+	//std::cout << "max: " << max.x << "  " << max.y << "  " << max.z << "\n";
 	glm::mat4 M = Mesh.GetTransformation();
-	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	std::vector<glm::fvec3> bb = Mesh.BoundingBox();
+	glm::fvec4 p;
+	for (auto i = 0; i < 8; i++)
 	{
-		A= glm::fvec2(A.x * M[0][0] + A.y * M[0][1] + M[0][2],A.x * M[1][0] + A.y * M[1][1] + M[1][2]);
-		B = glm::fvec2(B.x * M[0][0] + B.y * M[0][1] + M[0][2], B.x * M[1][0] + B.y * M[1][1] + M[1][2]);
-		C = glm::fvec2(C.x * M[0][0] + C.y * M[0][1] + M[0][2], C.x * M[1][0] + C.y * M[1][1] + M[1][2]);
-		D = glm::fvec2(D.x * M[0][0] + D.y * M[0][1] + M[0][2], D.x * M[1][0] + D.y * M[1][1] + M[1][2]);
-
+		p = glm::fvec4(bb[i].x, bb[i].y, bb[i].z, 1);
+		p.x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
+		p.y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
+		p.z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
+		p.w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
+		bb[i]=glm::fvec3(p.x/p.w , p.y/p.w  ,p.z/p.w );
 	}
-	
-	DrawLine(A, B, color); // A B
-	DrawLine(A, C, color); // A C
-	DrawLine(C, D, color); // C D
-	DrawLine(D, B, color); // D B
+
+	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[1].x, bb[1].y), color);
+	cout << "b0\n" << bb[0].x << " " << bb[0].y << "\n" << "b1\n" << bb[1].x << " " << bb[1].y << "\n";
+	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[3].x, bb[3].y), color);
+	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[5].x, bb[5].y), color);
+
+	DrawLine(glm::fvec2(bb[1].x, bb[1].y), glm::fvec2(bb[6].x, bb[6].y), color);
+	DrawLine(glm::fvec2(bb[1].x, bb[1].y), glm::fvec2(bb[3].x, bb[3].y), color);
+	DrawLine(glm::fvec2(bb[2].x, bb[2].y), glm::fvec2(bb[3].x, bb[3].y), color);
+
+	DrawLine(glm::fvec2(bb[2].x, bb[2].y), glm::fvec2(bb[7].x, bb[7].y), color);
+	DrawLine(glm::fvec2(bb[4].x, bb[4].y), glm::fvec2(bb[3].x, bb[3].y), color);
+	DrawLine(glm::fvec2(bb[4].x, bb[4].y), glm::fvec2(bb[6].x, bb[6].y), color);
+
+	DrawLine(glm::fvec2(bb[4].x, bb[4].y), glm::fvec2(bb[7].x, bb[7].y), color);
+	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[6].x, bb[6].y), color);
+	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[7].x, bb[7].y), color);
+
+	/*DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[1].x, bb[1].y), color);
+	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[3].x, bb[3].y), color);
+	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[4].x, bb[4].y), color);
+
+	DrawLine(glm::fvec2(bb[7].x, bb[7].y), glm::fvec2(bb[6].x, bb[6].y), color);
+	DrawLine(glm::fvec2(bb[7].x, bb[7].y), glm::fvec2(bb[3].x, bb[3].y), color);
+	DrawLine(glm::fvec2(bb[7].x, bb[7].y), glm::fvec2(bb[4].x, bb[4].y), color);
+
+	DrawLine(glm::fvec2(bb[2].x, bb[2].y), glm::fvec2(bb[6].x, bb[6].y), color);
+	DrawLine(glm::fvec2(bb[2].x, bb[2].y), glm::fvec2(bb[3].x, bb[3].y), color);
+	DrawLine(glm::fvec2(bb[2].x, bb[2].y), glm::fvec2(bb[1].x, bb[1].y), color);
+
+	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[4].x, bb[4].y), color);
+	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[6].x, bb[6].y), color);
+	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[1].x, bb[1].y), color);
+	*/
 }
 
 
@@ -561,7 +716,6 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
 		auto face = Mesh.GetFace(i);
-		//std::cout << "( " << Mesh.GetVertices(face.GetVertexIndex(0) - 1).x << " , " << Mesh.GetVertices(face.GetVertexIndex(0) - 1).y << "\n";
 		p1 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(0) - 1).x, Mesh.GetVertices(face.GetVertexIndex(0) - 1).y);
 		p2 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(1) - 1).x, Mesh.GetVertices(face.GetVertexIndex(1) - 1).y);
 		p3 = glm::fvec2(Mesh.GetVertices(face.GetVertexIndex(2) - 1).x, Mesh.GetVertices(face.GetVertexIndex(2) - 1).y);
@@ -577,11 +731,11 @@ void Renderer::FixPoints(MeshModel& Mesh)
 	glm::fvec3 vec;
 	for (int i = 0; i < Mesh.RetVerticesSize(); i++)  // (x/y, z/y, 1)
 	{
-		vec = glm::fvec3((float)(Mesh.GetVertices(i).x) / Mesh.GetVertices(i).z, (float)(Mesh.GetVertices(i).y) / Mesh.GetVertices(i).z, 1.0f);
+		vec = glm::fvec3((float)(Mesh.GetVertices(i).x) / Mesh.GetVertices(i).z, (float)(Mesh.GetVertices(i).y) / Mesh.GetVertices(i).z, 1);
 		Mesh.SetVertices(vec, i);
 	}
 
-	glm::fvec3 trans_vec = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
+	glm::fvec3 trans_vec = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, Mesh.GetVertices(0).z);
 	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
 		// min x
@@ -590,6 +744,9 @@ void Renderer::FixPoints(MeshModel& Mesh)
 		// min y
 		if (trans_vec.y > Mesh.GetVertices(i).y)
 			trans_vec.y = Mesh.GetVertices(i).y;
+		// min z
+		if (trans_vec.z > Mesh.GetVertices(i).z)
+			trans_vec.z = Mesh.GetVertices(i).z;
 	}
 	float min = trans_vec.x;
 	if (trans_vec.y < min)
@@ -600,7 +757,10 @@ void Renderer::FixPoints(MeshModel& Mesh)
 	{
 		min *= (-1.0f);
 		trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
-		Translate(Mesh, trans_vec);
+		for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+		{
+			Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x + trans_vec.x, Mesh.GetVertices(i).y + trans_vec.y, Mesh.GetVertices(i).z + trans_vec.z), i);
+		}
 	}
 	/// 
 
@@ -613,6 +773,9 @@ void Renderer::FixPoints(MeshModel& Mesh)
 		// max y
 		if (scale_vec.y < Mesh.GetVertices(i).y)
 			scale_vec.y = Mesh.GetVertices(i).y;
+		// max z
+		if (scale_vec.z < Mesh.GetVertices(i).z)
+			scale_vec.z = Mesh.GetVertices(i).z;
 
 	}
 	float max = scale_vec.x;
@@ -621,129 +784,13 @@ void Renderer::FixPoints(MeshModel& Mesh)
 	if (scale_vec.z > max)
 		max = scale_vec.z;
 	scale_vec.x = 600 / max; scale_vec.y = 600 / max; scale_vec.z = 600 / max;
-	Scale(Mesh, scale_vec);
-}
-
-void Renderer::worldMat(MeshModel& Mesh)
-{
-	FixPoints(Mesh);
-
-	//rotate;
-	float radian = 0.0f * (M_PI / 180);
-	float cs = cos(radian);
-	float sn = sin(radian);
-	float R[3][3] = {
-			{cs, -1 * sn, 0},
-			{sn, cs, 0},
-			{0, 0, 1} };
-
-	float inv_R[3][3] = {
-			{cs, sn, 0},
-			{-1 * sn, cs, 0},
-			{0, 0, 1} };
-
-	//translate:
-	float T[3][3] = {
-		{1, 0, 200.0f},
-		{0, 1, 30.0f},
-		{0, 0, 1} };
-
-	float inv_T[3][3] = {
-		{1, 0, -200.0f},
-		{0, 1, -30.0f},
-		{0, 0, 1} };
-
-	//scale
-	float S[3][3] = {
-	   { 0.5f, 0, 0 },
-	   { 0, 0.5f, 0 },
-	   { 0, 0, 1} };
-
-	float inv_S[3][3] = {
-	   { 1 / 0.5f, 0, 0 },
-	   { 0, 1 / 0.5f, 0 },
-	   { 0, 0, 1} };
-
-	// the world transformation matrix ( model matrix) is :
-	// M= SRT
-	// S = scale matrix, R = rotate matrix, T = translate matrix 
-	float M[3][3], SR[3][3];
-	// Multiplying scale matrix and the traslate matrix and putting the result in ST
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 3; k++) {
-				sum += S[i][k] * R[k][j];
-			}
-			SR[i][j] = sum;
-			//std::cout << SR[i][j] << "  ";
-		}
-	}
-	// Multiplying SR and teh rotatle matrix 
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 3; k++) {
-				sum += SR[i][k] * T[k][j];
-			}
-			M[i][j] = sum;
-			//std::cout << M[i][j] << "  ";
-		}
-		//std::cout << "\n";
-	}
-
-	/// inverse 
-	float inv_M[3][3], invTR[3][3];
-
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 3; k++) {
-				sum += inv_T[i][k] * inv_R[k][j];
-			}
-			invTR[i][j] = sum;
-			//std::cout << SR[i][j] << "  ";
-		}
-	}
-	// Multiplying INVERSE TR and teh rotatle matrix 
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 3; k++) {
-				sum += invTR[i][k] * inv_S[k][j];
-			}
-			inv_M[i][j] = sum;
-			//std::cout << inv_M[i][j] << "  ";
-		}
-		//std::cout << "\n";
-	}
-	// Now we need to multiply M * (x, y, z)
-	// each time we multipy one coordinate with M
 	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
-		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * M[0][0] + Mesh.GetVertices(i).y * M[0][1] + M[0][2],
-			Mesh.GetVertices(i).x * M[1][0] + Mesh.GetVertices(i).y * M[1][1] + M[1][2], 1), i);
-
+		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * scale_vec.x, Mesh.GetVertices(i).y * scale_vec.y, Mesh.GetVertices(i).z * scale_vec.z), i);
 	}
-
-
-	///
-
-	DrawTriangle(Mesh);
-
-
-	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * inv_M[0][0] + Mesh.GetVertices(i).y * inv_M[0][1] + inv_M[0][2],
-			Mesh.GetVertices(i).x * inv_M[1][0] + Mesh.GetVertices(i).y * inv_M[1][1] + M[1][2], 1), i);
-
-	}
-
-
-	///
-	DrawTriangle(Mesh);
-
 }
+
+
 
 /// okay here we have (x/z, y/z, 1) 
 // scale:
