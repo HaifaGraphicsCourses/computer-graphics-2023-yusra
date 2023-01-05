@@ -29,6 +29,7 @@ bool CAMERA_Perspective_window = false;
 bool window = false;
 bool Viewing_window = false;
 bool CAMERA_window = false;
+int Width = 1280, Height = 720;
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 			t_x_o = 0.0f, t_y_o = 0.0f, t_z_o = 0.0f,
@@ -39,13 +40,10 @@ static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 			l = -1.0f, r = 1.0f, Zf_o = -1.0f, Zn_o = 1.0f, top = 1.0f, botton = -1.0f,
 			t_x_c = 0.0f, t_y_c = 0.0f, t_z_c = 0.0f,
 			r_x_c = 0.0f, r_y_c = 0.0f, r_z_c = 0.0f,
-			Zn_p = 0.0f, Zf_p = 0.0f, fov = 0.0f,
+			Zn_p = 1.0f, Zf_p = 10.0f, fov = 45.0f, aspect = 1280/720,
 			eyeX = 0.0f, eyeY = 0.0f, eyeZ = 0.0f,
 			atX = 0.0f, atY = 0.0f, atZ = 0.0f,
 			upX = 0.0f, upY = 0.0f, upZ = 0.0f;
-
-int Width = 1280, Height = 720;
-
 /**
  * Function declarations
  */
@@ -284,11 +282,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (LOCALtransformation_window)
 		{
 
-			ImGui::SliderFloat("LOCAL Scale X", &s_x_o, 1.0f, 200.0f);
-			ImGui::SliderFloat("LOCAL Scale Y", &s_y_o, 1.0f, 200.0f);
-			ImGui::SliderFloat("LOCAL Scale Z", &s_z_o, 1.0f, 100.0f);
+			ImGui::SliderFloat("LOCAL Scale X", &s_x_o, 1.0f, 500.0f);
+			ImGui::SliderFloat("LOCAL Scale Y", &s_y_o, 1.0f, 500.0f);
+			ImGui::SliderFloat("LOCAL Scale Z", &s_z_o, 1.0f, 500.0f);
 			ImGui::SliderFloat("LOCAL Translate X", &t_x_o, -50.0f, 50.0f);
-			ImGui::SliderFloat("LOCAL Translate Y", &t_y_o, -200.0f, 200.0f);
+			ImGui::SliderFloat("LOCAL Translate Y", &t_y_o, -200.0f, 500.0f);
 			ImGui::SliderFloat("LOCAL Translate Z", &t_z_o, -50.0f, 50.0f);
 			ImGui::SliderFloat("LOCAL Rotate X", &r_x_o, 0.0f, 360.0f);
 			ImGui::SliderFloat("LOCAL Rotate Y", &r_y_o, 0.0f, 360.0f);
@@ -299,7 +297,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				scene.GetActiveModel().SetOBJScale(s_x_o, 0);
 				scene.GetActiveModel().SetOBJScale(s_y_o, 1);
 				scene.GetActiveModel().SetOBJScale(s_z_o, 2);
-				scene.GetActiveModel().SetOBJTranslate(t_x_o, 0);
 				scene.GetActiveModel().SetOBJTranslate(t_x_o, 0);
 				scene.GetActiveModel().SetOBJTranslate(t_y_o, 1);
 				scene.GetActiveModel().SetOBJTranslate(t_z_o, 2);
@@ -314,9 +311,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (WORLDtransformation_window)
 		{
 
-			ImGui::SliderFloat("WORLD Scale X", &s_x_w, 1.0f, 200.0f);
-			ImGui::SliderFloat("WORLD Scale Y", &s_y_w, 1.0f, 200.0f);
-			ImGui::SliderFloat("WORLD Scale Z", &s_z_w, 1.0f, 200.0f);
+			ImGui::SliderFloat("WORLD Scale X", &s_x_w, 1.0f, 50.0f);
+			ImGui::SliderFloat("WORLD Scale Y", &s_y_w, 1.0f, 50.0f);
+			ImGui::SliderFloat("WORLD Scale Z", &s_z_w, 1.0f, 50.0f);
 			ImGui::SliderFloat("WORLD Translate X", &t_x_w, -200.0f, 200.0f);
 			ImGui::SliderFloat("WORLD Translate Y", &t_y_w, -200.0f, 200.0f);
 			ImGui::SliderFloat("WORLD Translate Z", &t_z_w, -200.0f, 200.0f);
@@ -365,26 +362,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		}
 
-		//ImGui::Checkbox("Viewing", &Viewing_window);
-		////  --- LOOK AT ---  
-		//if (Viewing_window)
-		//{
-		//	ImGui::SliderFloat("eyeX", &eyeX, 0.0f, 100.0f);
-		//	ImGui::SliderFloat("eyeY", &eyeY, 0.0f, 100.0f);
-		//	ImGui::SliderFloat("eyeZ", &eyeZ, 0.0f, 100.0f);
-		//	ImGui::SliderFloat("atX", &atX, 0.0f, 100.0f);
-		//	ImGui::SliderFloat("atY", &atY, 0.0f, 100.0f);
-		//	ImGui::SliderFloat("atZ", &atZ, 0.0f, 100.0f);
-		//	ImGui::SliderFloat("upX", &upX, 0.0f, 100.0f);
-		//	ImGui::SliderFloat("upY", &upY, 0.0f, 100.0f);
-		//	ImGui::SliderFloat("upZ", &upZ, 0.0f, 100.0f);
-
-		//	scene.GetActiveCamera().SetCamera_position(glm::fvec3(eyeX, eyeY, eyeZ));
-		//	scene.GetActiveCamera().Set_at(glm::fvec3(atX, atY, atZ));
-		//	scene.GetActiveCamera().Set_up(glm::fvec3(upX, upY, upZ));
-
-		//}
-
 		ImGui::Checkbox("ORTHOGRAPHIC", &CAMERA_Orthographic_window);
 		//  --- ORTHOGRAPHIC
 		if (CAMERA_Orthographic_window)
@@ -404,13 +381,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		//  --- PERSPECTIVE
 		if (CAMERA_Perspective_window)
 		{
-			ImGui::SliderFloat("Fov", &fov, 1.0f, 360.0f);
-			// aspect ???
-			ImGui::SliderFloat("Near", &Zn_p, 0.0f, 100.0f);
-			ImGui::SliderFloat("Far", &Zf_p, 0.0f, 100.0f);
+			ImGui::SliderFloat("Fov", &fov, 0.0f, 360.0f);
+			ImGui::SliderFloat("Aspect", &aspect, 1.0f, 360.0f);
+			ImGui::SliderFloat("Near", &Zn_p, 0.0f, 2000.0f);
+			ImGui::SliderFloat("Far", &Zf_p, 0.0f, 2000.0f);
 
-			//scene.GetActiveCamera().SetPerspectiveProjectionMatrix(fov,0.0f, Zn_p, Zf_p);
-
+			scene.GetActiveCamera().SetPerspectiveProjectionMatrix(fov, aspect, Zn_p, Zf_p);
 		}
 		
 
