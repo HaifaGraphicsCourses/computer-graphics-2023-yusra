@@ -71,14 +71,5 @@ int Scene::GetActiveModelIndex() const
 	return active_model_index;
 }
 
-//void Scene::Draw()
-//{
-//	for (int i = 0; i < mesh_models.size(); i++)
-//	{
-//		renderer->udateModelTranform((* mesh_models[i]).GetobjectTransform(), *mesh_models[i]);
-//		renderer->DrawTriangle((*mesh_models[i]));
-//	}
-//
-//}
 
 
