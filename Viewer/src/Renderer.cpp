@@ -451,14 +451,14 @@ void Renderer::Render( Scene& scene)
 		//Orth(Mesh, Cam);
 		//View(Mesh, Cam);
 		//Perspective(Mesh, Cam);
+
 		//DrawBoundingBox(Mesh);
-		
 		//DrawAxes(Mesh);
 		Transformation(Mesh);
-		//Transformation(Mesh);
 		DrawTriangle(Mesh);
+		
 		//DrawFaceNormals(Mesh);
-		DrawVertexNormals(Mesh);
+		//DrawVertexNormals(Mesh);
 
 		
 	}
@@ -498,6 +498,7 @@ glm::fvec3 Renderer::Transform_point(glm::fvec3 a, MeshModel& Mesh) {
 	p.w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
 	return glm::fvec3(p.x / p.w, p.y / p.w, p.z / p.w);
 }
+
 void Renderer::DrawFaceNormals(MeshModel& Mesh)
 {
 	glm::vec3 color = glm::vec3(200.0f, 0.0f, 0.0f);
@@ -525,8 +526,6 @@ void Renderer::DrawVertexNormals(MeshModel& Mesh)
 {
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::fvec3 p1, p2, p3, n1, n2, n3;
-	glm::fvec2  middle;
-	std::vector<glm::fvec3> VNormals=Mesh.VerticesNormals();
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
 		auto face = Mesh.GetFace(i);
@@ -646,21 +645,43 @@ void Renderer::DrawBoundingBox(MeshModel& Mesh)
 {
 
 	glm::vec3 color = glm::vec3(20.0f, 10.0f, 20.0f);
-	//glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
-	//for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-	//{
-	//	// max x
-	//	if (max.x < Mesh.GetVertices(i).x)
-	//		max.x = Mesh.GetVertices(i).x;
-	//	// max y
-	//	if (max.y < Mesh.GetVertices(i).y)
-	//		max.y = Mesh.GetVertices(i).y;
-
-	glm::vec3 min = Mesh.FindMin(), max = Mesh.FindMax();
-	//std::cout << "min: " << min.x << "  " << min.y << "  " << min.z << "\n";
-	//std::cout << "max: " << max.x << "  " << max.y << "  " << max.z << "\n";
 	glm::mat4 M = Mesh.GetTransformation();
-	std::vector<glm::fvec3> bb = Mesh.BoundingBox();
+	glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, Mesh.GetVertices(0).z);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// max x
+		if (max.x < Mesh.GetVertices(i).x)
+			max.x = Mesh.GetVertices(i).x;
+		// max y
+		if (max.y < Mesh.GetVertices(i).y)
+			max.y = Mesh.GetVertices(i).y;
+		// max z
+		if (max.z < Mesh.GetVertices(i).z)
+			max.z = Mesh.GetVertices(i).z;
+	}
+	glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, Mesh.GetVertices(0).z);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// min x
+		if (min.x > Mesh.GetVertices(i).x)
+			min.x = Mesh.GetVertices(i).x;
+		// min y
+		if (min.y > Mesh.GetVertices(i).y)
+			min.y = Mesh.GetVertices(i).y;
+		// min z
+		if (min.z > Mesh.GetVertices(i).z)
+			min.z = Mesh.GetVertices(i).z;
+	}
+
+	std::vector<glm::fvec3> bb;
+	bb.push_back(glm::fvec3(min.x, min.y, min.z));// 000  0
+	bb.push_back(glm::fvec3(max.x, min.y, min.z));// 100  1
+	bb.push_back(glm::fvec3(max.x, max.y, min.z));// 110  2
+	bb.push_back(glm::fvec3(min.x, max.y, min.z));// 010  3
+	bb.push_back(glm::fvec3(min.x, min.y, max.z));// 001  4
+	bb.push_back(glm::fvec3(max.x, min.y, max.z));// 101  5
+	bb.push_back(glm::fvec3(max.x, max.y, max.z));// 111  6
+	bb.push_back(glm::fvec3(min.x, max.y, max.z));// 011  7
 	glm::fvec4 p;
 	for (auto i = 0; i < 8; i++)
 	{
@@ -669,27 +690,12 @@ void Renderer::DrawBoundingBox(MeshModel& Mesh)
 		p.y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
 		p.z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
 		p.w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
-		bb[i]=glm::fvec3(p.x/p.w , p.y/p.w  ,p.z/p.w );
+		bb[i]=glm::fvec3(p.x/p.w , p.y/p.w ,p.z/p.w);
 	}
 
+
+
 	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[1].x, bb[1].y), color);
-	cout << "b0\n" << bb[0].x << " " << bb[0].y << "\n" << "b1\n" << bb[1].x << " " << bb[1].y << "\n";
-	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[3].x, bb[3].y), color);
-	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[5].x, bb[5].y), color);
-
-	DrawLine(glm::fvec2(bb[1].x, bb[1].y), glm::fvec2(bb[6].x, bb[6].y), color);
-	DrawLine(glm::fvec2(bb[1].x, bb[1].y), glm::fvec2(bb[3].x, bb[3].y), color);
-	DrawLine(glm::fvec2(bb[2].x, bb[2].y), glm::fvec2(bb[3].x, bb[3].y), color);
-
-	DrawLine(glm::fvec2(bb[2].x, bb[2].y), glm::fvec2(bb[7].x, bb[7].y), color);
-	DrawLine(glm::fvec2(bb[4].x, bb[4].y), glm::fvec2(bb[3].x, bb[3].y), color);
-	DrawLine(glm::fvec2(bb[4].x, bb[4].y), glm::fvec2(bb[6].x, bb[6].y), color);
-
-	DrawLine(glm::fvec2(bb[4].x, bb[4].y), glm::fvec2(bb[7].x, bb[7].y), color);
-	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[6].x, bb[6].y), color);
-	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[7].x, bb[7].y), color);
-
-	/*DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[1].x, bb[1].y), color);
 	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[3].x, bb[3].y), color);
 	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[4].x, bb[4].y), color);
 
@@ -704,7 +710,7 @@ void Renderer::DrawBoundingBox(MeshModel& Mesh)
 	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[4].x, bb[4].y), color);
 	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[6].x, bb[6].y), color);
 	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[1].x, bb[1].y), color);
-	*/
+	
 }
 
 
