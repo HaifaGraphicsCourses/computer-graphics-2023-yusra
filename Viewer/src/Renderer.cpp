@@ -424,20 +424,20 @@ void Renderer::Render( Scene& scene)
 	{
 		auto Mesh = scene.GetModel(i);
 		auto Cam = scene.GetActiveCamera();
-		Orth(Mesh, Cam);
-		View(Mesh, Cam);
-		Perspective(Mesh, Cam);
+		//View(Mesh, Cam);
+		//Orth(Mesh, Cam);
+		//Perspective(Mesh, Cam);
 
-		DrawBoundingBoxModel(Mesh);
-		DrawBoundingBoxWorld(Mesh);
+		//DrawBoundingBoxModel(Mesh);
+		//DrawBoundingBoxWorld(Mesh);
 		
-		DrawAxesModel(Mesh);
-		DrawAxesWorld(Mesh);
+		//DrawAxesModel(Mesh);
+		//DrawAxesWorld(Mesh);
 		Transformation(Mesh);
 		DrawTriangle(Mesh);
 		
-		DrawFaceNormals(Mesh);
-		DrawVertexNormals(Mesh);
+		//DrawFaceNormals(Mesh);
+		//DrawVertexNormals(Mesh);
 
 		
 	}
@@ -484,7 +484,7 @@ void Renderer::DrawAxesWorld(MeshModel& Mesh)
 	glm::fvec3 p3 = WolrdTransform_point(glm::fvec3(0.0f, 0.0f, max_), Mesh);
 	//
 	glm::fvec2 center = glm::fvec2((max.x + min.x) / 2, (max.y + min.y) / 2);
-	glm::vec3 color = glm::vec3(200.0f, 50.0f, 255.0f);
+	glm::vec3 color = glm::vec3(0.0f, 0.0f, 10.0f);
 	DrawLine(center, p1, color);
 	DrawLine(center, p2, color);
 	DrawLine(center, p3, color);
@@ -529,7 +529,7 @@ void Renderer::DrawAxesModel(MeshModel& Mesh)
 	glm::fvec3 p3 = LocalTransform_point(glm::fvec3(0.0f, 0.0f, max_), Mesh);
 	//
 	glm::fvec2 center = glm::fvec2((max.x + min.x) / 2, (max.y + min.y ) / 2);
-	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 color = glm::vec3(50.0f, 0.0f, 0.0f);
 	DrawLine(center, p1, color);
 	DrawLine(center, p2, color);
 	DrawLine(center, p3, color);
