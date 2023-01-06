@@ -48,98 +48,99 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 	int dx = x1 - x0, dy = y1 - y0, D = 2 * dy - dx, x = x0, y = y0, yi = 1, xi = 1, m;
 	if (dx == 0) m = 200; // so we wont have something undefined
 	else { m = dy / dx; }; // calcutaleing the Incline
-	if (m < 1 && m > -1) // the cases is -1 < Incline < 1
-	{
-		//plotLineLow
-		if (dy < 0) {
-			yi = -1;
-			dy = -dy;
-		}
-		D = (2 * dy) - dx;
-		y = y0;
-		for (int x = x0; x <= x1; x++)
-		{
-			PutPixel(x, y, color);
-			if (D > 0)
-			{
-				y = y + yi;
-				D = D + (2 * (dy - dx));
-			}
-			else
-				D = D + 2 * dy;
-		}
-		// plotLineHigh
-		if (dx < 0)
-		{
-			xi = -1;
-			dx = -dx;
-		}
-		D = (2 * dx) - dy;
-		x = x0;
-		for (int y = y0; y <= y1; y++)
-		{
-			PutPixel(x, y, color);
-			if (D > 0)
-			{
-				x = x + xi;
-				D = D + (2 * (dx - dy));
-			}
-			else
-				D = D + 2 * dx;
-		}
-		if (dy > 0)
-		{
+	//if (m < 1 && m > -1) // the cases is -1 < Incline < 1
+	//{
+	//	//plotLineLow
+	//	if (dy < 0) {
+	//		yi = -1;
+	//		dy = -dy;
+	//	}
+	//	D = (2 * dy) - dx;
+	//	y = y0;
+	//	for (int x = x0; x <= x1; x++)
+	//	{
+	//		PutPixel(x, y, color);
+	//		if (D > 0)
+	//		{
+	//			y = y + yi;
+	//			D = D + (2 * (dy - dx));
+	//		}
+	//		else
+	//			D = D + 2 * dy;
+	//	}
+	//	// plotLineHigh
+	//	if (dx < 0)
+	//	{
+	//		xi = -1;
+	//		dx = -dx;
+	//	}
+	//	D = (2 * dx) - dy;
+	//	x = x0;
+	//	for (int y = y0; y <= y1; y++)
+	//	{
+	//		PutPixel(x, y, color);
+	//		if (D > 0)
+	//		{
+	//			x = x + xi;
+	//			D = D + (2 * (dx - dy));
+	//		}
+	//		else
+	//			D = D + 2 * dx;
+	//	}
+	//	if (dy > 0)
+	//	{
 
-			if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
-			{
-				dx = x0 - x1;
-				dy = y0 - y1;
-				yi = 1;
-				if (dy < 0) {
-					yi = -1;
-					dy = -dy;
-				}
-				D = (2 * dy) - dx;
-				y = y1;
-				cnt3++;
-				for (int x = x1; x <= x0; x++)
-				{
-					PutPixel(x, y, color);
-					if (D > 0)
-					{
-						y = y + yi;
-						D = D + (2 * (dy - dx));
-					}
-					else
-						D = D + 2 * dy;
-				}
-			}
-			else // plotLineLow(x0, y0, x1, y1)
-			{
-				dx = x1 - x0;
-				dy = y1 - y0;
-				yi = 1;
-				if (dy < 0) {
-					yi = -1;
-					dy = -dy;
-				}
-				D = (2 * dy) - dx;
-				y = y0;
-				for (int x = x0; x <= x1; x++)
-				{
-					PutPixel(x, y, color);
-					if (D > 0)
-					{
-						y = y + yi;
-						D = D + (2 * (dy - dx));
-					}
-					else
-						D = D + 2 * dy;
-				}
-			}
-		}
-	}
-	else if (abs(y1 - y0) < abs(x1 - x0))
+	//		if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
+	//		{
+	//			dx = x0 - x1;
+	//			dy = y0 - y1;
+	//			yi = 1;
+	//			if (dy < 0) {
+	//				yi = -1;
+	//				dy = -dy;
+	//			}
+	//			D = (2 * dy) - dx;
+	//			y = y1;
+	//			cnt3++;
+	//			for (int x = x1; x <= x0; x++)
+	//			{
+	//				PutPixel(x, y, color);
+	//				if (D > 0)
+	//				{
+	//					y = y + yi;
+	//					D = D + (2 * (dy - dx));
+	//				}
+	//				else
+	//					D = D + 2 * dy;
+	//			}
+	//		}
+	//		else // plotLineLow(x0, y0, x1, y1)
+	//		{
+	//			dx = x1 - x0;
+	//			dy = y1 - y0;
+	//			yi = 1;
+	//			if (dy < 0) {
+	//				yi = -1;
+	//				dy = -dy;
+	//			}
+	//			D = (2 * dy) - dx;
+	//			y = y0;
+	//			for (int x = x0; x <= x1; x++)
+	//			{
+	//				PutPixel(x, y, color);
+	//				if (D > 0)
+	//				{
+	//					y = y + yi;
+	//					D = D + (2 * (dy - dx));
+	//				}
+	//				else
+	//					D = D + 2 * dy;
+	//			}
+	//		}
+	//	}
+	//}
+	//else 
+	if (abs(y1 - y0) < abs(x1 - x0))
 	{
 		if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
 		{
@@ -423,42 +424,20 @@ void Renderer::Render( Scene& scene)
 	{
 		auto Mesh = scene.GetModel(i);
 		auto Cam = scene.GetActiveCamera();
-		//Transformation(Mesh);
-		//glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
-		//for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-		//{
-		//	// max x
-		//	if (max.x < Mesh.GetVertices(i).x)
-		//		max.x = Mesh.GetVertices(i).x;
-		//	// max y
-		//	if (max.y < Mesh.GetVertices(i).y)
-		//		max.y = Mesh.GetVertices(i).y;
-		//}
-		//glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, 1);
-		//for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-		//{
-		//	// min x
-		//	if (min.x > Mesh.GetVertices(i).x)
-		//		min.x = Mesh.GetVertices(i).x;
-		//	// min y
-		//	if (min.y > Mesh.GetVertices(i).y)
-		//		min.y = Mesh.GetVertices(i).y;
-		//}
-		//glm::fvec2 A = glm::fvec2(min.x, max.y), B = glm::fvec2(max.x, max.y),
-		//	C = glm::fvec2(min.x, min.y), D = glm::fvec2(max.x, min.y);
-		//Mesh.SetMax(max); Mesh.SetMin(min);
+		Orth(Mesh, Cam);
+		View(Mesh, Cam);
+		Perspective(Mesh, Cam);
 
-		//Orth(Mesh, Cam);
-		//View(Mesh, Cam);
-		//Perspective(Mesh, Cam);
-
-		//DrawBoundingBox(Mesh);
-		//DrawAxes(Mesh);
+		DrawBoundingBoxModel(Mesh);
+		DrawBoundingBoxWorld(Mesh);
+		
+		DrawAxesModel(Mesh);
+		DrawAxesWorld(Mesh);
 		Transformation(Mesh);
 		DrawTriangle(Mesh);
 		
-		//DrawFaceNormals(Mesh);
-		//DrawVertexNormals(Mesh);
+		DrawFaceNormals(Mesh);
+		DrawVertexNormals(Mesh);
 
 		
 	}
@@ -466,31 +445,109 @@ void Renderer::Render( Scene& scene)
 	
 }
 
-
-void Renderer::DrawAxes(MeshModel& Mesh) // max -> trans
+void Renderer::DrawAxesWorld(MeshModel& Mesh)
 {
-	glm::fvec3 min = Mesh.GetMin(), max = Mesh.GetMax();
-
+	glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, Mesh.GetVertices(0).z);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// max x
+		if (max.x < Mesh.GetVertices(i).x)
+			max.x = Mesh.GetVertices(i).x;
+		// max y
+		if (max.y < Mesh.GetVertices(i).y)
+			max.y = Mesh.GetVertices(i).y;
+		// max z
+		if (max.z < Mesh.GetVertices(i).z)
+			max.z = Mesh.GetVertices(i).z;
+	}
+	glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, Mesh.GetVertices(0).z);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// min x
+		if (min.x > Mesh.GetVertices(i).x)
+			min.x = Mesh.GetVertices(i).x;
+		// min y
+		if (min.y > Mesh.GetVertices(i).y)
+			min.y = Mesh.GetVertices(i).y;
+		// min z
+		if (min.z > Mesh.GetVertices(i).z)
+			min.z = Mesh.GetVertices(i).z;
+	}
 	float max_ = max.x;
 	if (max.y > max_)
 		max_ = max.y;
 	if (max.z > max_)
 		max_ = max.z;
 
-	//glm::fvec3 p1 = Transform_point(glm::fvec3(max_, 0.0f, 0.0f), Mesh);
-	//glm::fvec3 p2 = Transform_point(glm::fvec3(0.0f, max_, 0.0f), Mesh);
-	//glm::fvec3 p3 = Transform_point(glm::fvec3(0.0f, 0.0f, max_), Mesh);
+	glm::fvec3 p1 = WolrdTransform_point(glm::fvec3(max_, 0.0f, 0.0f), Mesh);
+	glm::fvec3 p2 = WolrdTransform_point(glm::fvec3(0.0f, max_, 0.0f), Mesh);
+	glm::fvec3 p3 = WolrdTransform_point(glm::fvec3(0.0f, 0.0f, max_), Mesh);
+	//
+	glm::fvec2 center = glm::fvec2((max.x + min.x) / 2, (max.y + min.y) / 2);
+	glm::vec3 color = glm::vec3(200.0f, 50.0f, 255.0f);
+	DrawLine(center, p1, color);
+	DrawLine(center, p2, color);
+	DrawLine(center, p3, color);
+
+}
+void Renderer::DrawAxesModel(MeshModel& Mesh)
+{
+	glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, Mesh.GetVertices(0).z);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// max x
+		if (max.x < Mesh.GetVertices(i).x)
+			max.x = Mesh.GetVertices(i).x;
+		// max y
+		if (max.y < Mesh.GetVertices(i).y)
+			max.y = Mesh.GetVertices(i).y;
+		// max z
+		if (max.z < Mesh.GetVertices(i).z)
+			max.z = Mesh.GetVertices(i).z;
+	}
+	glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, Mesh.GetVertices(0).z);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// min x
+		if (min.x > Mesh.GetVertices(i).x)
+			min.x = Mesh.GetVertices(i).x;
+		// min y
+		if (min.y > Mesh.GetVertices(i).y)
+			min.y = Mesh.GetVertices(i).y;
+		// min z
+		if (min.z > Mesh.GetVertices(i).z)
+			min.z = Mesh.GetVertices(i).z;
+	}
+	float max_ = max.x;
+	if (max.y > max_)
+		max_ = max.y;
+	if (max.z > max_)
+		max_ = max.z;
+
+	glm::fvec3 p1 = LocalTransform_point(glm::fvec3(max_, 0.0f, 0.0f), Mesh);
+	glm::fvec3 p2 = LocalTransform_point(glm::fvec3(0.0f, max_, 0.0f), Mesh);
+	glm::fvec3 p3 = LocalTransform_point(glm::fvec3(0.0f, 0.0f, max_), Mesh);
 	//
 	glm::fvec2 center = glm::fvec2((max.x + min.x) / 2, (max.y + min.y ) / 2);
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
-	DrawLine(center, glm::fvec2(max_, 0.0f), color);
-	DrawLine(center, glm::fvec2(0.0f, max_), color);
-	//DrawLine(center, glm::fvec2(p3.x, p3.y), color);
-
+	DrawLine(center, p1, color);
+	DrawLine(center, p2, color);
+	DrawLine(center, p3, color);
+	
 }
 
-glm::fvec3 Renderer::Transform_point(glm::fvec3 a, MeshModel& Mesh) {
+glm::fvec3 Renderer::LocalTransform_point(glm::fvec3 a, MeshModel& Mesh) {
 	glm::mat4 M = Mesh.GetTransformation();
+	glm::fvec4 p = glm::fvec4(a.x, a.y, a.z, 1);
+	p.x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
+	p.y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
+	p.z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
+	p.w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
+	return glm::fvec3(p.x / p.w, p.y / p.w, p.z / p.w);
+}
+glm::fvec3 Renderer::WolrdTransform_point(glm::fvec3 a, MeshModel& Mesh) {
+	Mesh.SetworldTransform();
+	glm::mat4 M = Mesh.GetworldTransform();
 	glm::fvec4 p = glm::fvec4(a.x, a.y, a.z, 1);
 	p.x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
 	p.y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
@@ -501,7 +558,7 @@ glm::fvec3 Renderer::Transform_point(glm::fvec3 a, MeshModel& Mesh) {
 
 void Renderer::DrawFaceNormals(MeshModel& Mesh)
 {
-	glm::vec3 color = glm::vec3(200.0f, 0.0f, 0.0f);
+	glm::vec3 color = glm::vec3(0.0f, 170.0f, 200.0f);
 	glm::fvec3 p1, p2, p3, normal, n1, n2;
 	glm::fvec2  middle;
 
@@ -521,10 +578,9 @@ void Renderer::DrawFaceNormals(MeshModel& Mesh)
 
 	}
 }
-
 void Renderer::DrawVertexNormals(MeshModel& Mesh)
 {
-	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 color = glm::vec3(200.0f, 0.0f, 0.0f);
 	glm::fvec3 p1, p2, p3, n1, n2, n3;
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
@@ -571,7 +627,6 @@ void Renderer::View(MeshModel& Mesh, Camera& Cam)
 		Mesh.SetVertices(glm::fvec3(x, y, z), i);
 	}	
 }
-
 void Renderer::Orth(MeshModel& Mesh, Camera& Cam)
 {
 	glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
@@ -598,7 +653,6 @@ void Renderer::Orth(MeshModel& Mesh, Camera& Cam)
 		Mesh.SetVertices(glm::fvec3(x, y, z), i);
 	}
 }
-
 void Renderer::Perspective(MeshModel& Mesh, Camera& Cam)
 {
 	glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
@@ -626,25 +680,10 @@ void Renderer::Perspective(MeshModel& Mesh, Camera& Cam)
 	}
 }
 
-void Renderer::Transformation(MeshModel& Mesh)
-{
-	glm::mat4 M = Mesh.GetTransformation();
-	glm::fvec4 p; float x, y, z, w;
-	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		p = glm::fvec4(Mesh.GetVertices(i).x, Mesh.GetVertices(i).y, Mesh.GetVertices(i).z, 1);
-		x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
-		y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
-		z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
-		w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
-		Mesh.SetVertices(glm::fvec3(x/w, y/w, z/w),i);
-	}
-}
-
-void Renderer::DrawBoundingBox(MeshModel& Mesh)
+void Renderer::DrawBoundingBoxModel(MeshModel& Mesh)
 {
 
-	glm::vec3 color = glm::vec3(20.0f, 10.0f, 20.0f);
+	glm::vec3 color = glm::vec3(0.0f, 0.0f, 200.0f);
 	glm::mat4 M = Mesh.GetTransformation();
 	glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, Mesh.GetVertices(0).z);
 	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
@@ -712,12 +751,82 @@ void Renderer::DrawBoundingBox(MeshModel& Mesh)
 	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[1].x, bb[1].y), color);
 	
 }
+void Renderer::DrawBoundingBoxWorld(MeshModel& Mesh)
+{
+
+	glm::vec3 color = glm::vec3(0.0f, 180.0f, 180.0f);
+	Mesh.SetworldTransform();
+	glm::mat4 M = Mesh.GetworldTransform();
+	glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, Mesh.GetVertices(0).z);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// max x
+		if (max.x < Mesh.GetVertices(i).x)
+			max.x = Mesh.GetVertices(i).x;
+		// max y
+		if (max.y < Mesh.GetVertices(i).y)
+			max.y = Mesh.GetVertices(i).y;
+		// max z
+		if (max.z < Mesh.GetVertices(i).z)
+			max.z = Mesh.GetVertices(i).z;
+	}
+	glm::fvec3 min = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, Mesh.GetVertices(0).z);
+	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		// min x
+		if (min.x > Mesh.GetVertices(i).x)
+			min.x = Mesh.GetVertices(i).x;
+		// min y
+		if (min.y > Mesh.GetVertices(i).y)
+			min.y = Mesh.GetVertices(i).y;
+		// min z
+		if (min.z > Mesh.GetVertices(i).z)
+			min.z = Mesh.GetVertices(i).z;
+	}
+
+	std::vector<glm::fvec3> bb;
+	bb.push_back(glm::fvec3(min.x, min.y, min.z));// 000  0
+	bb.push_back(glm::fvec3(max.x, min.y, min.z));// 100  1
+	bb.push_back(glm::fvec3(max.x, max.y, min.z));// 110  2
+	bb.push_back(glm::fvec3(min.x, max.y, min.z));// 010  3
+	bb.push_back(glm::fvec3(min.x, min.y, max.z));// 001  4
+	bb.push_back(glm::fvec3(max.x, min.y, max.z));// 101  5
+	bb.push_back(glm::fvec3(max.x, max.y, max.z));// 111  6
+	bb.push_back(glm::fvec3(min.x, max.y, max.z));// 011  7
+	glm::fvec4 p;
+	for (auto i = 0; i < 8; i++)
+	{
+		p = glm::fvec4(bb[i].x, bb[i].y, bb[i].z, 1);
+		p.x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
+		p.y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
+		p.z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
+		p.w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
+		bb[i] = glm::fvec3(p.x / p.w, p.y / p.w, p.z / p.w);
+	}
 
 
+
+	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[1].x, bb[1].y), color);
+	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[3].x, bb[3].y), color);
+	DrawLine(glm::fvec2(bb[0].x, bb[0].y), glm::fvec2(bb[4].x, bb[4].y), color);
+
+	DrawLine(glm::fvec2(bb[7].x, bb[7].y), glm::fvec2(bb[6].x, bb[6].y), color);
+	DrawLine(glm::fvec2(bb[7].x, bb[7].y), glm::fvec2(bb[3].x, bb[3].y), color);
+	DrawLine(glm::fvec2(bb[7].x, bb[7].y), glm::fvec2(bb[4].x, bb[4].y), color);
+
+	DrawLine(glm::fvec2(bb[2].x, bb[2].y), glm::fvec2(bb[6].x, bb[6].y), color);
+	DrawLine(glm::fvec2(bb[2].x, bb[2].y), glm::fvec2(bb[3].x, bb[3].y), color);
+	DrawLine(glm::fvec2(bb[2].x, bb[2].y), glm::fvec2(bb[1].x, bb[1].y), color);
+
+	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[4].x, bb[4].y), color);
+	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[6].x, bb[6].y), color);
+	DrawLine(glm::fvec2(bb[5].x, bb[5].y), glm::fvec2(bb[1].x, bb[1].y), color);
+
+}
 
 void Renderer::DrawTriangle(MeshModel& Mesh)
 {
-	glm::vec3 color = glm::vec3(200.0f, 10.0f, 0.0f);
+	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::fvec2 p1, p2, p3;
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
@@ -729,6 +838,20 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 		DrawLine(p2, p3, color);
 		DrawLine(p3, p1, color);
 
+	}
+}
+void Renderer::Transformation(MeshModel& Mesh)
+{
+	glm::mat4 M = Mesh.GetTransformation();
+	glm::fvec4 p; float x, y, z, w;
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		p = glm::fvec4(Mesh.GetVertices(i).x, Mesh.GetVertices(i).y, Mesh.GetVertices(i).z, 1);
+		x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
+		y = p.x * M[1][0] + p.y * M[1][1] + p.z * M[1][2] + p.w * M[1][3];
+		z = p.x * M[2][0] + p.y * M[2][1] + p.z * M[2][2] + p.w * M[2][3];
+		w = p.x * M[3][0] + p.y * M[3][1] + p.z * M[3][2] + p.w * M[3][3];
+		Mesh.SetVertices(glm::fvec3(x / w, y / w, z / w), i);
 	}
 }
 
