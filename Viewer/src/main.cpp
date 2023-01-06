@@ -282,9 +282,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (LOCALtransformation_window)
 		{
 
-			ImGui::SliderFloat("LOCAL Scale X", &s_x_o, 1.0f, 500.0f);
-			ImGui::SliderFloat("LOCAL Scale Y", &s_y_o, 1.0f, 500.0f);
-			ImGui::SliderFloat("LOCAL Scale Z", &s_z_o, 1.0f, 500.0f);
+			ImGui::SliderFloat("LOCAL Scale X", &s_x_o, 1.0f, 5.0f);
+			ImGui::SliderFloat("LOCAL Scale Y", &s_y_o, 1.0f, 5.0f);
+			ImGui::SliderFloat("LOCAL Scale Z", &s_z_o, 1.0f, 5.0f);
 			ImGui::SliderFloat("LOCAL Translate X", &t_x_o, -50.0f, 50.0f);
 			ImGui::SliderFloat("LOCAL Translate Y", &t_y_o, -200.0f, 500.0f);
 			ImGui::SliderFloat("LOCAL Translate Z", &t_z_o, -50.0f, 50.0f);
@@ -311,9 +311,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (WORLDtransformation_window)
 		{
 
-			ImGui::SliderFloat("WORLD Scale X", &s_x_w, 1.0f, 50.0f);
-			ImGui::SliderFloat("WORLD Scale Y", &s_y_w, 1.0f, 50.0f);
-			ImGui::SliderFloat("WORLD Scale Z", &s_z_w, 1.0f, 50.0f);
+			ImGui::SliderFloat("WORLD Scale X", &s_x_w, 1.0f, 5.0f);
+			ImGui::SliderFloat("WORLD Scale Y", &s_y_w, 1.0f, 5.0f);
+			ImGui::SliderFloat("WORLD Scale Z", &s_z_w, 1.0f, 5.0f);
 			ImGui::SliderFloat("WORLD Translate X", &t_x_w, -200.0f, 200.0f);
 			ImGui::SliderFloat("WORLD Translate Y", &t_y_w, -200.0f, 200.0f);
 			ImGui::SliderFloat("WORLD Translate Z", &t_z_w, -200.0f, 200.0f);
@@ -382,7 +382,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (CAMERA_Perspective_window)
 		{
 			ImGui::SliderFloat("Fov", &fov, 0.0f, 360.0f);
-			ImGui::SliderFloat("Aspect", &aspect, 1.0f, 360.0f);
+			ImGui::SliderFloat("Aspect", &aspect, 1.0f, 5.0f);
 			ImGui::SliderFloat("Near", &Zn_p, 0.0f, 2000.0f);
 			ImGui::SliderFloat("Far", &Zf_p, 0.0f, 2000.0f);
 
