@@ -443,40 +443,18 @@ void MeshModel::SetMax(glm::fvec3 m)
 std::vector<glm::fvec3> MeshModel::BoundingBox() 
 {
 	std::vector<glm::fvec3> bb;
-	//bb.push_back(glm::fvec3(min.x, min.y, min.z));// 000  0
-	//bb.push_back(glm::fvec3(max.x, min.y, min.z));// 100  1
-	//bb.push_back(glm::fvec3(max.x, max.y, min.z));// 110  2
-	//bb.push_back(glm::fvec3(min.x, max.y, min.z));// 010  3
-	//bb.push_back(glm::fvec3(min.x, min.y, max.z));// 001  4
-	//bb.push_back(glm::fvec3(max.x, min.y, max.z));// 101  5
-	//bb.push_back(glm::fvec3(max.x, max.y, max.z));// 111  6
-	//bb.push_back(glm::fvec3(min.x, max.y, max.z));// 011  7
+	glm::fvec3 center = glm::fvec3((max.x + min.x) / 2, (max.y + min.y) / 2, (max.z + min.z) / 2);	
+	bb.push_back(glm::fvec3(min.x, min.y, min.z));// 000  0
+	bb.push_back(glm::fvec3(max.x, min.y, min.z));// 100  1
+	bb.push_back(glm::fvec3(max.x, max.y, min.z));// 110  2
+	bb.push_back(glm::fvec3(min.x, max.y, min.z));// 010  3
+	bb.push_back(glm::fvec3(min.x, min.y, max.z));// 001  4
+	bb.push_back(glm::fvec3(max.x, min.y, max.z));// 101  5
+	bb.push_back(glm::fvec3(max.x, max.y, max.z));// 111  6
+	bb.push_back(glm::fvec3(min.x, max.y, max.z));// 011  7
 
-	bb.push_back(glm::fvec3(min.x, min.y, min.z));
-	bb.push_back(glm::fvec3(min.x, min.y, max.z));
-	bb.push_back(glm::fvec3(min.x, max.y, min.z));
-	bb.push_back(glm::fvec3(min.x, max.y, max.z));
-	bb.push_back(glm::fvec3(max.x, max.y, max.z));
-	bb.push_back(glm::fvec3(max.x, min.y, min.z));
-	bb.push_back(glm::fvec3(max.x, min.y, max.z));
-	bb.push_back(glm::fvec3(max.x, max.y, min.z));
+
 
 	return bb;
 
-}
-
-std::vector<glm::fvec3> MeshModel::VerticesNormals()
-{
-	std::vector<glm:: fvec3> VNormals= std::vector< glm::fvec3>(vertices.size());
-	for (int i = 0; i < VNormals.size(); i++)
-		VNormals[i] = glm::fvec3(0.0f);
-	for (int i = 0; i < faces.size(); i++)
-	{
-		VNormals[faces[i].GetVertexIndex(0) - 1] += normals[faces[i].GetVertexIndex(0) - 1];
-		VNormals[faces[i].GetVertexIndex(1) - 1] += normals[faces[i].GetVertexIndex(1) - 1];
-		VNormals[faces[i].GetVertexIndex(2) - 1] += normals[faces[i].GetVertexIndex(2) - 1];
-	}
-	for (int i = 0; i < VNormals.size(); i++)
-		VNormals[i] = glm::normalize(VNormals[i]);
-	return VNormals;
 }
