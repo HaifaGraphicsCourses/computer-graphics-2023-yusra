@@ -64,8 +64,6 @@ public:
 	void SetMin(glm::fvec3 m);
 
 	std::vector<glm::fvec3> BoundingBox();
-	std::vector<glm::fvec3> VerticesNormals();
-
 
 
 private:
