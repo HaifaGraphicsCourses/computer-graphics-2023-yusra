@@ -19,15 +19,17 @@ public:
 	void DrawTriangle(MeshModel& Mesh);
 	void FixPoints(MeshModel& Mesh);
 	void Transformation(MeshModel& Mesh);
-	void DrawBoundingBox(MeshModel& Mesh);
 	void Orth(MeshModel& Mesh, Camera& Cam);
 	void Perspective(MeshModel& Mesh, Camera& Cam);
 	void View(MeshModel& Mesh, Camera& Cam);
-	void DrawAxes(MeshModel& Mesh);
+	void DrawAxesModel(MeshModel& Mesh);
+	void DrawAxesWorld(MeshModel& Mesh);
 	void DrawFaceNormals(MeshModel& Mesh);
 	void DrawVertexNormals(MeshModel& Mesh);
-	glm::fvec3 Transform_point(glm::fvec3 a, MeshModel& Mesh);
-	//void udateModelTranform(glm::mat4x4 Transform, MeshModel& Mesh);
+	void DrawBoundingBoxModel(MeshModel& Mesh);
+	void DrawBoundingBoxWorld(MeshModel& Mesh);
+	glm::fvec3 LocalTransform_point(glm::fvec3 a, MeshModel& Mesh);
+	glm::fvec3 WolrdTransform_point(glm::fvec3 a, MeshModel& Mesh);
 
 	
 
