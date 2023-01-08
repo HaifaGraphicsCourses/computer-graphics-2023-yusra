@@ -838,6 +838,42 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 		DrawLine(p2, p3, color);
 		DrawLine(p3, p1, color);
 
+		// Drawing Bounding Rectangle
+		// fisrt we fins the min x, min y, max x, max y
+		float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y;
+		//min x
+		if (min_x > p2.x)
+			min_x = p2.x;
+		if (min_x > p3.x)
+			min_x = p3.x;
+		// min y
+		if (min_y > p2.y)
+			min_y = p2.y;
+		if (min_y > p3.y)
+			min_y = p3.y;
+		// max x
+		if (max_x < p2.x)
+			max_x = p2.x;
+		if (max_x < p3.x)
+			max_x = p3.x;
+		// max y
+		if (max_y < p2.y)
+			max_y = p2.y;
+		if (max_y < p3.y)
+			max_y = p3.y;
+		glm::fvec2 c1, c2, c3, c4;
+		c1 = glm::fvec2(min_x, min_y);
+		c2 = glm::fvec2(min_x, max_y);
+		c3 = glm::fvec2(max_x, min_y);
+		c4 = glm::fvec2(max_x, max_y);
+		glm::vec3 color_rec = glm::vec3(0.0f, 0.0f, 100.0f);
+		DrawLine(c1, c2, color_rec);
+		DrawLine(c2, c3, color_rec);
+		DrawLine(c3, c4, color_rec);
+		DrawLine(c4, c1, color_rec);
+
+
+
 	}
 }
 void Renderer::Transformation(MeshModel& Mesh)
