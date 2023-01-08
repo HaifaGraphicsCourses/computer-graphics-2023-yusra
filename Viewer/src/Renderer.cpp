@@ -426,14 +426,14 @@ void Renderer::Render( Scene& scene)
 		auto Cam = scene.GetActiveCamera();
 		//View(Mesh, Cam);
 		//Orth(Mesh, Cam);
-		//Perspective(Mesh, Cam);
+		Perspective(Mesh, Cam);
 
 		//DrawBoundingBoxModel(Mesh);
 		//DrawBoundingBoxWorld(Mesh);
 		
 		//DrawAxesModel(Mesh);
 		//DrawAxesWorld(Mesh);
-		Transformation(Mesh);
+		//Transformation(Mesh);
 		DrawTriangle(Mesh);
 		
 		//DrawFaceNormals(Mesh);
@@ -824,6 +824,19 @@ void Renderer::DrawBoundingBoxWorld(MeshModel& Mesh)
 
 }
 
+void Renderer::Depth(MeshModel& Mesh)
+{
+	// first we find the max Z
+	float max_z = Mesh.GetVertices(0).z;
+	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+	{
+		if (max_z < Mesh.GetVertices(i).z)
+			max_z = Mesh.GetVertices(i).z;
+	}
+	std::vector<float> Depth;
+
+}
+
 void Renderer::DrawTriangle(MeshModel& Mesh)
 {
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -866,16 +879,16 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 		c2 = glm::fvec2(min_x, max_y);
 		c3 = glm::fvec2(max_x, min_y);
 		c4 = glm::fvec2(max_x, max_y);
-		glm::vec3 color_rec = glm::vec3(0.0f, 0.0f, 100.0f);
+		float c = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z +
+			Mesh.GetVertices(face.GetVertexIndex(1) - 1).z) / 3.0f;
+		glm::vec3 color_rec = glm::vec3(250.0f - c, 250.0f - c, 250.0f - c);
 		DrawLine(c1, c2, color_rec);
 		DrawLine(c2, c3, color_rec);
 		DrawLine(c3, c4, color_rec);
 		DrawLine(c4, c1, color_rec);
-
-
-
 	}
 }
+
 void Renderer::Transformation(MeshModel& Mesh)
 {
 	glm::mat4 M = Mesh.GetTransformation();
