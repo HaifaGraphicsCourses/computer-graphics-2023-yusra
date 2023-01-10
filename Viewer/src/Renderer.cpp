@@ -426,13 +426,17 @@ void Renderer::Render( Scene& scene)
 		auto Cam = scene.GetActiveCamera();
 		//View(Mesh, Cam);
 		//Orth(Mesh, Cam);
-		Perspective(Mesh, Cam);
+		if (Cam.orth)
+			Orth(Mesh, Cam);
+		else if(Cam.pers)
+			Perspective(Mesh, Cam);
+		else Transformation(Mesh);
 
 		//DrawBoundingBoxModel(Mesh);
 		//DrawBoundingBoxWorld(Mesh);
 		
-		//DrawAxesModel(Mesh);
-		//DrawAxesWorld(Mesh);
+		/*DrawAxesModel(Mesh);
+		DrawAxesWorld(Mesh);*/
 		//Transformation(Mesh);
 		DrawTriangle(Mesh);
 		
@@ -840,7 +844,9 @@ void Renderer::Depth(MeshModel& Mesh)
 void Renderer::DrawTriangle(MeshModel& Mesh)
 {
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::fvec2 p1, p2, p3;
+	glm::fvec2 p1, p2, p3, p;
+	float a12, a13, a23, b12, b13, b23, c12, c13, c23;
+	int ur = 0, ul = 0, dl = 0, dr = 0;
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
 		auto face = Mesh.GetFace(i);
@@ -852,7 +858,7 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 		DrawLine(p3, p1, color);
 
 		// Drawing Bounding Rectangle
-		// fisrt we fins the min x, min y, max x, max y
+		// fisrt we find the min x, min y, max x, max y
 		float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y;
 		//min x
 		if (min_x > p2.x)
@@ -874,18 +880,45 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 			max_y = p2.y;
 		if (max_y < p3.y)
 			max_y = p3.y;
-		glm::fvec2 c1, c2, c3, c4;
+		/*glm::fvec2 c1, c2, c3, c4;
 		c1 = glm::fvec2(min_x, min_y);
 		c2 = glm::fvec2(min_x, max_y);
 		c3 = glm::fvec2(max_x, min_y);
 		c4 = glm::fvec2(max_x, max_y);
 		float c = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z +
 			Mesh.GetVertices(face.GetVertexIndex(1) - 1).z) / 3.0f;
-		glm::vec3 color_rec = glm::vec3(250.0f - c, 250.0f - c, 250.0f - c);
+		glm::vec3 color_rec = glm::vec3(255.0f - c, 255.0f - c, 255.0f - c);
 		DrawLine(c1, c2, color_rec);
 		DrawLine(c2, c3, color_rec);
 		DrawLine(c3, c4, color_rec);
-		DrawLine(c4, c1, color_rec);
+		DrawLine(c4, c1, color_rec);*/
+
+		/// we have a rectangle w x h
+		float w = max_x - min_x, h = max_y - min_y, k, m, l;
+
+		glm::vec3 color_poly = glm::vec3(200.f,0.0f, 0.0f);
+
+		float a12 = p1.y - p2.y;
+		float a23 = p2.y - p3.y;
+		float a31 = p3.y - p1.y;
+		float b12 = p2.x - p1.x;
+		float b23 = p3.x - p2.x;
+		float b31 = p1.x - p3.x;
+		float c12 = (p1.x * p2.y - p2.x * p1.y);
+		float c23 = (p2.x * p3.y - p3.x * p2.y);
+		float c31 = (p3.x * p1.y - p1.x * p3.y);
+		float e1, e2, e3;
+		for (float h = min_y; h <= max_y; h++)
+		{
+			for (float w = min_x; w <= max_x; w++)
+			{
+				e1 = a12 * w + b12 * h + c12;
+				e2 = a23 * w + b23 * h + c23;
+				e3 = a31 * w + b31 * h + c31;
+				if(e1 > 0 && e2 > 0&& e3 > 0)
+					PutPixel(w, h, color_poly);
+			}
+		}
 	}
 }
 
