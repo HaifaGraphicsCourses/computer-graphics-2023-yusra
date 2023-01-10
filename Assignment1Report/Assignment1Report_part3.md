@@ -25,9 +25,14 @@
 
 - After Local Translate only the red axes (local axes) moved.
 ![1c_4_2.png](https://ams03pap003files.storage.live.com/y4mB48lIXjKNuCGJKlAgdGlitS850FOPCeLBOtm3Br_aA6oPqili0w3jwVnXM7s_dMbB1H2S4JjP_uQZ3VEOzdmWbyagGvmxu1Y76t-5z8SwWoYgHh1PiBWOSUp6ZypaGB0Atsdj21opvoWt0a27_56icxegLOIlzr015IdQt3iA6BvntZuMO0Rrpj1i8C7af4h?width=1282&height=758&cropmode=none)
+after fixing:
+![42.png](https://ams03pap003files.storage.live.com/y4mUet8Q8BCv5MIjW9ojOHy_yqNVLMSAlZYTLuGkpwlgwwnc46ytcukjPS_RGQOU_ThCpGRUNXvKp0NdsgVymfMi2H7b1dsxiK9b184il-zKI9ifYrIC7hzLTqm8-DrLOd14acXz06xvSOtOSs1KEucIE69GP0Dge2c4YeqqQsy1W56D9XSNxy0SqCXQknKCrqC?width=1288&height=760&cropmode=none)
 
 - After World Translate both axes moved.
 ![1c_4_3.png](https://ams03pap003files.storage.live.com/y4m5SXkj1cJ5ENVHp2Ykxp6tAZrG4SgM167Hcq34G3Zsu-DQFQyl98JY7bJrWW2RVMZ6YwfEBB6-OfenVTcvrHwgVEIpbM72LFFda_c3OG9nUutphf1alIkM6cjTq-K_H2EPqxRX_9KQdebcXvjtscbnQj7lvUZHpELuDfmpnvesIgX9NDhah_jW0MDq1vWPzuC?width=1279&height=758&cropmode=none)
+after fixing:
+![43.png](https://ams03pap003files.storage.live.com/y4m2HRlr1J8HIXYyUFu_VGpDAGBbDTepUABro6lUXjvVrMcwXOUmiEm1aCDSnkftlqEirwWA2nVV6RwodyzGndweycNlZHjnHYqGwceERaSFJkb3XCyEARCu2pPIoogoWBS2dJpqIKGBIbgLz6b9f-riZb_eJOWtz6oAvpcN2F0cl4lJTVZhA_vMa53MFbC3oPv?width=1283&height=750&cropmode=none)
+
 
 ### 5.
 - The non-commuting transformations are scaling and translating.
@@ -44,6 +49,7 @@
 ![1c_6_2.png](https://ams03pap003files.storage.live.com/y4m4Se95Gs1_9_ppUKmgHPe2a219_o6bY5-yIKgbEz_XHAD5eIJ4qemwXjdcddXzgEiSnLeT3J4dCNnJJp-JAFpYKfoqrCHic5VKtZO4QGbJ1GIumYvkEN9u2rDsVdWV7moLcBA6VrtHCr9sQ2G_BehCYItME6tMttxJjcssmZxVF_ojSDPhLkVatnX1mZhncEm?width=1277&height=753&cropmode=none)
 ![1c_6_3.png](https://ams03pap003files.storage.live.com/y4mn6jTT5zrn9wioFyl-AxcleKqGyu_cmPslow1PECToY1nyFZPe8tiUcX6YqGOnRBySAohharg3H46bSZSqOiz29vfNFclQN0GL45dpPTzEAXkTNaRYDGSLab0vinKFzt0rbNIhZRrAUwBrFtCn_ujxaiuDhhl6g_6eLWvtCeP9_i3TAsB7tpClJCEGBtiACBM?width=1279&height=754&cropmode=none)
 ![1c_6_4.png](https://ams03pap003files.storage.live.com/y4m9NqZiqW07-M3IuQwbkwu7cAS66frqFknAaYJJ4vbktdk2qFe2hwVXMJ0HBTOEdoxN6GHwGKGOVsjyiDWn8cCqzl3dDOykctoJFcdHXRrLSufjiKEWwd0okZgPW6Z2hqiEtxdMGBUU3Vb7tyUYbHGLOeCKxvf7WxwggXtlTmZvudrmzL40Cq_TVi5Az-qLs28?width=1283&height=755&cropmode=none)
+
 
 ### 7. 
 - Face Normals:
