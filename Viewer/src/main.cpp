@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 		StartFrame();
 		glfwSetWindowSize(window, Width, Height);
 		glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
-		glViewport(0, 0, windowWidth, windowHeight);
+		//glViewport(1280, 720, windowWidth, windowHeight);
 		DrawImguiMenus(io, scene);
 		RenderFrame(window, scene, renderer, io);
 	}
@@ -372,7 +372,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("Botton", &botton, -10.0f, 10.0f);
 			ImGui::SliderFloat("Near", &Zn_o, -10.0f, 10.0f);
 			ImGui::SliderFloat("Far", &Zf_o, -10.0f, 10.0f);
-
+			scene.GetActiveCamera().orth = true;
+			scene.GetActiveCamera().pers = false;
+			CAMERA_Perspective_window = false;
 			scene.GetActiveCamera().SetOrthographicProjectionMatrix(botton, top, l, r, Zn_o, Zf_o);
 
 		}
@@ -385,7 +387,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("Aspect", &aspect, 1.0f, 5.0f);
 			ImGui::SliderFloat("Near", &Zn_p, 0.0f, 2000.0f);
 			ImGui::SliderFloat("Far", &Zf_p, 0.0f, 2000.0f);
-
+			scene.GetActiveCamera().pers= true;
+			scene.GetActiveCamera().orth = false;
+			CAMERA_Orthographic_window = false;
 			scene.GetActiveCamera().SetPerspectiveProjectionMatrix(fov, aspect, Zn_p, Zf_p);
 		}
 		
@@ -395,7 +399,15 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (window)
 		{
 			ImGui::SliderInt("Height", &Height, 1, 3000);
+			//if (scene.GetModelCount() > 0 && Height != 720)
+			//{
+			//	scene.GetActiveModel().SetOBJScale(Height - 720, 1);
+			//}
 			ImGui::SliderInt("Width", &Width, 1, 3000);
+			//if (scene.GetModelCount() > 0 && Width != 1280)
+			//{
+			//	scene.GetActiveModel().SetOBJScale(Width- 1280, 0);
+			//}
 
 		}
 
