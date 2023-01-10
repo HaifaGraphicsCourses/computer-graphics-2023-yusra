@@ -14,9 +14,14 @@
 ![1c_3_1.png](https://ams03pap003files.storage.live.com/y4mVCkE-_BDhaOUiVuMXCs7mOvJpUjrw5eD57JHThNHE1tCZRa-3v-IxmIV-Ij93Ykw-BCGr9onDt4nZDi16L-SQupv8FMjG_7x7h6QKqJCGpwOiVR4my8B5WPfXORk4kVGVNScZ2C80jTThRPfq2WDuPgMHqcTwf880O0Avh7igIEIq3UYiu5iLQtgXBTUN_DR?width=1277&height=750&cropmode=none)
 ![1c_3_2.png](https://ams03pap003files.storage.live.com/y4mdQcHjGlAVZgN4SjWytt2-gC_axOBylTKJkqcPOq7tjXge03LXNOYJ4zO9b1JyViXiuw08aJSRGQqNna9s6CRStv1DQ7kvdxW7Obk5Ih3EoxWiy8_3EBL6jzPzGvXr3NfLjRYyd4Opmu88i63fAhwPl31lLNJqKGRQzwd7fWgPXJ1GQ3UXoOcRKmMjWhrXGuc?width=1167&height=967&cropmode=none)
 
+### after fe=ixing:
+![30.png](https://ams03pap003files.storage.live.com/y4mO67Ncp191m_Tlu36k3HSqyNcrwiNNqgo_G1UEFKlv7PocRkQyiwpxlwrfv9S9f1TjUrvmAAIjanEniAl9Z7B_uMYxra3sWE5tWxnW5FU3BI5uBYB_c_LFBA6qMgQuXgKPj3SL-374A7N0uTaiRfAAI9S_l-4xcjAtv2BvD2VgaXgLF5GHcQ3BlSltSqfzijg?width=1286&height=758&cropmode=none)
+![31.png](https://ams03pap003files.storage.live.com/y4mU4VA24_lDyVY89Qj8rPgduiOxiMSRxpp9zZEin28QNSccfrRK2B_-4SmvmRf4NyytM7Mc0PIHoyb7bzmwfeqCWRBS9CIjjs0YFmQ8wU5uWy_homzApagqYd2JGGNuUPmhBYj_76VjMfuoAjA4kwbGH7wJT4Lq9ob3nIv74WlvzU7m2isvBjm36cI7OONOFHg?width=542&height=663&cropmode=none)
+
 ### 4.
 - In the beginning, both axes are in the same place. Red = Local, Blue = World
  ![1c_4_1.png](https://ams03pap003files.storage.live.com/y4mxp2yup5nds-ueOXEajK5rmB6AzRUEzaRdqUkKCopu9NLXPHsjoZeJYe9rs-ZtsVILqZYFk65bxLbjLUrC-CgFFecYGPBlkPvda4rwPX-fUGdnEZeBDih__aNQuaoqfH1EUaZtVZIWDLe9PcgNg_Y_pviRNKYp7-j-ph5PqFLRJ81rZnR4ATmaB9pwdSXKbDd?width=1283&height=758&cropmode=none)
+
 
 - After Local Translate only the red axes (local axes) moved.
 ![1c_4_2.png](https://ams03pap003files.storage.live.com/y4mB48lIXjKNuCGJKlAgdGlitS850FOPCeLBOtm3Br_aA6oPqili0w3jwVnXM7s_dMbB1H2S4JjP_uQZ3VEOzdmWbyagGvmxu1Y76t-5z8SwWoYgHh1PiBWOSUp6ZypaGB0Atsdj21opvoWt0a27_56icxegLOIlzr015IdQt3iA6BvntZuMO0Rrpj1i8C7af4h?width=1282&height=758&cropmode=none)
