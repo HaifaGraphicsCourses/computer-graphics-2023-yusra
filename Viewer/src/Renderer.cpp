@@ -429,8 +429,8 @@ void Renderer::Render( Scene& scene)
 		//DrawBoundingBoxModel(Mesh, Cam);
 		//DrawBoundingBoxWorld(Mesh, Cam);
 		
-		DrawAxesModel(Mesh, Cam);
-		DrawAxesWorld(Mesh, Cam);
+		//DrawAxesModel(Mesh, Cam);
+		//DrawAxesWorld(Mesh, Cam);
 		ProjectionTransformation(Mesh, Cam);
 		
 		DrawTriangle(Mesh);
@@ -589,13 +589,13 @@ glm::fvec3 Renderer::WolrdTransform_point(glm::fvec3 a, MeshModel& Mesh, Camera&
 	// tranformatiom = projection * inv(cam_trans)
 	glm::mat4x4 Projection = Cam.GetProjectionTransformation();
 	glm::mat4x4 cam_trans = glm::inverse(Cam.GetViewTransformation());
-	glm::mat4x4 world_trams = Mesh.GetworldTransform();
+	glm::mat4x4 world_trans = Mesh.GetworldTransform();
 	glm::mat4  M = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
-	M = Projection * world_trams;
+	M = Projection * world_trans;
 	glm::fvec4 p = glm::fvec4(a.x, a.y, a.z, 1.0f);
 	p = M * p;
 	/*p.x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
@@ -820,7 +820,7 @@ void Renderer::DrawBoundingBoxWorld(MeshModel& Mesh, Camera& Cam)
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
-	M = Projection * Mesh.GetworldTransform();
+	M = Projection * Mesh.GetTransformation();
 	glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, Mesh.GetVertices(0).z);
 	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
@@ -1002,41 +1002,41 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 
 		
 		/// we have a rectangle w x h
-	//	float w = max_x - min_x, h = max_y - min_y, k, m, l;
-	//	vector<vector<float>>z_depth = GetBuffer(h, w);
-	//	float sum = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z + Mesh.GetVertices(face.GetVertexIndex(2) - 1).z) / 3.0f;
-	//	glm::vec3 color_poly = glm::fvec3(sum, sum, sum);
-	//	//glm::vec3 color_poly = glm::fvec3(200.f, 0.0f, 0.0f);
-	//	float a12 = p1.y - p2.y;
-	//	float a23 = p2.y - p3.y;
-	//	float a31 = p3.y - p1.y;
-	//	float b12 = p2.x - p1.x;
-	//	float b23 = p3.x - p2.x;
-	//	float b31 = p1.x - p3.x;
-	//	float c12 = (p1.x * p2.y - p2.x * p1.y);
-	//	float c23 = (p2.x * p3.y - p3.x * p2.y);
-	//	float c31 = (p3.x * p1.y - p1.x * p3.y);
-	//	float e1, e2, e3, d, z, z_tag;
+		float w = max_x - min_x, h = max_y - min_y, k, m, l;
+		vector<vector<float>>z_depth = GetBuffer(h, w);
+		float sum = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z + Mesh.GetVertices(face.GetVertexIndex(2) - 1).z) / 3.0f;
+		glm::vec3 color_poly = glm::fvec3(sum, sum, sum);
+		//glm::vec3 color_poly = glm::fvec3(200.f, 0.0f, 0.0f);
+		float a12 = p1.y - p2.y;
+		float a23 = p2.y - p3.y;
+		float a31 = p3.y - p1.y;
+		float b12 = p2.x - p1.x;
+		float b23 = p3.x - p2.x;
+		float b31 = p1.x - p3.x;
+		float c12 = (p1.x * p2.y - p2.x * p1.y);
+		float c23 = (p2.x * p3.y - p3.x * p2.y);
+		float c31 = (p3.x * p1.y - p1.x * p3.y);
+		float e1, e2, e3, d, z, z_tag;
 
-	//	color_poly = glm::fvec3(rand() % 5, rand() % 50, rand() % 200);
-	//	for (float i = min_y; i <= max_y; i++)
-	//	{
-	//		z = (sort[0].z + sort[1].z) / 20.f;
+		color_poly = glm::fvec3(rand() % 5, rand() % 50, rand() % 200);
+		for (float i = min_y; i <= max_y; i++)
+		{
+			z = (sort[0].z + sort[1].z) / 20.f;
 
-	//		for (float j = min_x; j <= max_x; j++)
-	//		{
-	//			e1 = a12 * j + b12 * i + c12;
-	//			e2 = a23 * j + b23 * i + c23;
-	//			e3 = a31 * j + b31 * i + c31;
-	//			if (e1 > 0 && e2 > 0 && e3 > 0)
-	//			{
-	//				PutPixel(j, i, color_poly);
-	//				
-	//				//d = a12 * j + b12 * i + c12
-	//				//if(z_depth[j-min_x][i-min_y] >)
-	//			}
-	//		}
-	//	}
+			for (float j = min_x; j <= max_x; j++)
+			{
+				e1 = a12 * j + b12 * i + c12;
+				e2 = a23 * j + b23 * i + c23;
+				e3 = a31 * j + b31 * i + c31;
+				if (e1 > 0 && e2 > 0 && e3 > 0)
+				{
+					PutPixel(j, i, color_poly);
+					
+					//d = a12 * j + b12 * i + c12
+					//if(z_depth[j-min_x][i-min_y] >)
+				}
+			}
+		}
 	}
 }
 
