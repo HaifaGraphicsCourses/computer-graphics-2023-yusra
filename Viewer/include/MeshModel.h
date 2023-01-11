@@ -64,6 +64,12 @@ public:
 	void SetMin(glm::fvec3 m);
 
 	std::vector<glm::fvec3> BoundingBox();
+	
+	void InitializeDepthColor(); 
+	std::vector<float> depth;
+	std::vector<glm::vec3> color;
+
+	int	GetVerticesSize();
 
 
 private:
@@ -71,6 +77,7 @@ private:
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
 	std::string model_name;
+
 
 	glm::mat4 objectTransform;
 	glm::mat4 Scale_obj;
@@ -88,4 +95,8 @@ private:
 
 	glm::fvec3 max;
 	glm::fvec3 min;
+
+
+
+	
 };
