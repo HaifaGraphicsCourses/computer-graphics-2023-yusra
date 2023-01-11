@@ -25,13 +25,13 @@
 
 - After Local Translate only the red axes (local axes) moved.
 ![1c_4_2.png](https://ams03pap003files.storage.live.com/y4mB48lIXjKNuCGJKlAgdGlitS850FOPCeLBOtm3Br_aA6oPqili0w3jwVnXM7s_dMbB1H2S4JjP_uQZ3VEOzdmWbyagGvmxu1Y76t-5z8SwWoYgHh1PiBWOSUp6ZypaGB0Atsdj21opvoWt0a27_56icxegLOIlzr015IdQt3iA6BvntZuMO0Rrpj1i8C7af4h?width=1282&height=758&cropmode=none)
-after fixing:
-![42.png](https://ams03pap003files.storage.live.com/y4mUet8Q8BCv5MIjW9ojOHy_yqNVLMSAlZYTLuGkpwlgwwnc46ytcukjPS_RGQOU_ThCpGRUNXvKp0NdsgVymfMi2H7b1dsxiK9b184il-zKI9ifYrIC7hzLTqm8-DrLOd14acXz06xvSOtOSs1KEucIE69GP0Dge2c4YeqqQsy1W56D9XSNxy0SqCXQknKCrqC?width=1288&height=760&cropmode=none)
+
 
 - After World Translate both axes moved.
 ![1c_4_3.png](https://ams03pap003files.storage.live.com/y4m5SXkj1cJ5ENVHp2Ykxp6tAZrG4SgM167Hcq34G3Zsu-DQFQyl98JY7bJrWW2RVMZ6YwfEBB6-OfenVTcvrHwgVEIpbM72LFFda_c3OG9nUutphf1alIkM6cjTq-K_H2EPqxRX_9KQdebcXvjtscbnQj7lvUZHpELuDfmpnvesIgX9NDhah_jW0MDq1vWPzuC?width=1279&height=758&cropmode=none)
-after fixing:
-![43.png](https://ams03pap003files.storage.live.com/y4m2HRlr1J8HIXYyUFu_VGpDAGBbDTepUABro6lUXjvVrMcwXOUmiEm1aCDSnkftlqEirwWA2nVV6RwodyzGndweycNlZHjnHYqGwceERaSFJkb3XCyEARCu2pPIoogoWBS2dJpqIKGBIbgLz6b9f-riZb_eJOWtz6oAvpcN2F0cl4lJTVZhA_vMa53MFbC3oPv?width=1283&height=750&cropmode=none)
+ after fixing:
+![4_0.png](https://ams03pap003files.storage.live.com/y4mVftNOPiqyE9ZRQehrgSVAU6KkM76J7FhiSsIpyk9SC7jc3CaSoAx_wHoTX5pBzzmvaFv6s8BH9eKpWJ0NtgF9wFjZE8-vdRXpuvp3IMod3aQU2Yqj2HRtdPPHrvIHTJ1HpRIHDie1G4A4ULyw4VQuBfzJTwK34GLtr4huBcSm1szW7rS6puFChLe7S-3XHMt?width=1292&height=761&cropmode=none)
+![4_1.png](https://ams03pap003files.storage.live.com/y4m_3nOZKaYwkoJjMrW1yoknCkUkozwY7d7tD6zC3DnNQK75EN4ESeoRjQWAc2Z4PeoIE0b0o7Z1sCG0n_ptAb2fdaUQjAM4YtpIybu6qXZf0GB9iQkMZlJCkG24TOInssD56qqWQS0d_6k-hfcIhjbjd-zgxhP3FlXAnHd9jZMxZFK3ZrxDK_OOlpwfOdHNqbs?width=1282&height=764&cropmode=none)
 
 
 ### 5.
