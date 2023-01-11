@@ -40,13 +40,8 @@
 ![5.1.png](https://ams03pap003files.storage.live.com/y4mM_4dkCtnj7po8xND4zBVZxd2DrGG-PviHaDyMH-JDp76CipbGlsvx0fm4_FskjJgrbcGNYPOGFqSlMZUoJjQL0ddo4KeKqbZQgj6lTMLMUMkMfQBW_pbrxI1FYuJ-SHqSQ6O8_Te12BWw0OhSdrL58Wwp6X_wDlwNCSDwLT6-ECVnvAY8_AuAidMskraXfbT?width=1281&height=764&cropmode=none)
 ![5.2.png](https://ams03pap003files.storage.live.com/y4m4Dqclk_xlAG2pjgcJM99MHWWS3Un3isGIgz4p5_RavhPN5J6Fk5owOGrgdyTtCO9TJXwLGRprmSnEXccW3DNGMYgctmuVRn6wxe5wj399hBhV2uVdJVJajEAqqevxBW3n49ptIiKuE8O6cUw9yhv6xQBR_VM_fFgtwZKDEzniZVxWfKkE4LJU1MjsqjpPVZr?width=1282&height=760&cropmode=none)
 after fixing:
-T1 = tranlate X(20) ScaleX(1.500) ScaleY(1.500)
-T2 = tranlate Y(20) ScaleX(1.200) ScaleY(1.200)
-![50.png](https://ams03pap003files.storage.live.com/y4mUvJDO5tS6TB300Ior8l4fjQz7-8lhpIsyktcGGVa9Qn2sEJ7BIKdC1KuX6JiWIjGv4UZF9p0EsWEAtRIImQrHje5VnfbWgP_HKfqgRi2y2sVs1Rfqm0ibUT1-osiea1RW-HfuawbpWUzZ_lNf62uidXVVNrlSeBD4Ad9Zv70hGkjpfFJqxvlIItzgUz38ulQ?width=1282&height=761&cropmode=none)
-* Local Transform = T1, World Transform = T2
-![51.png](https://ams03pap003files.storage.live.com/y4mH7wi-Df0RyZgbyR5eO-3R2O1aqlaFp2HG0Yr8PG38KFXF2OmhU4ATqMz96qtfPJvIOyUGWeG6JMUWVYIIAnGFrfhTRSVVGYzH43j9o17oXW229b6PSZqOxehdko4jnQgdVgyXC-Ytd2rUwBr5QL54E4KL3O3js60kHC7K3gfm5-x4NwL9GCJdWcrOh7K7xRp?width=1282&height=755&cropmode=none)
-* Local Transform = T2, World Transform = T1
-![52.png](https://ams03pap003files.storage.live.com/y4mEp-lhGF6Y22QWSl1ImvfVD82v5f9kY37523LV9HjoLNrvKcx3c0a2EvpW-dojPYx4ov_4J2kzWVAd0OZnSEiQEPZr01JEPY51TUedvA4OLwenhapCt8FOY4X5A-L5_NScblAZ7V-J_uOVlVRBGzG46oxWjPGTasKLvczXBk7ZnDI5JfUwyuzYT7bzEumqshw?width=1280&height=757&cropmode=none)
+![t2.png](https://ams03pap003files.storage.live.com/y4mLjJw1QzR9NZ3Uan9Kh7eGGcZC_ibJKMvE-eMD62CPNXdNpIsalA0nSG_LDyZ0xI-dQz6B-vU6St6oFNwX3OePrBq5xkXdFePh-3zo66nWwu8UCHW9FDOX16TxRQ_yMeg1zMYO3vTL6wSvALP5XSnGj8YpQmE3eHhxzEiclXm_jZr9N4bFoRZRrbv9pbBuhiO?width=1653&height=609&cropmode=none)
+![t3.png](https://ams03pap003files.storage.live.com/y4mzi41qragbC_Vak1EZk4Yga0m78hDvBzfEgWURmk7VQOKrGh9fA7qdZr6GYHoqA3QWYwObcPxeQx20UTTB_22LYdiJ0fOY0ChmEaG3AfV8bTQx0qZQbAuPGOp-GHdAaxEyGUC6o9-0LFEVw5v1wE8OSrSJKem7f-oLJhYsN0qd4ml33uPQGIk2mZqaAn29oR6?width=1646&height=639&cropmode=none)
 ### 6. 
 - For the object Bounding Box we always multiply its coordinates with the same transformation matrix we multiply the mode. But in the world Bounding Box, we multiply them with World Transform Matrix.
 - both of the Bounding boces in the same place: 
