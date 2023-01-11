@@ -11,7 +11,7 @@ public:
 	void SetCameraLookAt(const glm::fvec3& eye, const glm::fvec3& at, const glm::fvec3& up);
 	void SetOrthographicProjectionMatrix(float b, float t, float l, float r, float Zn, float Zf);
 	void SetPerspectiveProjectionMatrix(float fovy, float aspect, float Zn, float Zf);
-	const glm::mat4x4& GetProjectionTransformation() const;
+	glm::mat4x4& GetProjectionTransformation();
 	const glm::mat4x4& GetViewTransformation();
 	void SetTransformation(const glm::mat4x4& transform);
 	void SetProjection(const glm::mat4x4& projection);
@@ -44,6 +44,10 @@ public:
 	glm::mat4x4 GetPersMat();
 	void TransformCamera();
 	glm::mat4x4 GetCamTransformation();
+
+	bool orth = false;
+	bool pers = false;
+
 
 private:
 	glm::mat4x4 view_transformation;
