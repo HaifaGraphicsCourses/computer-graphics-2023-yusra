@@ -434,20 +434,14 @@ void Renderer::Render( Scene& scene)
 			Perspective(Mesh, Cam);
 		else Transformation(Mesh);*/
 
-		/*DrawBoundingBoxModel(Mesh, Cam);
-		DrawBoundingBoxWorld(Mesh, Cam);*/
+		//DrawBoundingBoxModel(Mesh, Cam);
+		//DrawBoundingBoxWorld(Mesh, Cam);
 		
-		/*DrawAxesModel(Mesh,Cam);
-		DrawAxesWorld(Mesh,Cam);*/
-		//Transformation(Mesh);
-	/*	DrawAxesModel(Mesh, Cam);
-		DrawAxesWorld(Mesh, Cam);*/
 		DrawAxesModel(Mesh, Cam);
-		//DrawAxesWorld(Mesh, Cam);
+		DrawAxesWorld(Mesh, Cam);
 		ProjectionTransformation(Mesh, Cam);
 		
 		DrawTriangle(Mesh);
-		
 		
 		//DrawFaceNormals(Mesh);
 		//DrawVertexNormals(Mesh);
@@ -522,7 +516,7 @@ void Renderer::DrawAxesWorld(MeshModel& Mesh, Camera& Cam)
 		max_ = max.z;
 
 	//glm::fvec3 center = glm::fvec3((max.x + min.x) / 2, (max.y + min.y) / 2, (max.z + min.z) / 2);
-	glm::fvec3 center = glm::fvec3(50.0f, 50, 50.0f);
+	glm::fvec3 center = glm::fvec3(100.0f, 100, 100.0f);
 	center = WolrdTransform_point(center, Mesh, Cam);
 	glm::fvec3 p1 = WolrdTransform_point(glm::fvec3(300, 0.0f, 0.0f), Mesh, Cam);
 	glm::fvec3 p2 = WolrdTransform_point(glm::fvec3(0.0f, 300, 0.0f), Mesh, Cam);
@@ -594,7 +588,7 @@ glm::fvec3 Renderer::LocalTransform_point(glm::fvec3 a, MeshModel& Mesh, Camera&
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
-	M = Projection * cam_trans * Mesh_trans;
+	M = Projection * Mesh_trans;
 	glm::fvec4 p = glm::fvec4(a.x, a.y, a.z, 1);
 	p = p * M;
 	return glm::fvec3(p.x, p.y , p.z);
@@ -608,7 +602,7 @@ glm::fvec3 Renderer::WolrdTransform_point(glm::fvec3 a, MeshModel& Mesh, Camera&
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
-	M = Projection * cam_trans;
+	M = Projection;
 	glm::fvec4 p = glm::fvec4(a.x, a.y, a.z, 1.0f);
 	p = M * p;
 	/*p.x = p.x * M[0][0] + p.y * M[0][1] + p.z * M[0][2] + p.w * M[0][3];
@@ -668,7 +662,7 @@ void Renderer::ProjectionTransformation(MeshModel& Mesh,Camera& Cam)
 	glm::mat4x4 cam_trans = glm::inverse(Cam.GetViewTransformation());
 	glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
 	glm::mat4x4 M;
-	M = Projection * cam_trans * mesh_transformation;
+	M = Projection *  mesh_transformation;
 	glm::fvec4 p, r; float x, y, z, w;
 	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
@@ -755,7 +749,7 @@ void Renderer::DrawBoundingBoxModel(MeshModel& Mesh, Camera& Cam)
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
-	M = Mesh_trans;
+	M = Projection  * Mesh_trans;
 	//glm::mat4 M = Mesh.GetTransformation();
 	glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, Mesh.GetVertices(0).z);
 	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
@@ -833,7 +827,7 @@ void Renderer::DrawBoundingBoxWorld(MeshModel& Mesh, Camera& Cam)
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
-	M = Mesh.GetworldTransform();
+	M = Projection * Mesh.GetworldTransform();
 	glm::fvec3 max = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, Mesh.GetVertices(0).z);
 	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
