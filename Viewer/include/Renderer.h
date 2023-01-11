@@ -21,15 +21,20 @@ public:
 	void Transformation(MeshModel& Mesh);
 	void Orth(MeshModel& Mesh, Camera& Cam);
 	void Perspective(MeshModel& Mesh, Camera& Cam);
-	void View(MeshModel& Mesh, Camera& Cam);
-	void DrawAxesModel(MeshModel& Mesh);
-	void DrawAxesWorld(MeshModel& Mesh);
+	void CameraTransformarion(MeshModel& Mesh, Camera& Cam);
+	void DrawAxesModel(MeshModel& Mesh, Camera& Cam);
+	void DrawAxesWorld(MeshModel& Mesh, Camera& Cam);
 	void DrawFaceNormals(MeshModel& Mesh);
 	void DrawVertexNormals(MeshModel& Mesh);
-	void DrawBoundingBoxModel(MeshModel& Mesh);
-	void DrawBoundingBoxWorld(MeshModel& Mesh);
-	glm::fvec3 LocalTransform_point(glm::fvec3 a, MeshModel& Mesh);
-	glm::fvec3 WolrdTransform_point(glm::fvec3 a, MeshModel& Mesh);
+	void DrawBoundingBoxModel(MeshModel& Mesh, Camera& Cam);
+	void DrawBoundingBoxWorld(MeshModel& Mesh, Camera& Cam);
+	glm::fvec3 LocalTransform_point(glm::fvec3 a, MeshModel& Mesh, Camera& Cam);
+	glm::fvec3 WolrdTransform_point(glm::fvec3 a, MeshModel& Mesh, Camera& Cam);
+	void Depth(MeshModel& Mesh);
+	void Z_Buffer(MeshModel& Mesh);
+	vector<vector<float>> GetBuffer(int h, int w);
+	void ProjectionTransformation(MeshModel& Mesh, Camera& Cam);
+
 
 	
 
@@ -40,6 +45,7 @@ private:
 	void CreateBuffers(int w, int h);
 	void CreateOpenglBuffer();
 	void InitOpenglRendering();
+	
 
 	float* color_buffer;
 	int viewport_width;
