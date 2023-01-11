@@ -87,7 +87,6 @@ int main(int argc, char **argv)
 		StartFrame();
 		glfwSetWindowSize(window, Width, Height);
 		glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
-		//glViewport(1280, 720, windowWidth, windowHeight);
 		DrawImguiMenus(io, scene);
 		RenderFrame(window, scene, renderer, io);
 	}
@@ -399,15 +398,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (window)
 		{
 			ImGui::SliderInt("Height", &Height, 1, 3000);
-			//if (scene.GetModelCount() > 0 && Height != 720)
-			//{
-			//	scene.GetActiveModel().SetOBJScale(Height - 720, 1);
-			//}
 			ImGui::SliderInt("Width", &Width, 1, 3000);
-			//if (scene.GetModelCount() > 0 && Width != 1280)
-			//{
-			//	scene.GetActiveModel().SetOBJScale(Width- 1280, 0);
-			//}
+
 
 		}
 
