@@ -65,6 +65,8 @@ Camera::~Camera()
 	
 }
 
+
+
 void Camera::Set_at(glm::fvec3 a)
 {
 	at = a;
@@ -141,34 +143,25 @@ glm::mat4 Camera::Mul_RotateMat_CAMERA()
 		XYZ = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } };;
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	return Rotate_c_x * Rotate_c_y * Rotate_c_z;
 
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 3; k++) {
-				sum += Rotate_c_x[i][k] * Rotate_c_y[k][j];
-			}
-			XY[i][j] = sum;
-		}
-	}
-
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 3; k++) {
-				sum += XY[i][k] * Rotate_c_z[k][j];
-			}
-			XYZ[i][j] = sum;
-
-		}
-	}
-	return XYZ;
 
 }
 
-const glm::mat4x4& Camera::GetProjectionTransformation() const
+ glm::mat4x4& Camera::GetProjectionTransformation() 
 {
+	 projection_transformation= { { 1.0f, 0.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	if (orth)
+	{
+		projection_transformation = orth_mat;
+	}
+	else if (pers) {
+		projection_transformation = pers_mat;
+	}
 	return projection_transformation;
 }
 
@@ -176,15 +169,11 @@ const glm::mat4x4& Camera::GetViewTransformation()
 {
 	// multupy position * camrea tranformation
 	TransformCamera();
-	glm::fvec4 p; float x, y, z, w;
+	glm::fvec4 p,r; float x, y, z, w;
 
 	p = glm::fvec4(Camera_position.x, Camera_position.y, Camera_position.z, 1);
-	x = p.x * cam_transformation[0][0] + p.y * cam_transformation[0][1] + p.z * cam_transformation[0][2] + p.w * cam_transformation[0][3];
-	y = p.x * cam_transformation[1][0] + p.y * cam_transformation[1][1] + p.z * cam_transformation[1][2] + p.w * cam_transformation[1][3];
-	z = p.x * cam_transformation[2][0] + p.y * cam_transformation[2][1] + p.z * cam_transformation[2][2] + p.w * cam_transformation[2][3];
-	w = p.x * cam_transformation[3][0] + p.y * cam_transformation[3][1] + p.z * cam_transformation[3][2] + p.w * cam_transformation[3][3];
-	Camera_position = glm::fvec3(x/w, y/w, z/w);
-
+	r = p * cam_transformation;
+	Camera_position = glm::fvec3(r.x / r.w, r.y / r.w, r.z / r.w);
 	view_transformation = glm::lookAt(Camera_position, at, up);
 	return view_transformation;
 }
@@ -242,13 +231,5 @@ glm::mat4x4 Camera::GetCamTransformation()
 void Camera::TransformCamera()
 {
 	glm::mat4x4 Rotate_c = Mul_RotateMat_CAMERA();
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 3; k++) {
-				sum += Rotate_c[i][k] * Translate_c[k][j];
-			}
-			cam_transformation[i][j] = sum;
-		}
-	}
+	cam_transformation= Rotate_c * Translate_c;
 }
