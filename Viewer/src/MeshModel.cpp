@@ -67,14 +67,30 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
-;
-	FindMax(); FindMin();
+
+
+	InitializeDepthColor();
 }
 
 MeshModel::~MeshModel()
 {
-	
 }
+
+
+void MeshModel::InitializeDepthColor() 
+{
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		depth.push_back(1.0f);
+		color.push_back(glm::fvec3(255.0f, 255.0f, 255.0f));
+		
+	}
+}
+int MeshModel::GetVerticesSize()
+{
+	return vertices.size();
+}
+
 
 
 // ** OBJECT \ LOCAL TRANSFORMATION MATRICSES ** 
