@@ -39,7 +39,14 @@
 - I tried to get the same transformation every time.
 ![5.1.png](https://ams03pap003files.storage.live.com/y4mM_4dkCtnj7po8xND4zBVZxd2DrGG-PviHaDyMH-JDp76CipbGlsvx0fm4_FskjJgrbcGNYPOGFqSlMZUoJjQL0ddo4KeKqbZQgj6lTMLMUMkMfQBW_pbrxI1FYuJ-SHqSQ6O8_Te12BWw0OhSdrL58Wwp6X_wDlwNCSDwLT6-ECVnvAY8_AuAidMskraXfbT?width=1281&height=764&cropmode=none)
 ![5.2.png](https://ams03pap003files.storage.live.com/y4m4Dqclk_xlAG2pjgcJM99MHWWS3Un3isGIgz4p5_RavhPN5J6Fk5owOGrgdyTtCO9TJXwLGRprmSnEXccW3DNGMYgctmuVRn6wxe5wj399hBhV2uVdJVJajEAqqevxBW3n49ptIiKuE8O6cUw9yhv6xQBR_VM_fFgtwZKDEzniZVxWfKkE4LJU1MjsqjpPVZr?width=1282&height=760&cropmode=none)
-
+after fixing:
+T1 = tranlate X(20) ScaleX(1.500) ScaleY(1.500)
+T2 = tranlate Y(20) ScaleX(1.200) ScaleY(1.200)
+![50.png](https://ams03pap003files.storage.live.com/y4mUvJDO5tS6TB300Ior8l4fjQz7-8lhpIsyktcGGVa9Qn2sEJ7BIKdC1KuX6JiWIjGv4UZF9p0EsWEAtRIImQrHje5VnfbWgP_HKfqgRi2y2sVs1Rfqm0ibUT1-osiea1RW-HfuawbpWUzZ_lNf62uidXVVNrlSeBD4Ad9Zv70hGkjpfFJqxvlIItzgUz38ulQ?width=1282&height=761&cropmode=none)
+* Local Transform = T1, World Transform = T2
+![51.png](https://ams03pap003files.storage.live.com/y4mH7wi-Df0RyZgbyR5eO-3R2O1aqlaFp2HG0Yr8PG38KFXF2OmhU4ATqMz96qtfPJvIOyUGWeG6JMUWVYIIAnGFrfhTRSVVGYzH43j9o17oXW229b6PSZqOxehdko4jnQgdVgyXC-Ytd2rUwBr5QL54E4KL3O3js60kHC7K3gfm5-x4NwL9GCJdWcrOh7K7xRp?width=1282&height=755&cropmode=none)
+* Local Transform = T2, World Transform = T1
+![52.png](https://ams03pap003files.storage.live.com/y4mEp-lhGF6Y22QWSl1ImvfVD82v5f9kY37523LV9HjoLNrvKcx3c0a2EvpW-dojPYx4ov_4J2kzWVAd0OZnSEiQEPZr01JEPY51TUedvA4OLwenhapCt8FOY4X5A-L5_NScblAZ7V-J_uOVlVRBGzG46oxWjPGTasKLvczXBk7ZnDI5JfUwyuzYT7bzEumqshw?width=1280&height=757&cropmode=none)
 ### 6. 
 - For the object Bounding Box we always multiply its coordinates with the same transformation matrix we multiply the mode. But in the world Bounding Box, we multiply them with World Transform Matrix.
 - both of the Bounding boces in the same place: 
@@ -49,6 +56,12 @@
 ![1c_6_2.png](https://ams03pap003files.storage.live.com/y4m4Se95Gs1_9_ppUKmgHPe2a219_o6bY5-yIKgbEz_XHAD5eIJ4qemwXjdcddXzgEiSnLeT3J4dCNnJJp-JAFpYKfoqrCHic5VKtZO4QGbJ1GIumYvkEN9u2rDsVdWV7moLcBA6VrtHCr9sQ2G_BehCYItME6tMttxJjcssmZxVF_ojSDPhLkVatnX1mZhncEm?width=1277&height=753&cropmode=none)
 ![1c_6_3.png](https://ams03pap003files.storage.live.com/y4mn6jTT5zrn9wioFyl-AxcleKqGyu_cmPslow1PECToY1nyFZPe8tiUcX6YqGOnRBySAohharg3H46bSZSqOiz29vfNFclQN0GL45dpPTzEAXkTNaRYDGSLab0vinKFzt0rbNIhZRrAUwBrFtCn_ujxaiuDhhl6g_6eLWvtCeP9_i3TAsB7tpClJCEGBtiACBM?width=1279&height=754&cropmode=none)
 ![1c_6_4.png](https://ams03pap003files.storage.live.com/y4m9NqZiqW07-M3IuQwbkwu7cAS66frqFknAaYJJ4vbktdk2qFe2hwVXMJ0HBTOEdoxN6GHwGKGOVsjyiDWn8cCqzl3dDOykctoJFcdHXRrLSufjiKEWwd0okZgPW6Z2hqiEtxdMGBUU3Vb7tyUYbHGLOeCKxvf7WxwggXtlTmZvudrmzL40Cq_TVi5Az-qLs28?width=1283&height=755&cropmode=none)
+after fixing:
+* note: Red = Local, Blue = World
+![60.png](https://ams03pap003files.storage.live.com/y4m1z9U2Y4u-m4Z02V-ngIzCIvjavxSBVfaGaQC_7ELYPekgBWdIac3AguGN6J10nERZy152QUVubTCTJ9HitSZuGxtOS8i8HYWvgs5NFzhK-5NWzn5gfYRWoR0MsH41SoxNjDXg3UVHPv2nZzlwbsOQy6ZE_GFL9okJiUfrHjQ4CYhD48LiHhqgL6BxZ-gA85z?width=1281&height=751&cropmode=none)
+![61.png](https://ams03pap003files.storage.live.com/y4mKQCsUldyIv5hsP1ypJMVS3Jvo-E3ZnsVtoIiXKnmo9AXl7CfPv8_gXnJLPGlW80jItxxDKKiYV8KlQsQJOcdp008b8H4EmaJ-gS16epz0Drsuut6LAGt_k-1VlWHTn1KcjeHZYPUhVd6B-5jAMEzZHNEsKQ6Y3Zh8ISwXFdkeip13XCiGjnFDLpfSyMJ6gsI?width=1282&height=751&cropmode=none)
+![62.png](https://ams03pap003files.storage.live.com/y4mmrNzm5JR2EQ9zUHpgMAXH1qp5Fu6HpY0rvZQO9SW2141hIgtF4bZV4cS2zfWxXDJG1WJhHmseFFO7aDOaswsYgz5V8NFSIJVD6zPX0NKcpjIVjRFM3OeWQlNCYYszNE2SdSIcK_mHSQNk8iWoaZiZXcZ_MyGb-7zRvVkarqlBtoHhT6AOGar236Msvq6Jtpn?width=1284&height=760&cropmode=none)
+![63.png](https://ams03pap003files.storage.live.com/y4m0DdkbkBMsQ7tkx9FmxmgV5oYd8fMEFYfV2pMyNop5LT5DPi5uq3vbONHDKCnV12YdBWEqZUxwQF-Yp-pn1TJO1_fKAWgHdw5JyZQ_wguT6q7x6upEcnZm4TUJvwDQHkQ6jCC5xNh5ICxi65cRFNaLDv4HjXBcNizYbK9PODvf8R1Xrg_zDjR4ZHbp2bNi_yv?width=1285&height=758&cropmode=none)
 
 
 ### 7. 
