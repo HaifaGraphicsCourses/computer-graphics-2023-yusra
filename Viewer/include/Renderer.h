@@ -34,6 +34,7 @@ public:
 	void Z_Buffer(MeshModel& Mesh);
 	vector<vector<float>> GetBuffer(int h, int w);
 	void ProjectionTransformation(MeshModel& Mesh, Camera& Cam);
+	glm::fvec2 max_min_z(MeshModel& Mesh);
 
 
 	
