@@ -628,7 +628,7 @@ void Renderer::ProjectionTransformation(MeshModel& Mesh,Camera& Cam)
 	glm::mat4x4 cam_trans = glm::inverse(Cam.GetViewTransformation());
 	glm::mat4x4 mesh_transformation = Mesh.GetTransformation();
 	glm::mat4x4 M;
-	M = Projection * cam_trans* mesh_transformation;
+	M = Projection * /*cam_trans**/ mesh_transformation;
 	glm::fvec4 p, r; float x, y, z, w;
 	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
 	{
@@ -882,13 +882,16 @@ void Depth(MeshModel& Mesh , glm::fvec3 p1, glm::fvec3 p2, glm::fvec3 p3, glm::f
 
 void Renderer::DrawTriangle(MeshModel& Mesh)
 {
+	
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f) ,temp;
 	glm::fvec3 p1, p2, p3, p;
 	float a12, a13, a23, b12, b13, b23, c12, c13, c23;
 	int ur = 0, ul = 0, dl = 0, dr = 0;
+	glm::fvec2 z_max_min = max_min_z(Mesh);
 	vector<glm::fvec3> sort = { glm::vec3(0.0f, 0.0f, 0.0f) ,glm::vec3(0.0f, 0.0f, 0.0f) ,glm::vec3(0.0f, 0.0f, 0.0f) };
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
+		glm::vec3 c = glm::vec3((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX);
 		auto face = Mesh.GetFace(i);
 		p1 = glm::fvec3(Mesh.GetVertices(face.GetVertexIndex(0) - 1).x, Mesh.GetVertices(face.GetVertexIndex(0) - 1).y, Mesh.GetVertices(face.GetVertexIndex(0) - 1).z);
 		p2 = glm::fvec3(Mesh.GetVertices(face.GetVertexIndex(1) - 1).x, Mesh.GetVertices(face.GetVertexIndex(1) - 1).y, Mesh.GetVertices(face.GetVertexIndex(1) - 1).z);
@@ -899,7 +902,7 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 
 		// Drawing Bounding Rectangle
 		// fisrt we find the min x, min y, max x, max y
-		float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y;
+		float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y, min_z = p1.z, max_z = p1.z;
 		sort = { p1,p1,p1 };
 		// max x
 		if (max_x < p2.x)
@@ -921,18 +924,28 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 			min_y = p2.y;
 		if (min_y > p3.y)
 			min_y = p3.y;
-		//glm::fvec2 c1, c2, c3, c4;
-		//c1 = glm::fvec2(min_x, min_y);
-		//c2 = glm::fvec2(min_x, max_y);
-		//c3 = glm::fvec2(max_x, min_y);
-		//c4 = glm::fvec2(max_x, max_y);
-		//float c = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z +
-		//	Mesh.GetVertices(face.GetVertexIndex(1) - 1).z) / 3.0f;
-		//glm::vec3 color_rec = glm::vec3(255.0f - c, 255.0f - c, 255.0f - c);
-		//DrawLine(c1, c2, color_rec);
-		//DrawLine(c2, c3, color_rec);
-		//DrawLine(c3, c4, color_rec);
-		//DrawLine(c4, c1, color_rec);
+		//min z
+		if (min_z > p2.z)
+			min_z = p2.z;
+		if (min_z > p3.z)
+			min_z = p3.z;
+		// min z
+		if (min_z > p2.z)
+			min_z = p2.z;
+		if (min_z > p3.z)
+			min_z = p3.z;
+	/*	glm::fvec2 c1, c2, c3, c4;
+		c1 = glm::fvec2(min_x, min_y);
+		c2 = glm::fvec2(min_x, max_y);
+		c3 = glm::fvec2(max_x, min_y);
+		c4 = glm::fvec2(max_x, max_y);
+		float c_z = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z +
+			Mesh.GetVertices(face.GetVertexIndex(1) - 1).z) / 3.0f;
+		glm::vec3 color_rec = glm::vec3(255.0f / c_z, 36.0f / c_z, 36.0f / c_z);
+		DrawLine(c1, c2, color_rec);
+		DrawLine(c2, c3, color_rec);
+		DrawLine(c3, c4, color_rec);
+		DrawLine(c4, c1, color_rec);*/
 
 		
 		/// we have a rectangle w x h
@@ -951,45 +964,63 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 		float c23 = (p2.x * p3.y - p3.x * p2.y);
 		float c31 = (p3.x * p1.y - p1.x * p3.y);
 		float e1, e2, e3, d, z, z_tag;
-		//color_poly = glm::fvec3((int)rand() % 25, (int)rand() % 205, (int)rand() % 105);
-		color_poly = glm::fvec3(5,25,5);
-		//glm::vec3 c1 = glm::fvec3((int)rand() % 25, (int)rand() % 205, (int)rand() % 105);
-		//glm::vec3 c2 = glm::fvec3((int)rand() % 25, (int)rand() % 205, (int)rand() % 105);
-		//glm::vec3 c3 = glm::fvec3((int)rand() % 25, (int)rand() % 205, (int)rand() % 105);
+		color_poly = glm::fvec3(255, 36, 36);
+		//color_poly = glm::fvec3(5,25,5);
 		float w1, w2, w3;
-		for (float i = min_y + 1; i < max_y; i++)
+		//glm::fvec3 c = glm::fvec3((int) rand()%255, (int)rand() % 36, (int)rand() % 36);
+		for (float y = min_y + 1; y <=max_y; y++)
 		{
-
-			for (float j = min_x + 1; j < max_x; j++)
+			for (float x = min_x + 1; x <= max_x; x++)
 			{
-				e1 = a12 * j + b12 * i + c12;
-				e2 = a23 * j + b23 * i + c23;
-				e3 = a31 * j + b31 * i + c31;
+				e1 = a12 * x + b12 * y + c12;
+				e2 = a23 * x + b23 * y + c23;
+				e3 = a31 * x + b31 * y + c31;
 				if (e1 > 0 && e2 > 0 && e3 > 0) // inside the poly
 				{
 					//PutPixel(j, i, color_poly);
-					p = glm::fvec3(j, i, 1.0f);
+					p = glm::fvec3(x, y, 1.0f);
 					w1 = ((p2.y - p3.y) * (p.x - p3.x) + (p3.x - p2.x) * (p.y - p3.y)) /
 						((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y));
-
 					w2 = ((p3.y - p1.y) * (p.x - p3.x) + (p1.x - p3.x) * (p.y - p3.y)) /
 						((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y));
-
 					w3 = 1 - w1 - w2;
 					z = 1 / (w1 * p1.z + w2 * p2.z + w3 * p3.z);
 					z_tag = z - w1 / w3;
-					glm::vec3 c = w1 * color_poly + w2 * color_poly + w3 * color_poly;
-					//float color = 255.0f * w1 + 255.0f * w2 + 255.0f * w3;
-					//PutPixel(j, i, glm::fvec3((int)color % 255, (int)color % 255, (int)color % 255));
-					PutPixel(j, i, c);
-					if (z_depth[j - min_x - 1][i - min_y - 1] > z_tag)
+					// 1 -  (maz_z 3 - min_z all ) / (z_max all - z_min all) = > depth
+					float d = 1 - (max_z - z_max_min.y) / (z_max_min.x - z_max_min.y);
+					//glm::vec3 c = w1 * color_poly + w2 * color_poly + w3 * color_poly;
+					//glm::fvec3 c = glm::fvec3(255.0f / i, 36.0f / i, 36.0f / i);
+					if (z_depth[x - min_x - 1][y - min_y - 1] > z_tag)
 					{
-						z_depth[j - min_x - 1][i - min_y - 1] = z_tag;
+						z_depth[x - min_x - 1][y - min_y - 1] = z_tag;
 					}
+					//PutPixel(x, y, glm::fvec3(d, d, d));
+					PutPixel(x, y, c);
 				}
 			}
 		}
 	}
+}
+
+glm::fvec2 Renderer::max_min_z(MeshModel& Mesh)
+{
+	int s = Mesh.GetVerticesSize();
+	float max = Mesh.GetVertices(0).z, min = Mesh.GetVertices(0).z;
+	for (int i = 0; i < s; i++)
+	{
+		if (Mesh.GetVertices(i).z < Mesh.depth[i])
+		{
+			if (max < Mesh.GetVertices(i).z)
+			{
+				max = Mesh.GetVertices(i).z;
+			}
+			if (min > Mesh.GetVertices(i).z)
+			{
+				min = Mesh.GetVertices(i).z;
+			}
+		}
+	}
+	return glm::fvec2(max, min);
 }
 
 
