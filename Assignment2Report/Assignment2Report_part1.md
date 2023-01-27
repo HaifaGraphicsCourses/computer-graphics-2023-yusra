@@ -37,3 +37,5 @@ For each rectangle, we give it the color
 ![2a_4_z.png](https://ams03pap003files.storage.live.com/y4m1xxDgQoS54rs8sy41ato3HoKU_AOYwdGvQbepI_WWp1HvCAINIjFEtAaMoqz-aLvePcguzl_yfXvcQTscQ90ieoU4Waa9iSyLQOg8PNQ0BVuXjkw2EmGeVwLXXCoqro_3AzuYTRu_X_pk4b6JczNyAOSZVR-bVAOmcnifqFD5fsjX92p1R_q01Q1ofOUjz31?width=1284&height=764&cropmode=none)
 after fixing:
 ![z.png](https://ams03pap003files.storage.live.com/y4m4Ku7Ggc9rlVnxJ25wfKv48uku_1q0ha2ZhaTZi6WzOZ_MxFsvH8aG47GG8LWi4APMwMaSo8zsDo-7HQWbYQI0AVckR-_4Jg6et8pa8cnM4eGbNtie_ia-RYBWpTlvxHYSGeR6WOMkMBiKR0YnENyvdQf37cFS9emZEsYaN07VQEpsN07NPxFDWZTt2uOKu0T?width=811&height=621&cropmode=none)
+![z_d.png](https://ams03pap003files.storage.live.com/y4m8HUy5ieq5FoAwXQesM65iV7EfoQjfaxFUofvOiFmqF0qB4VrJw5GlbMfy1wWAqUy4HlKNY_wkJRjM5GIb9MN9GgMZjvye_mtNcl9PUkItajQa0D4bw1l0UClGqH7rnQ-A98FNXOEmQD7nX1KqDXHY6bwGlugxLG7O2bGtW0XbviPK7I7JbX0l0gkrGWtIdIx?width=1284&height=758&cropmode=none)
+
