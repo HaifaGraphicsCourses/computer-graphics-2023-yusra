@@ -38,5 +38,4 @@ For each rectangle, we give it the color
 after fixing:
 ![z.png](https://ams03pap003files.storage.live.com/y4m4Ku7Ggc9rlVnxJ25wfKv48uku_1q0ha2ZhaTZi6WzOZ_MxFsvH8aG47GG8LWi4APMwMaSo8zsDo-7HQWbYQI0AVckR-_4Jg6et8pa8cnM4eGbNtie_ia-RYBWpTlvxHYSGeR6WOMkMBiKR0YnENyvdQf37cFS9emZEsYaN07VQEpsN07NPxFDWZTt2uOKu0T?width=811&height=621&cropmode=none)
 ![z_d.png](https://ams03pap003files.storage.live.com/y4m8HUy5ieq5FoAwXQesM65iV7EfoQjfaxFUofvOiFmqF0qB4VrJw5GlbMfy1wWAqUy4HlKNY_wkJRjM5GIb9MN9GgMZjvye_mtNcl9PUkItajQa0D4bw1l0UClGqH7rnQ-A98FNXOEmQD7nX1KqDXHY6bwGlugxLG7O2bGtW0XbviPK7I7JbX0l0gkrGWtIdIx?width=1284&height=758&cropmode=none)
-
 ![c.png](https://ams03pap003files.storage.live.com/y4mUdX67D6v1gWvABuaevdLr4cSUy5aYDpoGs-CC0mdwNAulOKho9vR2XGZCSQ1kjPHAKT4acwviGQYnN7I8OfTyvNR_PiP1_kBofomkS2c9-5qx4ThxBPSvozI75Tt3JI3Ie7oxnG5CJrQbMQ-dMKyIRIeZXE-NOYgRsSh94Ye9iVI8my8Cy3WngE5exPETEkA?width=627&height=755&cropmode=none)
