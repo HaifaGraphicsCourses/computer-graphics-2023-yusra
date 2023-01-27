@@ -23,6 +23,9 @@ For each rectangle, we give it the color
 		DrawLine(c3, c4, color_rec);
 		DrawLine(c4, c1, color_rec);
 	![2a_2.png](https://ams03pap003files.storage.live.com/y4mxJ3ghPLbWdhjBP0f_1CN1zm8YDZujTBaCSn1AaWzdO2om3hVldkWKo5Hjd6gQTw3LgyOQJQJtDzTEoi9jCemvWjaUR2uFcXDOuwFfrcGqMa8R7HWoYwglriEcIpCZaRSTnKm892R3ev2Z97yU2vA7RD3Auinvi3PvQk62XnWZg3E7O8ljgmUErjpnBZHihnh?width=1280&height=748&cropmode=none)
+	after fixing
+	![rec.png](https://ams03pap003files.storage.live.com/y4mouvWpL_OS2qDgsV4GtjqjyHS7qtBlMusslFu-0WNWPJ-5kQOof6zVYoiFivl8tW7cGBrITtxfY7y2hhj1ZkMp_lmQYmyam3h41iQ_EwYKk_TKgnStF5r8MXBHyC77CH0c7VGLcJxrF7YuFdX7qLTWyLtP6jmbp2Yop1LaYVTJurdVsvLAnmwYfH23UGCOK2P?width=1276&height=750&cropmode=none)
+	
 
 ### 3. 
 ![23.png](https://ams03pap003files.storage.live.com/y4mrd2UrXBzzwA5VEEFWJfSVYEo2not90ctUUjOcFGJCp0kjy9Yi6ADyf8OQVU0cvAasYIRrWVWzmCkxhKH8ays0Y0pyy6cOr3mirf1F-u19YQ2IhUzed4W9HDYUXFRXN7PjjgA1Qc2Ml9W2IUPhuXs5Z3jmPT3wtNG72-LAh-HwYm11soxE7XPRa-CwwKlDDdY?width=1281&height=759&cropmode=none)
@@ -32,3 +35,5 @@ For each rectangle, we give it the color
 ![2a_4_c.png](https://ams03pap003files.storage.live.com/y4m2-EuE5m60ZrUYGd8DJx7zs_foA_x6_fl9zlDlzYoENTbIPBE-lzFvygjnA0lzx3bXORB37sjBOz1N8ZwHY5cuRS-EP1RGE7TuZ3uTlUBldWZgANbZXS6gGl247Tlb7uQT6nC_v3lCE4igIl5BJlj777nGakXoE8PfjtDLFN5MBr7mDMC2vYkjAoJWB2bR4f5?width=1282&height=756&cropmode=none)
 * z-buffer: 
 ![2a_4_z.png](https://ams03pap003files.storage.live.com/y4m1xxDgQoS54rs8sy41ato3HoKU_AOYwdGvQbepI_WWp1HvCAINIjFEtAaMoqz-aLvePcguzl_yfXvcQTscQ90ieoU4Waa9iSyLQOg8PNQ0BVuXjkw2EmGeVwLXXCoqro_3AzuYTRu_X_pk4b6JczNyAOSZVR-bVAOmcnifqFD5fsjX92p1R_q01Q1ofOUjz31?width=1284&height=764&cropmode=none)
+after fixing:
+![z.png](https://ams03pap003files.storage.live.com/y4m4Ku7Ggc9rlVnxJ25wfKv48uku_1q0ha2ZhaTZi6WzOZ_MxFsvH8aG47GG8LWi4APMwMaSo8zsDo-7HQWbYQI0AVckR-_4Jg6et8pa8cnM4eGbNtie_ia-RYBWpTlvxHYSGeR6WOMkMBiKR0YnENyvdQf37cFS9emZEsYaN07VQEpsN07NPxFDWZTt2uOKu0T?width=811&height=621&cropmode=none)
