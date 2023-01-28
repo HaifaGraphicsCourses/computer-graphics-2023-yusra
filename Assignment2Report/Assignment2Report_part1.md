@@ -38,4 +38,12 @@ For each rectangle, we give it the color
 after fixing:
 ![z.png](https://ams03pap003files.storage.live.com/y4m4Ku7Ggc9rlVnxJ25wfKv48uku_1q0ha2ZhaTZi6WzOZ_MxFsvH8aG47GG8LWi4APMwMaSo8zsDo-7HQWbYQI0AVckR-_4Jg6et8pa8cnM4eGbNtie_ia-RYBWpTlvxHYSGeR6WOMkMBiKR0YnENyvdQf37cFS9emZEsYaN07VQEpsN07NPxFDWZTt2uOKu0T?width=811&height=621&cropmode=none)
 ![z_d.png](https://ams03pap003files.storage.live.com/y4m8HUy5ieq5FoAwXQesM65iV7EfoQjfaxFUofvOiFmqF0qB4VrJw5GlbMfy1wWAqUy4HlKNY_wkJRjM5GIb9MN9GgMZjvye_mtNcl9PUkItajQa0D4bw1l0UClGqH7rnQ-A98FNXOEmQD7nX1KqDXHY6bwGlugxLG7O2bGtW0XbviPK7I7JbX0l0gkrGWtIdIx?width=1284&height=758&cropmode=none)
-![c.png](https://ams03pap003files.storage.live.com/y4mUdX67D6v1gWvABuaevdLr4cSUy5aYDpoGs-CC0mdwNAulOKho9vR2XGZCSQ1kjPHAKT4acwviGQYnN7I8OfTyvNR_PiP1_kBofomkS2c9-5qx4ThxBPSvozI75Tt3JI3Ie7oxnG5CJrQbMQ-dMKyIRIeZXE-NOYgRsSh94Ye9iVI8my8Cy3WngE5exPETEkA?width=627&height=755&cropmode=none)
+![c_1.png](https://ams03pap003files.storage.live.com/y4mlSI9XSWoWErls4XNjE3nofmFzdxwkNxtdPRGFS8jvGHrCAXMwK5pB0N45v3k5ReR9OvfAJ4Lc3Td9u7vXyGBnZr4shdC6fhdVh0nC8hkrgU30k8mzpWMIhgJftzWCu3cNPMHCAHSvlHRAzCCp3IYJvictlxp7TEHIhmZw0lCkjCOemZ-w-wr0qcMAAk1DogL?width=402&height=406&cropmode=none)
+![c_2.png](https://ams03pap003files.storage.live.com/y4mZXapRKiZSebwjM-NxfWQcVjnukwM5wcQCR9YDb8KakrRzhjgKQqyv3u-zVeD3HErH47vE5CW8mDo1nmg39OQl6gvn6sN-UNycYyv5QY_YqKkC3Rclh-kcDei3DN3ThndL4EcXhk_NCTRS40qpqjsyUmLCSymR-3x9af43YkQAY3Fj1fkgN2wjCbWFyokCugR?width=563&height=512&cropmode=none)
+![c_3.png](https://ams03pap003files.storage.live.com/y4mmiV2TGUyHh9fWbpL-92JwHIgvT1rmBHCwSWH3q334XCYDE2wKVXdCCPGS4F34Cx2T5CD9-HdP-jeCz8vSxjVRMBh3pLCU8lFe5yNzBaMu6Q5FgcWJDJMSzw2JESpFHITzKzopRrGva2JJNupLP11zVXGRRq3MaknGmbJnLfFpGQ1SRnA_J_SsJaM8R-hlI6n?width=500&height=561&cropmode=none)
+
+
+
+
+
+
