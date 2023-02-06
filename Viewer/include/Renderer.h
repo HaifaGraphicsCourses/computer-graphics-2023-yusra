@@ -16,7 +16,7 @@ public:
 	void Scale(MeshModel& Mesh, glm::fvec3 scale_vec);
 	void Translate(MeshModel& Mesh, glm::fvec3 translate_vec);
 	void Rotate(MeshModel& Mesh, float degree);
-	void DrawTriangle(MeshModel& Mesh);
+	void DrawTriangle(MeshModel& Mesh, vector<vector<float>>& z_depth);
 	void FixPoints(MeshModel& Mesh);
 	void Transformation(MeshModel& Mesh);
 	void Orth(MeshModel& Mesh, Camera& Cam);
@@ -35,8 +35,9 @@ public:
 	vector<vector<float>> GetBuffer(int h, int w);
 	void ProjectionTransformation(MeshModel& Mesh, Camera& Cam);
 	glm::fvec2 max_min_z(MeshModel& Mesh);
+	glm::fvec2 max_min_z_avg(MeshModel& Mesh);
 
-
+	void Ambient(MeshModel& Mesh, glm::vec4 ambient);
 	
 
 private:
