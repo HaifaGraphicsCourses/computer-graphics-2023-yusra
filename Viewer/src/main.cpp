@@ -29,6 +29,7 @@ bool CAMERA_Perspective_window = false;
 bool window = false;
 bool Viewing_window = false;
 bool CAMERA_window = false;
+bool Light = false;
 int Width = 1280, Height = 720;
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
@@ -43,7 +44,13 @@ static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 			Zn_p = 1.0f, Zf_p = 10.0f, fov = 45.0f, aspect = 1280/720,
 			eyeX = 0.0f, eyeY = 0.0f, eyeZ = 0.0f,
 			atX = 0.0f, atY = 0.0f, atZ = 0.0f,
-			upX = 0.0f, upY = 0.0f, upZ = 0.0f;
+			upX = 0.0f, upY = 0.0f, upZ = 0.0f,
+			x_l = 0.0f, y_l = 0.0f, z_l = 0.0f, 
+			red = 0.0f, green = 0.0f, blue = 0.0f,
+			red_a = 0.0f, green_a = 0.0f, blue_a = 0.0f,
+			red_d = 0.0f, green_d = 0.0f, blue_d = 0.0f,
+			red_s = 0.0f, green_s = 0.0f, blue_s = 0.0f,
+			ambient, diffuse, specular;
 /**
  * Function declarations
  */
@@ -399,6 +406,44 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		{
 			ImGui::SliderInt("Height", &Height, 1, 3000);
 			ImGui::SliderInt("Width", &Width, 1, 3000);
+
+
+		}
+
+		ImGui::Checkbox("LIGHT", &Light);
+		//  --- Light
+		if (Light)
+		{
+			ImGui::Text("Light Coordinate: ");
+			ImGui::SliderFloat("X", &x_l, 0.0f, 700.0f);
+			ImGui::SliderFloat("Y", &y_l, 0.0f, 700.0f);
+			ImGui::SliderFloat("Z", &z_l, 0.0f, 700.0f);
+			scene.SetLightPosition(glm::vec3(x_l, y_l, z_l));
+			ImGui::Text("Light RGB");
+			ImGui::SliderFloat("R", &red, 0.0f, 255.0f);
+			ImGui::SliderFloat("G", &green, 0.0f, 255.0f);
+			ImGui::SliderFloat("B", &blue, 0.0f, 255.0f);
+			scene.SetColor(glm::vec3(red, green, blue));
+			
+			ImGui::SliderFloat("Ambient", &ambient, 1.0f, 255.0f);
+			ImGui::Text("Ambient RGB");
+			ImGui::SliderFloat("R_A", &red_a, 0.0f, 255.0f);
+			ImGui::SliderFloat("G_A", &green_a, 0.0f, 255.0f);
+			ImGui::SliderFloat("B_A", &blue_a, 0.0f, 255.0f);
+			scene.SetAmbientColor(glm::vec3(red_a, green_a, blue_a));
+			scene.SetAmbient(ambient);
+			
+			ImGui::SliderFloat("Diffuse", &diffuse, 1.0f, 255.0f);
+			ImGui::Text("Diffuse RGB");
+			ImGui::SliderFloat("R_D", &red_d, 0.0f, 255.0f);
+			ImGui::SliderFloat("G_D", &green_d, 0.0f, 255.0f);
+			ImGui::SliderFloat("B_D", &blue_d, 0.0f, 255.0f);
+			
+			ImGui::SliderFloat("Specular", &specular,1.0f, 255.0f);
+			ImGui::Text("Specular RGB");
+			ImGui::SliderFloat("R_S", &red_s, 0.0f, 255.0f);
+			ImGui::SliderFloat("G_S", &green_s, 0.0f, 255.0f);
+			ImGui::SliderFloat("B_S", &blue_s, 0.0f, 255.0f);
 
 
 		}
