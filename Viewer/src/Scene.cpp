@@ -9,6 +9,79 @@ Scene::Scene() :
 
 }
 
+glm::vec3  Scene::GetLightPosition()
+{
+	return light_position;
+}
+void  Scene::SetLightPosition(glm::vec3 p)
+{
+	light_position = p;
+}
+glm::vec3  Scene::GetColor()
+{
+	return color;
+}
+void  Scene::SetColor(glm::vec3 c) 
+{
+	color = c;
+}
+
+float Scene::GetAmbient() {
+	return ambient;
+}
+void Scene::SetAmbient(float a)
+{
+	ambient = a;
+}
+glm::vec3  Scene::GetAmbientColor()
+{
+	return ambient_color;
+}
+void  Scene::SetAmbientColor(glm::vec3 c)
+{
+	ambient_color = c;
+}
+
+float Scene::GetDiffuse()
+{
+	return diffuse;
+}
+void Scene::SetDiffuse(float d)
+{
+	diffuse = d;
+}
+glm::vec3  Scene::GetDiffuseColor()
+{
+	return diffuse_color;
+}
+void  Scene::SetDiffuseColor(glm::vec3 c)
+{
+	diffuse_color = c;
+}
+
+float Scene::GetSpecular()
+{
+	return specular;
+}
+void Scene::SetSpecular(float s)
+{
+	specular = s;
+}
+glm::vec3  Scene::GetSpecularColor()
+{
+	return specular_color;
+}
+void  Scene::SetSpecularColor(glm::vec3 c)
+{
+	specular_color = c;
+}
+
+glm::vec4 Scene::CalculateAmbient()
+{
+	// ambient light intensity * ambient color
+	return glm::vec4(ambient * ambient_color, 1.0);
+
+}
 
 void Scene::AddModel(const std::shared_ptr<MeshModel>& mesh_model)
 {
