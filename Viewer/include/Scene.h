@@ -29,8 +29,29 @@ public:
 	void SetActiveModelIndex(int index);
 	int GetActiveModelIndex() const;
 
-	//void Draw();
+	glm::vec3 GetLightPosition();
+	void SetLightPosition(glm::vec3 p);
+	glm::vec3 GetColor();
+	void SetColor(glm::vec3 c);
 
+	void SetAmbient(float a);
+	float GetAmbient();
+	glm::vec3 GetAmbientColor();
+	void SetAmbientColor(glm::vec3 c);
+
+	void SetDiffuse(float d);
+	float GetDiffuse();
+	glm::vec3 GetDiffuseColor();
+	void SetDiffuseColor(glm::vec3 c);
+
+	float GetSpecular();
+	void SetSpecular(float s);
+	glm::vec3 GetSpecularColor();
+	void SetSpecularColor(glm::vec3 c);
+	
+	glm::vec4 CalculateAmbient();
+	glm::vec4 CalculateDiffuse();
+	glm::vec4 CalculateSpecular();
 
 
 	
@@ -39,4 +60,13 @@ private:
 	vector<shared_ptr<Camera>> cameras;
 	int active_camera_index;
 	int active_model_index;
+	glm::vec3 light_position;
+	glm::vec3 color;
+	float ambient;
+	glm::vec3 ambient_color;
+	float diffuse;
+	glm::vec3 diffuse_color;
+	float specular;
+	glm::vec3 specular_color;
+
 };
