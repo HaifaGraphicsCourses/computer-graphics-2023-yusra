@@ -430,9 +430,11 @@ void Renderer::Render( Scene& scene)
 		DrawBoundingBoxWorld(Mesh, Cam);
 		DrawAxesModel(Mesh, Cam);
 		DrawAxesWorld(Mesh, Cam);*/
-
+		vector<vector<float>>z_depth = GetBuffer(11, 44);
 		ProjectionTransformation(Mesh, Cam);
-		DrawTriangle(Mesh);
+		glm::vec4 ambient = scene.CalculateAmbient();
+		Ambient(Mesh, ambient);
+		//DrawTriangle(Mesh,z_depth);
 		
 		//DrawFaceNormals(Mesh);
 		//DrawVertexNormals(Mesh);
@@ -444,7 +446,87 @@ void Renderer::Render( Scene& scene)
 }
 
 
+void Renderer::Ambient(MeshModel& Mesh, glm::vec4 ambient) 
+{
+	glm::vec3 color = ambient;
+	glm::fvec3 p1, p2, p3, p;
+	float a12, a13, a23, b12, b13, b23, c12, c13, c23;
+	int ur = 0, ul = 0, dl = 0, dr = 0;
+	glm::fvec2 z_max_min = max_min_z(Mesh);
+	glm::fvec2 z_max_min_avg = max_min_z_avg(Mesh);
+	for (int i = 0; i < Mesh.GetFacesCount(); i++)
+	{
+		//glm::vec3 c = glm::vec3((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX);
+		auto face = Mesh.GetFace(i);
+		p1 = glm::fvec3(Mesh.GetVertices(face.GetVertexIndex(0) - 1).x, Mesh.GetVertices(face.GetVertexIndex(0) - 1).y, Mesh.GetVertices(face.GetVertexIndex(0) - 1).z);
+		p2 = glm::fvec3(Mesh.GetVertices(face.GetVertexIndex(1) - 1).x, Mesh.GetVertices(face.GetVertexIndex(1) - 1).y, Mesh.GetVertices(face.GetVertexIndex(1) - 1).z);
+		p3 = glm::fvec3(Mesh.GetVertices(face.GetVertexIndex(2) - 1).x, Mesh.GetVertices(face.GetVertexIndex(2) - 1).y, Mesh.GetVertices(face.GetVertexIndex(2) - 1).z);
+		DrawLine(p1, p2, color);
+		DrawLine(p2, p3, color);
+		DrawLine(p3, p1, color);
+		float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y, min_z = p1.z, max_z = p1.z;
+		// max x
+		if (max_x < p2.x)
+			max_x = p2.x;
+		if (max_x < p3.x)
+			max_x = p3.x;
+		// max y
+		if (max_y < p2.y)
+			max_y = p2.y;
+		if (max_y < p3.y)
+			max_y = p3.y;
+		//min x
+		if (min_x > p2.x)
+			min_x = p2.x;
+		if (min_x > p3.x)
+			min_x = p3.x;
+		// min y
+		if (min_y > p2.y)
+			min_y = p2.y;
+		if (min_y > p3.y)
+			min_y = p3.y;
+		//min z
+		if (min_z > p2.z)
+			min_z = p2.z;
+		if (min_z > p3.z)
+			min_z = p3.z;
+		// min z
+		if (min_z > p2.z)
+			min_z = p2.z;
+		if (min_z > p3.z)
+			min_z = p3.z;
 
+		float w = max_x - min_x, h = max_y - min_y, k, m, l;
+		float sum = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z + Mesh.GetVertices(face.GetVertexIndex(2) - 1).z) / 3.0f;
+		glm::vec3 color_poly = glm::fvec3(sum, sum, sum);
+		float a12 = p1.y - p2.y;
+		float a23 = p2.y - p3.y;
+		float a31 = p3.y - p1.y;
+		float b12 = p2.x - p1.x;
+		float b23 = p3.x - p2.x;
+		float b31 = p1.x - p3.x;
+		float c12 = (p1.x * p2.y - p2.x * p1.y);
+		float c23 = (p2.x * p3.y - p3.x * p2.y);
+		float c31 = (p3.x * p1.y - p1.x * p3.y);
+		float e1, e2, e3, d, z, z_tag;
+		//color_poly = glm::fvec3(255, 36, 36);
+		float w1, w2, w3;
+		//glm::fvec3 c = glm::fvec3(0, 36, 36);
+		for (float y = min_y ; y <max_y; y++)
+		{
+			for (float x = min_x ; x < max_x; x++)
+			{
+				e1 = a12 * x + b12 * y + c12;
+				e2 = a23 * x + b23 * y + c23;
+				e3 = a31 * x + b31 * y + c31;
+				if (e1 > 0 && e2 > 0 && e3 > 0) // inside the poly
+				{
+					PutPixel(x, y, color);
+				}
+			}
+		}
+	}
+}
 
 void Renderer::DrawAxesWorld(MeshModel& Mesh, Camera& Cam)
 {
@@ -880,7 +962,7 @@ void Depth(MeshModel& Mesh , glm::fvec3 p1, glm::fvec3 p2, glm::fvec3 p3, glm::f
 
 }
 
-void Renderer::DrawTriangle(MeshModel& Mesh)
+void Renderer::DrawTriangle(MeshModel& Mesh, vector<vector<float>>& z_depth)
 {
 	
 	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f) ,temp;
@@ -888,10 +970,10 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 	float a12, a13, a23, b12, b13, b23, c12, c13, c23;
 	int ur = 0, ul = 0, dl = 0, dr = 0;
 	glm::fvec2 z_max_min = max_min_z(Mesh);
-	vector<glm::fvec3> sort = { glm::vec3(0.0f, 0.0f, 0.0f) ,glm::vec3(0.0f, 0.0f, 0.0f) ,glm::vec3(0.0f, 0.0f, 0.0f) };
+	glm::fvec2 z_max_min_avg = max_min_z_avg(Mesh);
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
-		glm::vec3 c = glm::vec3((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX);
+		//glm::vec3 c = glm::vec3((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX);
 		auto face = Mesh.GetFace(i);
 		p1 = glm::fvec3(Mesh.GetVertices(face.GetVertexIndex(0) - 1).x, Mesh.GetVertices(face.GetVertexIndex(0) - 1).y, Mesh.GetVertices(face.GetVertexIndex(0) - 1).z);
 		p2 = glm::fvec3(Mesh.GetVertices(face.GetVertexIndex(1) - 1).x, Mesh.GetVertices(face.GetVertexIndex(1) - 1).y, Mesh.GetVertices(face.GetVertexIndex(1) - 1).z);
@@ -902,103 +984,86 @@ void Renderer::DrawTriangle(MeshModel& Mesh)
 
 		// Drawing Bounding Rectangle
 		// fisrt we find the min x, min y, max x, max y
-		float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y, min_z = p1.z, max_z = p1.z;
-		sort = { p1,p1,p1 };
-		// max x
-		if (max_x < p2.x)
-			max_x = p2.x;
-		if (max_x < p3.x)
-			max_x = p3.x;
-		// max y
-		if (max_y < p2.y)
-			max_y = p2.y;
-		if (max_y < p3.y)
-			max_y = p3.y;
-		//min x
-		if (min_x > p2.x)
-			min_x = p2.x;
-		if (min_x > p3.x)
-			min_x = p3.x;
-		// min y
-		if (min_y > p2.y)
-			min_y = p2.y;
-		if (min_y > p3.y)
-			min_y = p3.y;
-		//min z
-		if (min_z > p2.z)
-			min_z = p2.z;
-		if (min_z > p3.z)
-			min_z = p3.z;
-		// min z
-		if (min_z > p2.z)
-			min_z = p2.z;
-		if (min_z > p3.z)
-			min_z = p3.z;
-	/*	glm::fvec2 c1, c2, c3, c4;
-		c1 = glm::fvec2(min_x, min_y);
-		c2 = glm::fvec2(min_x, max_y);
-		c3 = glm::fvec2(max_x, min_y);
-		c4 = glm::fvec2(max_x, max_y);
-		float c_z = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z +
-			Mesh.GetVertices(face.GetVertexIndex(1) - 1).z) / 3.0f;
-		glm::vec3 color_rec = glm::vec3(255.0f / c_z, 36.0f / c_z, 36.0f / c_z);
-		DrawLine(c1, c2, color_rec);
-		DrawLine(c2, c3, color_rec);
-		DrawLine(c3, c4, color_rec);
-		DrawLine(c4, c1, color_rec);*/
-
-		
-		/// we have a rectangle w x h
-		float w = max_x - min_x, h = max_y - min_y, k, m, l;
-		vector<vector<float>>z_depth = GetBuffer(h, w);
-		float sum = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z + Mesh.GetVertices(face.GetVertexIndex(2) - 1).z) / 3.0f;
-		glm::vec3 color_poly = glm::fvec3(sum, sum, sum);
-		//glm::vec3 color_poly = glm::fvec3(200.f, 0.0f, 0.0f);
-		float a12 = p1.y - p2.y;
-		float a23 = p2.y - p3.y;
-		float a31 = p3.y - p1.y;
-		float b12 = p2.x - p1.x;
-		float b23 = p3.x - p2.x;
-		float b31 = p1.x - p3.x;
-		float c12 = (p1.x * p2.y - p2.x * p1.y);
-		float c23 = (p2.x * p3.y - p3.x * p2.y);
-		float c31 = (p3.x * p1.y - p1.x * p3.y);
-		float e1, e2, e3, d, z, z_tag;
-		color_poly = glm::fvec3(255, 36, 36);
-		//color_poly = glm::fvec3(5,25,5);
-		float w1, w2, w3;
-		//glm::fvec3 c = glm::fvec3((int) rand()%255, (int)rand() % 36, (int)rand() % 36);
-		for (float y = min_y + 1; y <=max_y; y++)
-		{
-			for (float x = min_x + 1; x <= max_x; x++)
-			{
-				e1 = a12 * x + b12 * y + c12;
-				e2 = a23 * x + b23 * y + c23;
-				e3 = a31 * x + b31 * y + c31;
-				if (e1 > 0 && e2 > 0 && e3 > 0) // inside the poly
-				{
-					//PutPixel(j, i, color_poly);
-					p = glm::fvec3(x, y, 1.0f);
-					w1 = ((p2.y - p3.y) * (p.x - p3.x) + (p3.x - p2.x) * (p.y - p3.y)) /
-						((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y));
-					w2 = ((p3.y - p1.y) * (p.x - p3.x) + (p1.x - p3.x) * (p.y - p3.y)) /
-						((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y));
-					w3 = 1 - w1 - w2;
-					z = 1 / (w1 * p1.z + w2 * p2.z + w3 * p3.z);
-					z_tag = z - w1 / w3;
-					// 1 -  (maz_z 3 - min_z all ) / (z_max all - z_min all) = > depth
-					float d = 1 - (max_z - z_max_min.y) / (z_max_min.x - z_max_min.y);
-					//glm::vec3 c = w1 * color_poly + w2 * color_poly + w3 * color_poly;
-					//glm::fvec3 c = glm::fvec3(255.0f / i, 36.0f / i, 36.0f / i);
-					if (z_depth[x - min_x - 1][y - min_y - 1] > z_tag)
-					{
-						z_depth[x - min_x - 1][y - min_y - 1] = z_tag;
-					}
-					//PutPixel(x, y, glm::fvec3(d, d, d));
-					PutPixel(x, y, c);
-				}
-			}
-		}
+		//float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y, min_z = p1.z, max_z = p1.z;
+		//// max x
+		//if (max_x < p2.x)
+		//	max_x = p2.x;
+		//if (max_x < p3.x)
+		//	max_x = p3.x;
+		//// max y
+		//if (max_y < p2.y)
+		//	max_y = p2.y;
+		//if (max_y < p3.y)
+		//	max_y = p3.y;
+		////min x
+		//if (min_x > p2.x)
+		//	min_x = p2.x;
+		//if (min_x > p3.x)
+		//	min_x = p3.x;
+		//// min y
+		//if (min_y > p2.y)
+		//	min_y = p2.y;
+		//if (min_y > p3.y)
+		//	min_y = p3.y;
+		////min z
+		//if (min_z > p2.z)
+		//	min_z = p2.z;
+		//if (min_z > p3.z)
+		//	min_z = p3.z;
+		//// min z
+		//if (min_z > p2.z)
+		//	min_z = p2.z;
+		//if (min_z > p3.z)
+		//	min_z = p3.z;
+		////glm::fvec2 c1, c2, c3, c4;
+		////c1 = glm::fvec2(min_x, min_y);
+		////c2 = glm::fvec2(min_x, max_y);
+		////c3 = glm::fvec2(max_x, min_y);
+		////c4 = glm::fvec2(max_x, max_y);
+		////float c_z = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z +
+		////	Mesh.GetVertices(face.GetVertexIndex(1) - 1).z) / 3.0f;
+		////glm::vec3 color_rec = glm::vec3(255.0f / c_z, 36.0f / c_z, 36.0f / c_z);
+		////DrawLine(c1, c2, color_rec);
+		////DrawLine(c1, c3, color_rec);
+		////DrawLine(c3, c4, color_rec);
+		////DrawLine(c4, c2, color_rec);
+		// //we have a rectangle w x h
+		//float w = max_x - min_x, h = max_y - min_y, k, m, l;
+		//float sum = (Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z + Mesh.GetVertices(face.GetVertexIndex(2) - 1).z) / 3.0f;
+		//glm::vec3 color_poly = glm::fvec3(sum, sum, sum);
+		//float a12 = p1.y - p2.y;
+		//float a23 = p2.y - p3.y;
+		//float a31 = p3.y - p1.y;
+		//float b12 = p2.x - p1.x;
+		//float b23 = p3.x - p2.x;
+		//float b31 = p1.x - p3.x;
+		//float c12 = (p1.x * p2.y - p2.x * p1.y);
+		//float c23 = (p2.x * p3.y - p3.x * p2.y);
+		//float c31 = (p3.x * p1.y - p1.x * p3.y);
+		//float e1, e2, e3, d, z, z_tag;
+		////color_poly = glm::fvec3(255, 36, 36);
+		//float w1, w2, w3;
+		////glm::fvec3 c = glm::fvec3(0, 36, 36);
+		//for (float y = min_y ; y <max_y; y++)
+		//{
+		//	for (float x = min_x ; x < max_x; x++)
+		//	{
+		//		e1 = a12 * x + b12 * y + c12;
+		//		e2 = a23 * x + b23 * y + c23;
+		//		e3 = a31 * x + b31 * y + c31;
+		//		if (e1 > 0 && e2 > 0 && e3 > 0) // inside the poly
+		//		{
+		//			float avg = (p1.z + p2.z + p3.z) / 3.0;
+		//			float z_d = (avg - z_max_min_avg.y) / (z_max_min_avg.x - z_max_min_avg.y);
+		//			if (z_depth[x][y] > z_d)
+		//			{
+		//				z_depth[x][y ] = z_d;
+		//				//PutPixel(x, y, c);
+		//				PutPixel(x, y, glm::fvec3(z_d, z_d, z_d));
+		//			}
+		//		}
+		//	}
+		//}
 	}
 }
 
@@ -1023,16 +1088,35 @@ glm::fvec2 Renderer::max_min_z(MeshModel& Mesh)
 	return glm::fvec2(max, min);
 }
 
+glm::fvec2 Renderer::max_min_z_avg(MeshModel& Mesh)
+{
+	int s = Mesh.GetVerticesSize();
+	glm::fvec3 p1, p2, p3;
+	auto face = Mesh.GetFace(0);
+	float avg = 0, max = -1000*Mesh.GetVertices(face.GetVertexIndex(0) - 1).z, min = 1000 *Mesh.GetVertices(face.GetVertexIndex(0) - 1).z;
+	for (int i = 0; i < Mesh.GetFacesCount(); i++)
+	{
+		//	glm::vec3 c = glm::vec3((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX);
+		auto face = Mesh.GetFace(i);
+		avg = Mesh.GetVertices(face.GetVertexIndex(0) - 1).z + Mesh.GetVertices(face.GetVertexIndex(1) - 1).z +
+			Mesh.GetVertices(face.GetVertexIndex(2) - 1).z;
+		if (max < avg) max = avg;
+		if (min > avg) min = avg;
+
+	}
+	return glm::fvec2(max, min);
+}
+
 
 vector<vector<float>> Renderer::GetBuffer(int h, int w)
 {
 	vector<vector<float>>z_depth;
-	for (int i = 0; i < w; i++)
+	for (int i = 0; i < 720; i++)
 	{
 		vector<float> row;
-		for (int j = 0; j < h; j++)
+		for (int j = 0; j < 1280; j++)
 		{
-			row.push_back(1.0f);
+			row.push_back(INFINITY);
 		}
 		z_depth.push_back(row);
 	}
@@ -1066,69 +1150,69 @@ void Renderer::Transformation(MeshModel& Mesh)
 	}
 }
 
-void Renderer::FixPoints(MeshModel& Mesh)
-{
-	glm::fvec3 vec;
-	for (int i = 0; i < Mesh.RetVerticesSize(); i++)  // (x/y, z/y, 1)
-	{
-		vec = glm::fvec3((float)(Mesh.GetVertices(i).x) / Mesh.GetVertices(i).z, (float)(Mesh.GetVertices(i).y) / Mesh.GetVertices(i).z, 1);
-		Mesh.SetVertices(vec, i);
-	}
-
-	glm::fvec3 trans_vec = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, Mesh.GetVertices(0).z);
-	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		// min x
-		if (trans_vec.x > Mesh.GetVertices(i).x)
-			trans_vec.x = Mesh.GetVertices(i).x;
-		// min y
-		if (trans_vec.y > Mesh.GetVertices(i).y)
-			trans_vec.y = Mesh.GetVertices(i).y;
-		// min z
-		if (trans_vec.z > Mesh.GetVertices(i).z)
-			trans_vec.z = Mesh.GetVertices(i).z;
-	}
-	float min = trans_vec.x;
-	if (trans_vec.y < min)
-		min = trans_vec.y;
-	if (trans_vec.z < min)
-		min = trans_vec.z;
-	if (min < 0)
-	{
-		min *= (-1.0f);
-		trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
-		for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
-		{
-			Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x + trans_vec.x, Mesh.GetVertices(i).y + trans_vec.y, Mesh.GetVertices(i).z + trans_vec.z), i);
-		}
-	}
-	/// 
-
-	glm::fvec3 scale_vec = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
-	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		// max x
-		if (scale_vec.x < Mesh.GetVertices(i).x)
-			scale_vec.x = Mesh.GetVertices(i).x;
-		// max y
-		if (scale_vec.y < Mesh.GetVertices(i).y)
-			scale_vec.y = Mesh.GetVertices(i).y;
-		// max z
-		if (scale_vec.z < Mesh.GetVertices(i).z)
-			scale_vec.z = Mesh.GetVertices(i).z;
-
-	}
-	float max = scale_vec.x;
-	if (scale_vec.y > max)
-		max = scale_vec.y;
-	if (scale_vec.z > max)
-		max = scale_vec.z;
-	scale_vec.x = 600 / max; scale_vec.y = 600 / max; scale_vec.z = 600 / max;
-	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * scale_vec.x, Mesh.GetVertices(i).y * scale_vec.y, Mesh.GetVertices(i).z * scale_vec.z), i);
-	}
-}
+//void Renderer::FixPoints(MeshModel& Mesh)
+//{
+//	glm::fvec3 vec;
+//	for (int i = 0; i < Mesh.RetVerticesSize(); i++)  // (x/y, z/y, 1)
+//	{
+//		vec = glm::fvec3((float)(Mesh.GetVertices(i).x) / Mesh.GetVertices(i).z, (float)(Mesh.GetVertices(i).y) / Mesh.GetVertices(i).z, 1);
+//		Mesh.SetVertices(vec, i);
+//	}
+//
+//	glm::fvec3 trans_vec = glm::fvec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).y, Mesh.GetVertices(0).z);
+//	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+//	{
+//		// min x
+//		if (trans_vec.x > Mesh.GetVertices(i).x)
+//			trans_vec.x = Mesh.GetVertices(i).x;
+//		// min y
+//		if (trans_vec.y > Mesh.GetVertices(i).y)
+//			trans_vec.y = Mesh.GetVertices(i).y;
+//		// min z
+//		if (trans_vec.z > Mesh.GetVertices(i).z)
+//			trans_vec.z = Mesh.GetVertices(i).z;
+//	}
+//	float min = trans_vec.x;
+//	if (trans_vec.y < min)
+//		min = trans_vec.y;
+//	if (trans_vec.z < min)
+//		min = trans_vec.z;
+//	if (min < 0)
+//	{
+//		min *= (-1.0f);
+//		trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
+//		for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+//		{
+//			Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x + trans_vec.x, Mesh.GetVertices(i).y + trans_vec.y, Mesh.GetVertices(i).z + trans_vec.z), i);
+//		}
+//	}
+//	/// 
+//
+//	glm::fvec3 scale_vec = glm::vec3(Mesh.GetVertices(0).x, Mesh.GetVertices(0).x, 1);
+//	for (int i = 0; i < Mesh.RetVerticesSize(); i++)
+//	{
+//		// max x
+//		if (scale_vec.x < Mesh.GetVertices(i).x)
+//			scale_vec.x = Mesh.GetVertices(i).x;
+//		// max y
+//		if (scale_vec.y < Mesh.GetVertices(i).y)
+//			scale_vec.y = Mesh.GetVertices(i).y;
+//		// max z
+//		if (scale_vec.z < Mesh.GetVertices(i).z)
+//			scale_vec.z = Mesh.GetVertices(i).z;
+//
+//	}
+//	float max = scale_vec.x;
+//	if (scale_vec.y > max)
+//		max = scale_vec.y;
+//	if (scale_vec.z > max)
+//		max = scale_vec.z;
+//	scale_vec.x = 600 / max; scale_vec.y = 600 / max; scale_vec.z = 600 / max;
+//	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
+//	{
+//		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * scale_vec.x, Mesh.GetVertices(i).y * scale_vec.y, Mesh.GetVertices(i).z * scale_vec.z), i);
+//	}
+//}
 
 
 
