@@ -67,9 +67,10 @@ public:
 	
 	void InitializeDepthColor(); 
 	std::vector<float> depth;
-	std::vector<glm::vec3> color;
 
 	int	GetVerticesSize();
+	glm::vec3 GetColor();
+	void SetColor(glm::vec3 c);
 
 
 private:
@@ -96,7 +97,6 @@ private:
 	glm::fvec3 max;
 	glm::fvec3 min;
 
+	glm::vec3 color;
 
-
-	
 };
