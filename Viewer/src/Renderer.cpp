@@ -432,8 +432,11 @@ void Renderer::Render( Scene& scene)
 		DrawAxesWorld(Mesh, Cam);*/
 		vector<vector<float>>z_depth = GetBuffer(11, 44);
 		ProjectionTransformation(Mesh, Cam);
-		glm::vec4 ambient = scene.CalculateAmbient();
-		Ambient(Mesh, ambient);
+		glm::vec3 ambient = scene.CalculateAmbient();
+		glm::vec3 light_pos = scene.GetLightPosition();
+		Diffuse(light_pos, ambient, scene.GetDiffuseColor(), Mesh);
+		//Ambient(Mesh, ambient);
+		// 
 		//DrawTriangle(Mesh,z_depth);
 		
 		//DrawFaceNormals(Mesh);
@@ -445,15 +448,96 @@ void Renderer::Render( Scene& scene)
 	
 }
 
+void Renderer::Diffuse(glm::vec3 light_pos, glm::vec3 ambient, glm::vec3 diffuce_color, MeshModel& Mesh)
+{
+	//glm::vec3 light_pos = scene.GetLightPosition();
+	//glm::vec4 ambient = scene.CalculateAmbient();
+	//auto Mesh = scene.GetActiveModel();
 
+	glm::fvec3 p1, p2, p3, n1, n2, n3, l1, l2, l3, normal, middle;
+	for (int i = 0; i < Mesh.GetFacesCount(); i++)
+	{
+		auto face = Mesh.GetFace(i);
+
+		p1 = Mesh.GetVertices(face.GetVertexIndex(0) - 1);
+		p2 = Mesh.GetVertices(face.GetVertexIndex(1) - 1);
+		p3 = Mesh.GetVertices(face.GetVertexIndex(2) - 1);
+		middle = glm::fvec3((p1.x + p2.x + p3.x) / 3, (p1.y + p2.y + p3.y) / 3, (p1.z + p2.z + p3.z) / 3);
+		normal = glm::cross(p2 - p1, p3 - p1);
+		glm::vec3 norm = normalize(normal);
+		glm::vec3 lightDir = normalize(light_pos - middle);
+		float diff = dot(norm, lightDir);
+		if(diff <= 0.0) diff = 0.0;
+		glm::vec3 diffuse = diff * diffuce_color;
+		glm::vec3 color = (diffuse) * Mesh.GetColor();
+		
+		float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y, min_z = p1.z, max_z = p1.z;
+		// max x
+		if (max_x < p2.x)
+			max_x = p2.x;
+		if (max_x < p3.x)
+			max_x = p3.x;
+		// max y
+		if (max_y < p2.y)
+			max_y = p2.y;
+		if (max_y < p3.y)
+			max_y = p3.y;
+		//min x
+		if (min_x > p2.x)
+			min_x = p2.x;
+		if (min_x > p3.x)
+			min_x = p3.x;
+		// min y
+		if (min_y > p2.y)
+			min_y = p2.y;
+		if (min_y > p3.y)
+			min_y = p3.y;
+		//min z
+		if (min_z > p2.z)
+			min_z = p2.z;
+		if (min_z > p3.z)
+			min_z = p3.z;
+		// min z
+		if (min_z > p2.z)
+			min_z = p2.z;
+		if (min_z > p3.z)
+			min_z = p3.z;
+
+		float w = max_x - min_x, h = max_y - min_y, k, m, l;
+		float a12 = p1.y - p2.y;
+		float a23 = p2.y - p3.y;
+		float a31 = p3.y - p1.y;
+		float b12 = p2.x - p1.x;
+		float b23 = p3.x - p2.x;
+		float b31 = p1.x - p3.x;
+		float c12 = (p1.x * p2.y - p2.x * p1.y);
+		float c23 = (p2.x * p3.y - p3.x * p2.y);
+		float c31 = (p3.x * p1.y - p1.x * p3.y);
+		float e1, e2, e3, d, z, z_tag;
+		float w1, w2, w3;
+		for (float y = min_y; y < max_y; y++)
+		{
+			for (float x = min_x; x < max_x; x++)
+			{
+				e1 = a12 * x + b12 * y + c12;
+				e2 = a23 * x + b23 * y + c23;
+				e3 = a31 * x + b31 * y + c31;
+				if (e1 > 0 && e2 > 0 && e3 > 0) // inside the poly
+				{
+					PutPixel(x, y, color);
+				}
+			}
+		}
+		
+	}
+
+}
 void Renderer::Ambient(MeshModel& Mesh, glm::vec4 ambient) 
 {
 	glm::vec3 color = ambient;
 	glm::fvec3 p1, p2, p3, p;
 	float a12, a13, a23, b12, b13, b23, c12, c13, c23;
-	int ur = 0, ul = 0, dl = 0, dr = 0;
-	glm::fvec2 z_max_min = max_min_z(Mesh);
-	glm::fvec2 z_max_min_avg = max_min_z_avg(Mesh);
+
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
 		//glm::vec3 c = glm::vec3((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX);
@@ -674,7 +758,7 @@ void Renderer::DrawFaceNormals(MeshModel& Mesh)
 		p3 = Mesh.GetVertices(face.GetVertexIndex(2) - 1);
 
 		middle = glm::fvec2((p1.x + p2.x + p3.x) / 3, (p1.y + p2.y + p3.y) / 3);
-		normal = glm::cross(p2 - p1, p3 - p1); //normal = normal * 2.0f;
+		normal = glm::cross(p2 - p1, p3 - p1); 
 		glm::fvec2 p;
 		p.x = normal.x / 6.0f + middle.x;
 		p.y = normal.y / 6.0f + middle.y;
@@ -1131,7 +1215,7 @@ void Renderer::Z_Buffer(MeshModel& Mesh)
 		if (Mesh.GetVertices(i).z < Mesh.depth[i])
 		{
 			Mesh.depth[i] = Mesh.GetVertices(i).z;
-			Mesh.color[i] = glm::fvec3(5 * Mesh.depth[i], 5 * Mesh.depth[i], 5 * Mesh.depth[i]);
+			//Mesh.color[i] = glm::fvec3(5 * Mesh.depth[i], 5 * Mesh.depth[i], 5 * Mesh.depth[i]);
 		}
 	}
 }
