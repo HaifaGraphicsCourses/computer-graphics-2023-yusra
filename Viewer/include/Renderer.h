@@ -38,6 +38,7 @@ public:
 	glm::fvec2 max_min_z_avg(MeshModel& Mesh);
 
 	void Ambient(MeshModel& Mesh, glm::vec4 ambient);
+	void Diffuse(glm::vec3 light_pos, glm::vec3 ambient, glm::vec3 diffuce_color, MeshModel& Mesh);
 	
 
 private:
