@@ -76,10 +76,10 @@ void  Scene::SetSpecularColor(glm::vec3 c)
 	specular_color = c;
 }
 
-glm::vec4 Scene::CalculateAmbient()
+glm::vec3 Scene::CalculateAmbient()
 {
 	// ambient light intensity * ambient color
-	return glm::vec4(ambient * ambient_color, 1.0);
+	return glm::vec3(ambient * ambient_color);
 
 }
 
