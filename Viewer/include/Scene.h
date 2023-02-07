@@ -49,7 +49,7 @@ public:
 	glm::vec3 GetSpecularColor();
 	void SetSpecularColor(glm::vec3 c);
 	
-	glm::vec4 CalculateAmbient();
+	glm::vec3 CalculateAmbient();
 	glm::vec4 CalculateDiffuse();
 	glm::vec4 CalculateSpecular();
 
