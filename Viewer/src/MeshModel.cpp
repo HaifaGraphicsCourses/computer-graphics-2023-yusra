@@ -76,14 +76,19 @@ MeshModel::~MeshModel()
 {
 }
 
+glm::vec3 MeshModel::GetColor() {
+	return color;
+}
+void MeshModel::SetColor(glm::vec3 c)
+{
+	color = c;
+}
 
 void MeshModel::InitializeDepthColor() 
 {
 	for (int i = 0; i < vertices.size(); i++)
 	{
-		depth.push_back(1.0f);
-		color.push_back(glm::fvec3(255.0f, 255.0f, 255.0f));
-		
+		depth.push_back(1.0f);		
 	}
 }
 int MeshModel::GetVerticesSize()
