@@ -46,11 +46,12 @@ static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 			atX = 0.0f, atY = 0.0f, atZ = 0.0f,
 			upX = 0.0f, upY = 0.0f, upZ = 0.0f,
 			x_l = 0.0f, y_l = 0.0f, z_l = 0.0f, 
-			red = 0.0f, green = 0.0f, blue = 0.0f,
-			red_a = 0.0f, green_a = 0.0f, blue_a = 0.0f,
-			red_d = 0.0f, green_d = 0.0f, blue_d = 0.0f,
-			red_s = 0.0f, green_s = 0.0f, blue_s = 0.0f,
-			ambient, diffuse, specular;
+			red = 1.0f, green = 1.0f, blue = 1.0f,
+			red_a = 1.0f, green_a = 1.0f, blue_a = 1.0f,
+			red_d = 1.0f, green_d = 1.0f, blue_d = 1.0f,
+			red_s = 1.0f, green_s = 1.0f, blue_s = 1.0f,
+			red_m = 1.0f, green_m = 1.0f, blue_m = 1.0f,
+			ambient, specular;
 /**
  * Function declarations
  */
@@ -414,36 +415,45 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		//  --- Light
 		if (Light)
 		{
+			ImGui::Text("Mesh RGB");
+			ImGui::SliderFloat("R_m", &red_m, 1.0f, 255.0f);
+			ImGui::SliderFloat("G_m", &green_m, 1.0f, 255.0f);
+			ImGui::SliderFloat("B_m", &blue_m, 1.0f, 255.0f);
+			if (scene.GetModelCount() > 0)
+			{
+				scene.GetActiveModel().SetColor(glm::vec3(red_m, green_m, blue_m));
+			}
+
 			ImGui::Text("Light Coordinate: ");
-			ImGui::SliderFloat("X", &x_l, 0.0f, 700.0f);
-			ImGui::SliderFloat("Y", &y_l, 0.0f, 700.0f);
-			ImGui::SliderFloat("Z", &z_l, 0.0f, 700.0f);
+			ImGui::SliderFloat("X", &x_l, 1.0f, 700.0f);
+			ImGui::SliderFloat("Y", &y_l, 1.0f, 700.0f);
+			ImGui::SliderFloat("Z", &z_l, 1.0f, 700.0f);
 			scene.SetLightPosition(glm::vec3(x_l, y_l, z_l));
 			ImGui::Text("Light RGB");
-			ImGui::SliderFloat("R", &red, 0.0f, 255.0f);
-			ImGui::SliderFloat("G", &green, 0.0f, 255.0f);
-			ImGui::SliderFloat("B", &blue, 0.0f, 255.0f);
+			ImGui::SliderFloat("R", &red, 1.0f, 255.0f);
+			ImGui::SliderFloat("G", &green, 1.0f, 255.0f);
+			ImGui::SliderFloat("B", &blue, 1.0f, 255.0f);
 			scene.SetColor(glm::vec3(red, green, blue));
 			
-			ImGui::SliderFloat("Ambient", &ambient, 1.0f, 255.0f);
+			ImGui::SliderFloat("Ambient", &ambient, 0.0f, 1.0f);
 			ImGui::Text("Ambient RGB");
-			ImGui::SliderFloat("R_A", &red_a, 0.0f, 255.0f);
-			ImGui::SliderFloat("G_A", &green_a, 0.0f, 255.0f);
-			ImGui::SliderFloat("B_A", &blue_a, 0.0f, 255.0f);
+			ImGui::SliderFloat("R_A", &red_a, 1.0f, 255.0f);
+			ImGui::SliderFloat("G_A", &green_a, 1.0f, 255.0f);
+			ImGui::SliderFloat("B_A", &blue_a, 1.0f, 255.0f);
 			scene.SetAmbientColor(glm::vec3(red_a, green_a, blue_a));
 			scene.SetAmbient(ambient);
 			
-			ImGui::SliderFloat("Diffuse", &diffuse, 1.0f, 255.0f);
 			ImGui::Text("Diffuse RGB");
-			ImGui::SliderFloat("R_D", &red_d, 0.0f, 255.0f);
-			ImGui::SliderFloat("G_D", &green_d, 0.0f, 255.0f);
-			ImGui::SliderFloat("B_D", &blue_d, 0.0f, 255.0f);
+			ImGui::SliderFloat("R_D", &red_d, 1.0f, 255.0f);
+			ImGui::SliderFloat("G_D", &green_d, 1.0f, 255.0f);
+			ImGui::SliderFloat("B_D", &blue_d, 1.0f, 255.0f);
+			scene.SetDiffuseColor(glm::vec3(red_d, green_d, blue_d));
 			
 			ImGui::SliderFloat("Specular", &specular,1.0f, 255.0f);
 			ImGui::Text("Specular RGB");
-			ImGui::SliderFloat("R_S", &red_s, 0.0f, 255.0f);
-			ImGui::SliderFloat("G_S", &green_s, 0.0f, 255.0f);
-			ImGui::SliderFloat("B_S", &blue_s, 0.0f, 255.0f);
+			ImGui::SliderFloat("R_S", &red_s, 1.0f, 255.0f);
+			ImGui::SliderFloat("G_S", &green_s, 1.0f, 255.0f);
+			ImGui::SliderFloat("B_S", &blue_s, 1.0f, 255.0f);
 
 
 		}
