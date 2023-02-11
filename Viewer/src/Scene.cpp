@@ -6,7 +6,7 @@ Scene::Scene() :
 	active_camera_index(0),
 	active_model_index(0)
 {
-
+	light_position = glm::vec3(700, 700, 700);
 }
 
 glm::vec3  Scene::GetLightPosition()
@@ -74,6 +74,15 @@ glm::vec3  Scene::GetSpecularColor()
 void  Scene::SetSpecularColor(glm::vec3 c)
 {
 	specular_color = c;
+}
+
+void Scene::SetPower(float p)
+{
+	power = p;
+}
+float Scene::GetPower()
+{
+	return power;
 }
 
 glm::vec3 Scene::CalculateAmbient()
