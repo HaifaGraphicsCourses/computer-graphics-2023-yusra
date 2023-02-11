@@ -48,6 +48,8 @@ public:
 	void SetSpecular(float s);
 	glm::vec3 GetSpecularColor();
 	void SetSpecularColor(glm::vec3 c);
+	void SetPower(float p);
+	float GetPower();
 	
 	glm::vec3 CalculateAmbient();
 	glm::vec4 CalculateDiffuse();
@@ -68,5 +70,6 @@ private:
 	glm::vec3 diffuse_color;
 	float specular;
 	glm::vec3 specular_color;
+	float power;
 
 };
