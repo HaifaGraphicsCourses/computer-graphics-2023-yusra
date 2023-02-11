@@ -45,13 +45,13 @@ static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 			eyeX = 0.0f, eyeY = 0.0f, eyeZ = 0.0f,
 			atX = 0.0f, atY = 0.0f, atZ = 0.0f,
 			upX = 0.0f, upY = 0.0f, upZ = 0.0f,
-			x_l = 0.0f, y_l = 0.0f, z_l = 0.0f, 
+			x_l = 1.0f, y_l = 1.0f, z_l = 1.0f, 
 			red = 1.0f, green = 1.0f, blue = 1.0f,
 			red_a = 1.0f, green_a = 1.0f, blue_a = 1.0f,
 			red_d = 1.0f, green_d = 1.0f, blue_d = 1.0f,
 			red_s = 1.0f, green_s = 1.0f, blue_s = 1.0f,
 			red_m = 1.0f, green_m = 1.0f, blue_m = 1.0f,
-			ambient, specular;
+			ambient = 1.0f, specular = 1.0f, power = 1.0f;
 /**
  * Function declarations
  */
@@ -435,6 +435,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("B", &blue, 1.0f, 255.0f);
 			scene.SetColor(glm::vec3(red, green, blue));
 			
+			ImGui::Text("\nAmbient");
 			ImGui::SliderFloat("Ambient", &ambient, 0.0f, 1.0f);
 			ImGui::Text("Ambient RGB");
 			ImGui::SliderFloat("R_A", &red_a, 1.0f, 255.0f);
@@ -443,18 +444,22 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			scene.SetAmbientColor(glm::vec3(red_a, green_a, blue_a));
 			scene.SetAmbient(ambient);
 			
-			ImGui::Text("Diffuse RGB");
+			ImGui::Text("\nDiffuse RGB");
 			ImGui::SliderFloat("R_D", &red_d, 1.0f, 255.0f);
 			ImGui::SliderFloat("G_D", &green_d, 1.0f, 255.0f);
 			ImGui::SliderFloat("B_D", &blue_d, 1.0f, 255.0f);
 			scene.SetDiffuseColor(glm::vec3(red_d, green_d, blue_d));
 			
-			ImGui::SliderFloat("Specular", &specular,1.0f, 255.0f);
+			ImGui::Text("\nSpecular");
+			ImGui::SliderFloat("", &specular,0.0f, 1.0f);
 			ImGui::Text("Specular RGB");
 			ImGui::SliderFloat("R_S", &red_s, 1.0f, 255.0f);
 			ImGui::SliderFloat("G_S", &green_s, 1.0f, 255.0f);
 			ImGui::SliderFloat("B_S", &blue_s, 1.0f, 255.0f);
-
+			ImGui::SliderFloat("Power\n", &power, 0.0f, 100.0f);
+			scene.SetSpecularColor(glm::vec3(red_s, green_s, blue_s));
+			scene.SetSpecular(specular);
+			scene.SetPower(power);
 
 		}
 
