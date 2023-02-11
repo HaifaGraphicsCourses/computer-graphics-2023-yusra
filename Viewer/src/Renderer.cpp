@@ -434,11 +434,12 @@ void Renderer::Render( Scene& scene)
 		ProjectionTransformation(Mesh, Cam);
 		glm::vec3 ambient = scene.CalculateAmbient();
 		glm::vec3 light_pos = scene.GetLightPosition();
-		Diffuse(light_pos, ambient, scene.GetDiffuseColor(), Mesh);
+		//Diffuse(light_pos, ambient, scene.GetDiffuseColor(), Mesh);
+		Specular(light_pos, scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
+		//Reflect(light_pos, scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
 		//Ambient(Mesh, ambient);
 		// 
 		//DrawTriangle(Mesh,z_depth);
-		
 		//DrawFaceNormals(Mesh);
 		//DrawVertexNormals(Mesh);
 
@@ -447,6 +448,183 @@ void Renderer::Render( Scene& scene)
 	
 	
 }
+
+void Renderer::Reflect(glm::vec3 light_pos, float specular, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos)
+{
+
+	glm::fvec3 p1, p2, p3, n1, n2, n3, l1, l2, l3, normal, middle;
+	glm::vec3 light_c = glm::vec3(255.0f, 26.0f, 26.0f);
+	glm::vec3 reflect_c = glm::vec3(0.0f, 0.0f, 255.0f);
+	glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
+	for (int i = 0; i < Mesh.GetFacesCount(); i++)
+	{
+		auto face = Mesh.GetFace(i);
+
+		p1 = Mesh.GetVertices(face.GetVertexIndex(0) - 1);
+		p2 = Mesh.GetVertices(face.GetVertexIndex(1) - 1);
+		p3 = Mesh.GetVertices(face.GetVertexIndex(2) - 1);
+		DrawLine(p1, p2, color);
+		DrawLine(p2, p3, color);
+		DrawLine(p3, p1, color);
+		middle = glm::fvec3((p1.x + p2.x + p3.x) / 3, (p1.y + p2.y + p3.y) / 3, (p1.z + p2.z + p3.z) / 3);
+		normal = glm::cross(p2 - p1, p3 - p1);
+		glm::vec3 norm = normalize(normal);
+		glm::vec3 lightDir = normalize(light_pos - middle);
+		glm::vec3 reflectDir = normalize(reflect(lightDir, norm));
+
+		DrawLine(middle, light_pos/8.0f + middle, light_c);
+		DrawLine(middle, reflectDir * 30.0f + middle, reflect_c);
+
+		//float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y, min_z = p1.z, max_z = p1.z;
+		//// max x
+		//if (max_x < p2.x)
+		//	max_x = p2.x;
+		//if (max_x < p3.x)
+		//	max_x = p3.x;
+		//// max y
+		//if (max_y < p2.y)
+		//	max_y = p2.y;
+		//if (max_y < p3.y)
+		//	max_y = p3.y;
+		////min x
+		//if (min_x > p2.x)
+		//	min_x = p2.x;
+		//if (min_x > p3.x)
+		//	min_x = p3.x;
+		//// min y
+		//if (min_y > p2.y)
+		//	min_y = p2.y;
+		//if (min_y > p3.y)
+		//	min_y = p3.y;
+		////min z
+		//if (min_z > p2.z)
+		//	min_z = p2.z;
+		//if (min_z > p3.z)
+		//	min_z = p3.z;
+		//// min z
+		//if (min_z > p2.z)
+		//	min_z = p2.z;
+		//if (min_z > p3.z)
+		//	min_z = p3.z;
+		//float w = max_x - min_x, h = max_y - min_y, k, m, l;
+		//float a12 = p1.y - p2.y;
+		//float a23 = p2.y - p3.y;
+		//float a31 = p3.y - p1.y;
+		//float b12 = p2.x - p1.x;
+		//float b23 = p3.x - p2.x;
+		//float b31 = p1.x - p3.x;
+		//float c12 = (p1.x * p2.y - p2.x * p1.y);
+		//float c23 = (p2.x * p3.y - p3.x * p2.y);
+		//float c31 = (p3.x * p1.y - p1.x * p3.y);
+		//float e1, e2, e3, z, z_tag;
+		//float w1, w2, w3;
+		//for (float y = min_y; y < max_y; y++)
+		//{
+		//	for (float x = min_x; x < max_x; x++)
+		//	{
+		//		e1 = a12 * x + b12 * y + c12;
+		//		e2 = a23 * x + b23 * y + c23;
+		//		e3 = a31 * x + b31 * y + c31;
+		//		if (e1 > 0 && e2 > 0 && e3 > 0) // inside the poly
+		//		{
+		//			PutPixel(x, y, color);
+		//		}
+		//	}
+		//}
+	}
+
+}
+
+
+void Renderer::Specular(glm::vec3 light_pos, float specular, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos)
+{
+
+	glm::fvec3 p1, p2, p3, n1, n2, n3, l1, l2, l3, normal, middle;
+	for (int i = 0; i < Mesh.GetFacesCount(); i++)
+	{
+		auto face = Mesh.GetFace(i);
+
+		p1 = Mesh.GetVertices(face.GetVertexIndex(0) - 1);
+		p2 = Mesh.GetVertices(face.GetVertexIndex(1) - 1);
+		p3 = Mesh.GetVertices(face.GetVertexIndex(2) - 1);
+		middle = glm::fvec3((p1.x + p2.x + p3.x) / 3, (p1.y + p2.y + p3.y) / 3, (p1.z + p2.z + p3.z) / 3);
+		normal = glm::cross(p2 - p1, p3 - p1);
+		glm::vec3 norm = normalize(normal);
+		glm::vec3 lightDir = normalize(light_pos - middle);
+
+		glm::vec3 viewDir = normalize(viewPos - middle);
+		glm::vec3 reflectDir = reflect(-lightDir, norm);
+		float spec;
+		float d = dot(viewDir, reflectDir);
+		if (d <= 0.0)
+			spec = pow(0.0, power);
+		else
+			spec = pow(d, power);
+		glm::vec3 specular = specular_color * specular * spec;
+		glm::vec3 color = (specular)*Mesh.GetColor();
+
+		float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y, min_z = p1.z, max_z = p1.z;
+		// max x
+		if (max_x < p2.x)
+			max_x = p2.x;
+		if (max_x < p3.x)
+			max_x = p3.x;
+		// max y
+		if (max_y < p2.y)
+			max_y = p2.y;
+		if (max_y < p3.y)
+			max_y = p3.y;
+		//min x
+		if (min_x > p2.x)
+			min_x = p2.x;
+		if (min_x > p3.x)
+			min_x = p3.x;
+		// min y
+		if (min_y > p2.y)
+			min_y = p2.y;
+		if (min_y > p3.y)
+			min_y = p3.y;
+		//min z
+		if (min_z > p2.z)
+			min_z = p2.z;
+		if (min_z > p3.z)
+			min_z = p3.z;
+		// min z
+		if (min_z > p2.z)
+			min_z = p2.z;
+		if (min_z > p3.z)
+			min_z = p3.z;
+
+		float w = max_x - min_x, h = max_y - min_y, k, m, l;
+		float a12 = p1.y - p2.y;
+		float a23 = p2.y - p3.y;
+		float a31 = p3.y - p1.y;
+		float b12 = p2.x - p1.x;
+		float b23 = p3.x - p2.x;
+		float b31 = p1.x - p3.x;
+		float c12 = (p1.x * p2.y - p2.x * p1.y);
+		float c23 = (p2.x * p3.y - p3.x * p2.y);
+		float c31 = (p3.x * p1.y - p1.x * p3.y);
+		float e1, e2, e3, z, z_tag;
+		float w1, w2, w3;
+		for (float y = min_y; y < max_y; y++)
+		{
+			for (float x = min_x; x < max_x; x++)
+			{
+				e1 = a12 * x + b12 * y + c12;
+				e2 = a23 * x + b23 * y + c23;
+				e3 = a31 * x + b31 * y + c31;
+				if (e1 > 0 && e2 > 0 && e3 > 0) // inside the poly
+				{
+					PutPixel(x, y, color);
+				}
+			}
+		}
+
+	}
+
+}
+
 
 void Renderer::Diffuse(glm::vec3 light_pos, glm::vec3 ambient, glm::vec3 diffuce_color, MeshModel& Mesh)
 {
