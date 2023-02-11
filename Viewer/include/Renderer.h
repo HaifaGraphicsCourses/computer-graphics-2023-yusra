@@ -39,7 +39,9 @@ public:
 
 	void Ambient(MeshModel& Mesh, glm::vec4 ambient);
 	void Diffuse(glm::vec3 light_pos, glm::vec3 ambient, glm::vec3 diffuce_color, MeshModel& Mesh);
-	
+	void Specular(glm::vec3 light_pos, float specular, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos);
+	void Reflect(glm::vec3 light_pos, float specular, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos);
+
 
 private:
 	void PutPixel(const int i, const int j, const glm::vec3& color);
