@@ -425,9 +425,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			}
 
 			ImGui::Text("Light Coordinate: ");
-			ImGui::SliderFloat("X", &x_l, 1.0f, 700.0f);
-			ImGui::SliderFloat("Y", &y_l, 1.0f, 700.0f);
-			ImGui::SliderFloat("Z", &z_l, 1.0f, 700.0f);
+			ImGui::SliderFloat("X", &x_l, 0.0f, 1200.0f);
+			ImGui::SliderFloat("Y", &y_l, 0.0f, 1200.0f);
+			ImGui::SliderFloat("Z", &z_l, 0.0f, 1200.0f);
 			scene.SetLightPosition(glm::vec3(x_l, y_l, z_l));
 			ImGui::Text("Light RGB");
 			ImGui::SliderFloat("R", &red, 1.0f, 255.0f);
@@ -456,7 +456,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("R_S", &red_s, 1.0f, 255.0f);
 			ImGui::SliderFloat("G_S", &green_s, 1.0f, 255.0f);
 			ImGui::SliderFloat("B_S", &blue_s, 1.0f, 255.0f);
-			ImGui::SliderFloat("Power\n", &power, 0.0f, 100.0f);
+			ImGui::SliderFloat("Power\n", &power, 0.0f, 2.0f);
 			scene.SetSpecularColor(glm::vec3(red_s, green_s, blue_s));
 			scene.SetSpecular(specular);
 			scene.SetPower(power);
