@@ -439,9 +439,9 @@ void Renderer::Render( Scene& scene)
 		glm::fvec2 z_max_min_avg = max_min_z_avg(Mesh);
 
 		//Diffuse(light_pos, ambient, scene.GetDiffuseColor(), Mesh);
-		Specular(z_depth,z_max_min, z_max_min_avg,light_pos, ambient, scene.GetDiffuseColor(),scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
+		//Specular(z_depth,z_max_min, z_max_min_avg,light_pos, ambient, scene.GetDiffuseColor(),scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
 		//Reflect(light_pos, scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
-		//Ambient(Mesh, ambient);
+		Ambient(Mesh, ambient);
 		// 
 		//DrawTriangle(Mesh,z_depth);
 		//DrawFaceNormals(Mesh);
