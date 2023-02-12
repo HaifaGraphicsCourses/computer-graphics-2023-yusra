@@ -434,8 +434,12 @@ void Renderer::Render( Scene& scene)
 		ProjectionTransformation(Mesh, Cam);
 		glm::vec3 ambient = scene.CalculateAmbient();
 		glm::vec3 light_pos = scene.GetLightPosition();
+		//Ambient(Mesh, ambient);
+		glm::fvec2 z_max_min = max_min_z(Mesh);
+		glm::fvec2 z_max_min_avg = max_min_z_avg(Mesh);
+
 		//Diffuse(light_pos, ambient, scene.GetDiffuseColor(), Mesh);
-		Specular(light_pos, scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
+		Specular(z_depth,z_max_min, z_max_min_avg,light_pos, ambient, scene.GetDiffuseColor(),scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
 		//Reflect(light_pos, scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
 		//Ambient(Mesh, ambient);
 		// 
@@ -536,9 +540,9 @@ void Renderer::Reflect(glm::vec3 light_pos, float specular, float power, glm::ve
 }
 
 
-void Renderer::Specular(glm::vec3 light_pos, float specular, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos)
+void Renderer::Specular(vector<vector<float>>z_depth,glm::fvec2 z_max_min, glm::fvec2 z_max_min_avg, glm::vec3 light_pos, glm::vec3 ambient, glm::vec3 diffuce_color, float Ks, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos)
 {
-
+	
 	glm::fvec3 p1, p2, p3, n1, n2, n3, l1, l2, l3, normal, middle;
 	for (int i = 0; i < Mesh.GetFacesCount(); i++)
 	{
@@ -547,22 +551,29 @@ void Renderer::Specular(glm::vec3 light_pos, float specular, float power, glm::v
 		p1 = Mesh.GetVertices(face.GetVertexIndex(0) - 1);
 		p2 = Mesh.GetVertices(face.GetVertexIndex(1) - 1);
 		p3 = Mesh.GetVertices(face.GetVertexIndex(2) - 1);
-		middle = glm::fvec3((p1.x + p2.x + p3.x) / 3, (p1.y + p2.y + p3.y) / 3, (p1.z + p2.z + p3.z) / 3);
-		normal = glm::cross(p2 - p1, p3 - p1);
-		glm::vec3 norm = normalize(normal);
-		glm::vec3 lightDir = normalize(light_pos - middle);
+		//middle = glm::fvec3((p1.x + p2.x + p3.x) / 3, (p1.y + p2.y + p3.y) / 3, (p1.z + p2.z + p3.z) / 3);
+		//normal = glm::cross(p2 - p1, p3 - p1);
+		//glm::vec3 R, V; float specAngle;
 
-		glm::vec3 viewDir = normalize(viewPos - middle);
-		glm::vec3 reflectDir = reflect(-lightDir, norm);
-		float spec;
-		float d = dot(viewDir, reflectDir);
-		if (d <= 0.0)
-			spec = pow(0.0, power);
-		else
-			spec = pow(d, power);
-		glm::vec3 specular = specular_color * specular * spec;
-		glm::vec3 color = (specular)*Mesh.GetColor();
-
+		//glm::vec3 N = normalize(normal);
+		//glm::vec3 L = normalize(light_pos - middle);
+		//// Lambert's cosine law
+		//float lambertian = dot(N, L);
+		//if (lambertian < 0.0)
+		//	lambertian = 0.0;
+		//float specular = 0.0;
+		//if (lambertian > 0.0) {
+		//	R = reflect(-L, N);      // Reflected light vector
+		//	V = normalize(-middle); // Vector to viewer
+		//	// Compute the specular term
+		//	specAngle = dot(R, V);
+		//	if (specAngle < 0.0) specAngle = 0.0;
+		//	specular = pow(specAngle, power);
+		//}
+		//glm::vec3 color = Ks * specular * specular_color;
+		/*DrawLine(p1, p2, color);
+		DrawLine(p2, p3, color);
+		DrawLine(p3, p1, color);*/
 		float min_x = p1.x, max_x = p1.x, min_y = p1.y, max_y = p1.y, min_z = p1.z, max_z = p1.z;
 		// max x
 		if (max_x < p2.x)
@@ -595,6 +606,7 @@ void Renderer::Specular(glm::vec3 light_pos, float specular, float power, glm::v
 		if (min_z > p3.z)
 			min_z = p3.z;
 
+		 //we have a rectangle w x h
 		float w = max_x - min_x, h = max_y - min_y, k, m, l;
 		float a12 = p1.y - p2.y;
 		float a23 = p2.y - p3.y;
@@ -605,18 +617,46 @@ void Renderer::Specular(glm::vec3 light_pos, float specular, float power, glm::v
 		float c12 = (p1.x * p2.y - p2.x * p1.y);
 		float c23 = (p2.x * p3.y - p3.x * p2.y);
 		float c31 = (p3.x * p1.y - p1.x * p3.y);
-		float e1, e2, e3, z, z_tag;
+		float e1, e2, e3, d, z, z_tag;
+		//color_poly = glm::fvec3(255, 36, 36);
 		float w1, w2, w3;
-		for (float y = min_y; y < max_y; y++)
+		//glm::fvec3 c = glm::fvec3(0, 36, 36);
+		for (float y = min_y ; y <max_y; y++)
 		{
-			for (float x = min_x; x < max_x; x++)
+			for (float x = min_x ; x < max_x; x++)
 			{
 				e1 = a12 * x + b12 * y + c12;
 				e2 = a23 * x + b23 * y + c23;
 				e3 = a31 * x + b31 * y + c31;
 				if (e1 > 0 && e2 > 0 && e3 > 0) // inside the poly
 				{
-					PutPixel(x, y, color);
+					normal = glm::cross(p2 - p1, p3 - p1);
+					glm::vec3 R, V; float specAngle;
+					glm::vec3 m = glm::vec3(x, y, (p1.z + p2.z + p3.z) / 3);
+					glm::vec3 N = normalize(normal);
+					glm::vec3 L = normalize(light_pos - m);
+					// Lambert's cosine law
+					float lambertian = dot(N, L);
+					if (lambertian < 0.0)
+						lambertian = 0.0;
+					float specular = 0.0;
+					if (lambertian > 0.0) {
+						R = reflect(-L, N);      // Reflected light vector
+						V = normalize(-m); // Vector to viewer
+						// Compute the specular term
+						specAngle = dot(R, V);
+						if (specAngle < 0.0) specAngle = 0.0;
+						specular = pow(specAngle, power);
+					}
+					glm::vec3 color = Ks * specular * specular_color;
+					color = ambient + lambertian * diffuce_color + Ks * specular * specular_color;
+					float avg = (p1.z + p2.z + p3.z) / 3.0;
+					float z_d = (avg - z_max_min_avg.y) / (z_max_min_avg.x - z_max_min_avg.y);
+					if (z_depth[x][y] > z_d)
+					{
+						z_depth[x][y ] = z_d;
+						PutPixel(x, y, color);
+					}
 				}
 			}
 		}
@@ -710,7 +750,7 @@ void Renderer::Diffuse(glm::vec3 light_pos, glm::vec3 ambient, glm::vec3 diffuce
 	}
 
 }
-void Renderer::Ambient(MeshModel& Mesh, glm::vec4 ambient) 
+void Renderer::Ambient(MeshModel& Mesh, glm::vec3 ambient) 
 {
 	glm::vec3 color = ambient;
 	glm::fvec3 p1, p2, p3, p;
