@@ -39,7 +39,7 @@ public:
 
 	void Ambient(MeshModel& Mesh, glm::vec3 ambient);
 	void Diffuse(glm::vec3 light_pos, glm::vec3 ambient, glm::vec3 diffuce_color, MeshModel& Mesh);
-	void Specular(vector<vector<float>>z_depth, glm::fvec2 z_max_min, glm::fvec2 z_max_min_avg, glm::vec3 light_pos, glm::vec3 ambient,glm::vec3 diffuce_color, float Ks, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos);
+	void Specular(float Fa, vector<vector<float>>z_depth, glm::fvec2 z_max_min, glm::fvec2 z_max_min_avg, glm::vec3 light_pos, glm::vec3 ambient,glm::vec3 diffuce_color, float Ks, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos);
 	void Reflect(glm::vec3 light_pos, float specular, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos);
 
 
