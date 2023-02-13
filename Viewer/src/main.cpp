@@ -451,7 +451,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			scene.SetDiffuseColor(glm::vec3(red_d, green_d, blue_d));
 			
 			ImGui::Text("\nSpecular");
-			ImGui::SliderFloat("", &specular,0.0f, 1.0f);
+			ImGui::SliderFloat("", &specular,-2.0f, 1.0f);
 			ImGui::Text("Specular RGB");
 			ImGui::SliderFloat("R_S", &red_s, 1.0f, 255.0f);
 			ImGui::SliderFloat("G_S", &green_s, 1.0f, 255.0f);
