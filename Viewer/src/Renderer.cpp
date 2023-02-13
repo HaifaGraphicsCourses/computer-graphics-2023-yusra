@@ -439,9 +439,9 @@ void Renderer::Render( Scene& scene)
 		glm::fvec2 z_max_min_avg = max_min_z_avg(Mesh);
 
 		//Diffuse(light_pos, ambient, scene.GetDiffuseColor(), Mesh);
-		//Specular(z_depth,z_max_min, z_max_min_avg,light_pos, ambient, scene.GetDiffuseColor(),scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
+		Specular(scene.GetAmbient(), z_depth,z_max_min, z_max_min_avg,light_pos,  ambient, scene.GetDiffuseColor(),scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
 		//Reflect(light_pos, scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
-		Ambient(Mesh, ambient);
+		//Ambient(Mesh, ambient);
 		// 
 		//DrawTriangle(Mesh,z_depth);
 		//DrawFaceNormals(Mesh);
@@ -539,8 +539,7 @@ void Renderer::Reflect(glm::vec3 light_pos, float specular, float power, glm::ve
 
 }
 
-
-void Renderer::Specular(vector<vector<float>>z_depth,glm::fvec2 z_max_min, glm::fvec2 z_max_min_avg, glm::vec3 light_pos, glm::vec3 ambient, glm::vec3 diffuce_color, float Ks, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos)
+void Renderer::Specular(float Fa, vector<vector<float>>z_depth,glm::fvec2 z_max_min, glm::fvec2 z_max_min_avg, glm::vec3 light_pos, glm::vec3 ambient, glm::vec3 diffuce_color, float Ks, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos)
 {
 	
 	glm::fvec3 p1, p2, p3, n1, n2, n3, l1, l2, l3, normal, middle;
@@ -628,11 +627,19 @@ void Renderer::Specular(vector<vector<float>>z_depth,glm::fvec2 z_max_min, glm::
 				e1 = a12 * x + b12 * y + c12;
 				e2 = a23 * x + b23 * y + c23;
 				e3 = a31 * x + b31 * y + c31;
+				float w1, w2, w3, z;
 				if (e1 > 0 && e2 > 0 && e3 > 0) // inside the poly
 				{
+					w1 = ((p2.y - p3.y) * (x - p3.x) + (p3.x - p2.x) * (y - p3.y)) /
+						(((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y)));
+					
+					w2 = ((p3.y - p1.y) * (x - p3.x) + (p1.x - p3.x) * (y - p3.y)) /
+						(((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y)));
+					w3 = 1 - w1 - w2;
+					z = w1 * p1.z + w2 * p2.z + w3 * p3.z;
 					normal = glm::cross(p2 - p1, p3 - p1);
 					glm::vec3 R, V; float specAngle;
-					glm::vec3 m = glm::vec3(x, y, (p1.z + p2.z + p3.z) / 3);
+					glm::vec3 m = glm::vec3(x, y, z);
 					glm::vec3 N = normalize(normal);
 					glm::vec3 L = normalize(light_pos - m);
 					// Lambert's cosine law
@@ -664,7 +671,6 @@ void Renderer::Specular(vector<vector<float>>z_depth,glm::fvec2 z_max_min, glm::
 	}
 
 }
-
 
 void Renderer::Diffuse(glm::vec3 light_pos, glm::vec3 ambient, glm::vec3 diffuce_color, MeshModel& Mesh)
 {
