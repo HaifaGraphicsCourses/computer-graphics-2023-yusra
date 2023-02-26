@@ -11,7 +11,12 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/ext.hpp>
 #include <glm/ext/matrix_transform.hpp>
-using namespace std;
+#include "MeshModel.h"
+#include "ShaderProgram.h"
+#include <imgui/imgui.h>
+#include <vector>
+#include <memory>
+#include <algorithm>
 using namespace std;
 #define INDEX(width,x,y,c) ((x)+(y)*(width))*3+(c)
 #define Z_INDEX(width,x,y) ((x)+(y)*(width))
@@ -27,6 +32,14 @@ Renderer::Renderer(int viewport_width, int viewport_height) :
 Renderer::~Renderer()
 {
 	delete[] color_buffer;
+}
+
+Renderer::Renderer()
+{
+	viewport_width = 1200;
+	viewport_height = 800;
+	InitOpenglRendering();
+	CreateBuffers(viewport_width, viewport_height);
 }
 
 void Renderer::PutPixel(int i, int j, const glm::vec3& color)
@@ -48,98 +61,6 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 	int dx = x1 - x0, dy = y1 - y0, D = 2 * dy - dx, x = x0, y = y0, yi = 1, xi = 1, m;
 	if (dx == 0) m = 200; // so we wont have something undefined
 	else { m = dy / dx; }; // calcutaleing the Incline
-	//if (m < 1 && m > -1) // the cases is -1 < Incline < 1
-	//{
-	//	//plotLineLow
-	//	if (dy < 0) {
-	//		yi = -1;
-	//		dy = -dy;
-	//	}
-	//	D = (2 * dy) - dx;
-	//	y = y0;
-	//	for (int x = x0; x <= x1; x++)
-	//	{
-	//		PutPixel(x, y, color);
-	//		if (D > 0)
-	//		{
-	//			y = y + yi;
-	//			D = D + (2 * (dy - dx));
-	//		}
-	//		else
-	//			D = D + 2 * dy;
-	//	}
-	//	// plotLineHigh
-	//	if (dx < 0)
-	//	{
-	//		xi = -1;
-	//		dx = -dx;
-	//	}
-	//	D = (2 * dx) - dy;
-	//	x = x0;
-	//	for (int y = y0; y <= y1; y++)
-	//	{
-	//		PutPixel(x, y, color);
-	//		if (D > 0)
-	//		{
-	//			x = x + xi;
-	//			D = D + (2 * (dx - dy));
-	//		}
-	//		else
-	//			D = D + 2 * dx;
-	//	}
-	//	if (dy > 0)
-	//	{
-
-	//		if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
-	//		{
-	//			dx = x0 - x1;
-	//			dy = y0 - y1;
-	//			yi = 1;
-	//			if (dy < 0) {
-	//				yi = -1;
-	//				dy = -dy;
-	//			}
-	//			D = (2 * dy) - dx;
-	//			y = y1;
-	//			cnt3++;
-	//			for (int x = x1; x <= x0; x++)
-	//			{
-	//				PutPixel(x, y, color);
-	//				if (D > 0)
-	//				{
-	//					y = y + yi;
-	//					D = D + (2 * (dy - dx));
-	//				}
-	//				else
-	//					D = D + 2 * dy;
-	//			}
-	//		}
-	//		else // plotLineLow(x0, y0, x1, y1)
-	//		{
-	//			dx = x1 - x0;
-	//			dy = y1 - y0;
-	//			yi = 1;
-	//			if (dy < 0) {
-	//				yi = -1;
-	//				dy = -dy;
-	//			}
-	//			D = (2 * dy) - dx;
-	//			y = y0;
-	//			for (int x = x0; x <= x1; x++)
-	//			{
-	//				PutPixel(x, y, color);
-	//				if (D > 0)
-	//				{
-	//					y = y + yi;
-	//					D = D + (2 * (dy - dx));
-	//				}
-	//				else
-	//					D = D + 2 * dy;
-	//			}
-	//		}
-	//	}
-	//}
-	//else 
 	if (abs(y1 - y0) < abs(x1 - x0))
 	{
 		if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
@@ -240,45 +161,6 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 			}
 		}
 	}
-
-
-	// algorethem from the enternet with some changes
-	/*double x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
-	int dx = x2 - x1,
-		dy = y2 - y1,
-		p = 2 * dy - dx,
-		x = x1,
-		y = y1;
-	while (x <= x2)
-	{
-		if (p >= 0)
-		{
-			PutPixel(x, y, color);
-			y = y + 1;
-			p = p + 2 * dy - 2 * dx;
-		}
-		else
-		{
-			PutPixel(x, y, color);
-			p = p + 2 * dy;
-		}
-		x = x + 1;
-	}*/
-	
-	// algorethem from the slides
-	/*double x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
-	int x = x1, y = y1, e = -1 * (x2 - x1), dx = x2 - x1,dy = y2 - y1;
-	while (x <= x2)
-	{
-		e = 2 * dy * x + 2 * dx * y - 1;
-		if (e > 0)
-		{
-			y = y + 1; e = e - 2 * dx;
-		}
-		PutPixel(x, y, color);
-		x = x + 1; e = e + 2 * dy;
-	}*/
-
 }
 
 void Renderer::CreateBuffers(int w, int h)
@@ -412,46 +294,102 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 	}
 }
 
-void Renderer::Render( Scene& scene)
-{
-	// TODO: Replace this code with real scene rendering code
-	int half_width = viewport_width / 2;
-	int half_height = viewport_height / 2;	
-	
-	// HW2
-	//auto Cam = scene.GetCamera(1);
-	for (int i = 0; i < scene.GetModelCount(); i++)
+void Renderer::Render(Scene& scene) {
+	int cameraCount = scene.GetCameraCount();
+	if (cameraCount > 0)
 	{
-		
+		int modelCount = scene.GetModelCount();
+		auto& camera = scene.GetActiveCamera();
+		//const Camera&
+		for (int currentModelIndex = 0; currentModelIndex < modelCount; currentModelIndex++)
+		{
+			auto currentModel = scene.GetModel(currentModelIndex);
+			//std::shared_ptr<MeshModel> currentModel
+			// Activate the 'colorShader' program (vertex and fragment shaders)
+			colorShader.use();
 
-		auto Mesh = scene.GetModel(i);
-		auto Cam = scene.GetActiveCamera();
-	/*	DrawBoundingBoxModel(Mesh, Cam);
-		DrawBoundingBoxWorld(Mesh, Cam);
-		DrawAxesModel(Mesh, Cam);
-		DrawAxesWorld(Mesh, Cam);*/
-		vector<vector<float>>z_depth = GetBuffer(11, 44);
-		ProjectionTransformation(Mesh, Cam);
-		glm::vec3 ambient = scene.CalculateAmbient();
-		glm::vec3 light_pos = scene.GetLightPosition();
-		//Ambient(Mesh, ambient);
-		glm::fvec2 z_max_min = max_min_z(Mesh);
-		glm::fvec2 z_max_min_avg = max_min_z_avg(Mesh);
+			// Set the uniform variables
+			colorShader.setUniform("model", currentModel.GetTransformation());
+			colorShader.setUniform("view", camera.GetViewTransformation());
+			colorShader.setUniform("projection", camera.GetProjectionTransformation());
+			colorShader.setUniform("material.textureMap", 0);
 
-		//Diffuse(light_pos, ambient, scene.GetDiffuseColor(), Mesh);
-		Specular(scene.GetAmbient(), z_depth,z_max_min, z_max_min_avg,light_pos,  ambient, scene.GetDiffuseColor(),scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
-		//Reflect(light_pos, scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
-		//Ambient(Mesh, ambient);
-		// 
-		//DrawTriangle(Mesh,z_depth);
-		//DrawFaceNormals(Mesh);
-		//DrawVertexNormals(Mesh);
+			// Set 'texture1' as the active texture at slot #0
+			texture1.bind(0);
 
-		
+			// Drag our model's faces (triangles) in fill mode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glBindVertexArray(currentModel.GetVAO());
+			glDrawArrays(GL_TRIANGLES, 0, currentModel.RetVerticesSize());
+			glBindVertexArray(0);
+
+			// Unset 'texture1' as the active texture at slot #0
+			texture1.unbind(0);
+
+			colorShader.setUniform("color", glm::vec3(0, 0, 0));
+
+			// Drag our model's faces (triangles) in line mode (wireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glBindVertexArray(currentModel.GetVAO());
+			glDrawArrays(GL_TRIANGLES, 0, currentModel.RetVerticesSize());
+			glBindVertexArray(0);
+		}
 	}
-	
-	
 }
+
+void Renderer::LoadShaders()
+{
+	colorShader.loadShaders("vshader_color.glsl", "fshader_color.glsl");
+}
+
+void Renderer::LoadTextures()
+{
+	/*if (!texture1.loadTexture("bin\\Debug\\crate.jpg", true))
+	{
+		texture1.loadTexture("bin\\Release\\crate.jpg", true);
+	}*/
+}
+
+//void Renderer::Render( Scene& scene)
+//{
+//	// TODO: Replace this code with real scene rendering code
+//	int half_width = viewport_width / 2;
+//	int half_height = viewport_height / 2;	
+//	
+//	// HW2
+//	//auto Cam = scene.GetCamera(1);
+//	for (int i = 0; i < scene.GetModelCount(); i++)
+//	{
+//		
+//
+//		auto Mesh = scene.GetModel(i);
+//		auto Cam = scene.GetActiveCamera();
+//	/*	DrawBoundingBoxModel(Mesh, Cam);
+//		DrawBoundingBoxWorld(Mesh, Cam);
+//		DrawAxesModel(Mesh, Cam);
+//		DrawAxesWorld(Mesh, Cam);*/
+//		vector<vector<float>>z_depth = GetBuffer(11, 44);
+//		ProjectionTransformation(Mesh, Cam);
+//		glm::vec3 ambient = scene.CalculateAmbient();
+//		glm::vec3 light_pos = scene.GetLightPosition();
+//		//Ambient(Mesh, ambient);
+//		glm::fvec2 z_max_min = max_min_z(Mesh);
+//		glm::fvec2 z_max_min_avg = max_min_z_avg(Mesh);
+//
+//		//Diffuse(light_pos, ambient, scene.GetDiffuseColor(), Mesh);
+//		//Specular(scene.GetAmbient(), z_depth,z_max_min, z_max_min_avg,light_pos,  ambient, scene.GetDiffuseColor(),scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
+//		//Reflect(light_pos, scene.GetSpecular(), scene.GetPower(), scene.GetSpecularColor(), Mesh, Cam.GetCamera_position());
+//		//Ambient(Mesh, ambient);
+//		// 
+//		//DrawTriangle(Mesh,z_depth);
+//		//DrawFaceNormals(Mesh);
+//		//DrawVertexNormals(Mesh);
+//
+//		
+//	}
+//	
+//	
+//}
 
 void Renderer::Reflect(glm::vec3 light_pos, float specular, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos)
 {
