@@ -1,13 +1,25 @@
 #pragma once
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <string>
+#include <memory>
+#include "MeshModel.h"
 #include "Face.h"
+
+struct Vertex
+{
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 textureCoords;
+};
 
 class MeshModel
 {
 public:
 	MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name);
 	virtual ~MeshModel();
+
+
 	const Face& GetFace(int index) const;
 	int GetFacesCount() const;
 	const std::string& GetModelName() const;
@@ -77,7 +89,20 @@ private:
 	std::vector<Face> faces;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
-	std::string model_name;
+
+	std::vector<glm::vec3> textureCoords;
+
+	std::vector<Vertex> modelVertices;
+
+	glm::mat4x4 modelTransform;
+	glm::mat4x4 worldTransform;
+
+	std::string modelName;
+
+	glm::vec3 color;
+
+	GLuint vbo;
+	GLuint vao;
 
 
 	glm::mat4 objectTransform;
