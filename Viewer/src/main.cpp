@@ -1,5 +1,16 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <stdio.h>
+#include <iostream>
+#include <memory>
+#include <random>
+#include <string>
+#include <sstream>
+#include <stdlib.h>
 #include <string>
 #include <iostream>
 #include <imgui/imgui.h>
@@ -15,7 +26,10 @@
 #include "Scene.h"
 #include "Utils.h"
 
+
 using namespace std;
+
+
 
 /**
  * Fields
@@ -26,7 +40,7 @@ bool LOCALtransformation_window = false;
 bool WORLDtransformation_window = false;
 bool CAMERA_Orthographic_window = false;
 bool CAMERA_Perspective_window = false;
-bool window = false;
+bool windows = false;
 bool Viewing_window = false;
 bool CAMERA_window = false;
 bool Light = false;
@@ -55,6 +69,17 @@ static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 /**
  * Function declarations
  */
+
+double zoomFactor = 1;
+int windowWidth = 1280;
+int windowHeight = 720;
+char* windowTitle = "OpenGL Demo";
+glm::vec4 clearColor = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+bool zoomChanged = false;
+std::shared_ptr<Scene> scene;
+ImGuiIO* imgui;
+GLFWwindow* window;
+
 static void GlfwErrorCallback(int error, const char* description);
 GLFWwindow* SetupGlfwWindow(int w, int h, const char* window_name);
 ImGuiIO& SetupDearImgui(GLFWwindow* window);
@@ -62,6 +87,13 @@ void StartFrame();
 void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io);
 void Cleanup(GLFWwindow* window);
 void DrawImguiMenus(ImGuiIO& io, Scene& scene);
+
+bool Setup(int windowWidth, int windowHeight, const char* windowName);
+
+static void GlfwErrorCallback(int error, const char* description);
+
+//float GetAspectRatio();
+//void HandleImguiInput();
 
 /**
  * Function implementation
@@ -84,19 +116,44 @@ int main(int argc, char **argv)
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 	
 	//Camera camera = Camera();
-	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
+	Renderer renderer;
+	renderer.LoadShaders();
+	renderer.LoadTextures();
 	Scene scene = Scene();
 	scene.AddCamera(std::make_shared<Camera>());
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
+	
 	while (!glfwWindowShouldClose(window)) /////////
 	{
-		glfwPollEvents();
+		/*glfwPollEvents();
 		StartFrame();
 		glfwSetWindowSize(window, Width, Height);
 		glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
 		DrawImguiMenus(io, scene);
-		RenderFrame(window, scene, renderer, io);
+		RenderFrame(window, scene, renderer, io);*/
+		// Poll and process events
+		glfwPollEvents();
+
+		// Imgui stuff
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		DrawImguiMenus(io, scene);
+		ImGui::Render();
+		//HandleImguiInput();
+
+		// Clear the screen and depth buffer
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Render scene
+		renderer.Render(scene);
+
+		// Imgui stuff
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		// Swap front and back buffers
+		glfwSwapBuffers(window);
 	}
 
 	Cleanup(window);
@@ -107,6 +164,24 @@ static void GlfwErrorCallback(int error, const char* description)
 {
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
+
+bool Setup(int windowWidth, int windowHeight, const char* windowName)
+{
+	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, windowName);
+	if (!window)
+	{
+		std::cerr << "Window setup failed" << std::endl;
+		return false;
+	}
+
+	imgui = &SetupDearImgui(window);
+
+	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+	glEnable(GL_DEPTH_TEST);
+
+	return true;
+}
+
 
 GLFWwindow* SetupGlfwWindow(int w, int h, const char* window_name)
 {
@@ -136,12 +211,20 @@ ImGuiIO& SetupDearImgui(GLFWwindow* window)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
+
+	// Setup style
 	ImGui::StyleColorsDark();
+
+	//glfwSetScrollCallback(window, glfw_OnMouseScroll);
+
 	return io;
 }
 
+	
 void StartFrame()
 {
 	ImGui_ImplOpenGL3_NewFrame();
@@ -401,9 +484,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		}
 		
 
-		ImGui::Checkbox("WINDOW", &window);
+		ImGui::Checkbox("WINDOWS", &windows);
 		//  --- WINDOW
-		if (window)
+		if (windows)
 		{
 			ImGui::SliderInt("Height", &Height, 1, 3000);
 			ImGui::SliderInt("Width", &Width, 1, 3000);
