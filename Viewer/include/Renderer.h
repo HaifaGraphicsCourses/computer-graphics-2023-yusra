@@ -1,18 +1,30 @@
 #pragma once
 #include "Scene.h"
+#include <vector>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <GLFW/glfw3.h>
+#include <imgui/imgui.h>
+#include <memory>
+#include "Texture2D.h"
+#include "ShaderProgram.h"
 
 class Renderer
 {
 public:
 	Renderer(int viewportWidth, int viewportHeight);
-	virtual ~Renderer();
+	Renderer();
+	~Renderer();
 	void Render( Scene& scene);
 	void SwapBuffers();
 	void ClearColorBuffer(const glm::vec3& color);
-	int GetViewportWidth() const;
+	int GetViewportWidth() const;	
 	int GetViewportHeight() const;
+	
+	void LoadShaders();
+	void LoadTextures();
+	
+	
 	void Scale(MeshModel& Mesh, glm::fvec3 scale_vec);
 	void Translate(MeshModel& Mesh, glm::fvec3 translate_vec);
 	void Rotate(MeshModel& Mesh, float degree);
@@ -57,4 +69,8 @@ private:
 	int viewport_height;
 	GLuint gl_screen_tex;
 	GLuint gl_screen_vtc;
+
+	ShaderProgram lightShader;
+	ShaderProgram colorShader;
+	Texture2D texture1;
 };
