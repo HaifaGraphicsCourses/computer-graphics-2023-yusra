@@ -16,7 +16,7 @@ struct Vertex
 class MeshModel
 {
 public:
-	MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name);
+	MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> textureCoords, const std::string& modelName = "");
 	virtual ~MeshModel();
 
 
@@ -29,9 +29,11 @@ public:
 	
 	glm::mat4x4 GetTransformation();
 	glm::mat4 GetobjectTransform();
+
 	void SetobjectTransform();
 	glm::mat4 GetworldTransform();
 	void SetworldTransform();
+
 	glm::mat4 GetOBJScale();
 	void SetOBJScale(float s, int index);
 	glm::mat4 GetOBJTranslate();
@@ -52,6 +54,7 @@ public:
 	void SetWORLDRotate_Y(float degree);
 	glm::mat4 GetWORLDRotate_Z();
 	void SetWORLDRotate_Z(float degree);
+
 	glm::mat4 Mul_RotateMat_World();
 	glm::mat4 Mul_RotateMat_OBJ();
 
@@ -75,7 +78,7 @@ public:
 	void setupMatrics();
 
 
-private:
+protected:
 	std::vector<Face> faces;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
@@ -90,9 +93,6 @@ private:
 	GLuint vbo;
 	GLuint vao;
 	GLuint ebo;
-	
-	/*glm::mat4x4 modelTransform;
-	glm::mat4x4 worldTransform;*/
 
 	glm::mat4 objectTransform;
 	glm::mat4 Scale_obj;
@@ -110,7 +110,6 @@ private:
 
 	glm::fvec3 max;
 	glm::fvec3 min;
-
-	//glm::vec3 color;
+	
 
 };
