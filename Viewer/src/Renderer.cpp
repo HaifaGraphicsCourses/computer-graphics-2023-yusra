@@ -228,7 +228,7 @@ void Renderer::InitOpenglRendering()
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vtc), sizeof(tex), tex);
 
 	// Loads and compiles a sheder.
-	GLuint program = InitShader( "vshader.glsl", "fshader.glsl" );
+	GLuint program = InitShader( "vshader_color.glsl", "fshader_color.glsl" );
 
 	// Make this program the current one.
 	glUseProgram(program);
@@ -294,16 +294,16 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 	}
 }
 
-void Renderer::Render(Scene& scene) {
-	int cameraCount = scene.GetCameraCount();
+void Renderer::Render(const std::shared_ptr<Scene>& scene) {
+	int cameraCount = scene->GetCameraCount();
 	if (cameraCount > 0)
 	{
-		int modelCount = scene.GetModelCount();
-		auto& camera = scene.GetActiveCamera();
+		int modelCount = scene->GetModelCount();
+		auto camera = scene->GetActiveCamera();
 		//const Camera&
 		for (int currentModelIndex = 0; currentModelIndex < modelCount; currentModelIndex++)
 		{
-			auto currentModel = scene.GetModel(currentModelIndex);
+			auto currentModel = scene->GetModel(currentModelIndex);
 			//std::shared_ptr<MeshModel> currentModel
 			// Activate the 'colorShader' program (vertex and fragment shaders)
 			colorShader.use();
@@ -313,6 +313,10 @@ void Renderer::Render(Scene& scene) {
 			colorShader.setUniform("view", camera.GetViewTransformation());
 			colorShader.setUniform("projection", camera.GetProjectionTransformation());
 			colorShader.setUniform("material.textureMap", 0);
+
+			/*colorShader.setUniform("material.objAmbientColor", currentModel.GetAmbientColor());
+			colorShader.setUniform("material.objDiffuseColor", currentModel.GetDiffuseColor());
+			colorShader.setUniform("material.objSpecularColor", currentModel.GetSpecularColor());*/
 
 			// Set 'texture1' as the active texture at slot #0
 			texture1.bind(0);
@@ -344,10 +348,10 @@ void Renderer::LoadShaders()
 
 void Renderer::LoadTextures()
 {
-	/*if (!texture1.loadTexture("bin\\Debug\\crate.jpg", true))
+	if (!texture1.loadTexture("bin\\Debug\\crate.jpg", true))
 	{
 		texture1.loadTexture("bin\\Release\\crate.jpg", true);
-	}*/
+	}
 }
 
 //void Renderer::Render( Scene& scene)
@@ -1460,64 +1464,6 @@ void Renderer::Transformation(MeshModel& Mesh)
 //	}
 //}
 
-
-
-/// okay here we have (x/z, y/z, 1) 
-// scale:
-// first we will biuld the matrix:
-/*
-*	Sx 0  0  0     x     Sx * x
-*	0  Sy 0  0  *  y  =	 Sy * y
-*	0  0  Sz 0     z     Sz * z
-*	0  0  0  1     w        w
-*/
-void Renderer::Scale(MeshModel& Mesh, glm::fvec3 scale_vec)
-{
-	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x * scale_vec.x, Mesh.GetVertices(i).y * scale_vec.y, 1), i);
-	}
-
-}
-
-// Translate:
-// first we will biuld the matrix:
-/*
-*	1  0  0  Tx     x     Tx + x
-*	0  1  0  Ty  *  y  =  Ty + y
-*	0  0  1  Tz     z     Tz + z
-*	0  0  0  1      w        w
-*/
-void Renderer::Translate(MeshModel& Mesh, glm::fvec3 translate_vec)
-{
-	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		Mesh.SetVertices(glm::fvec3(Mesh.GetVertices(i).x + translate_vec.x, Mesh.GetVertices(i).y + translate_vec.y, 1), i);
-	}
-}
-
-// Rotate Z:
-/*
-*	cosa -sina  0  0     x     x * cosa - y * sina
-*	sina  cosa  0  0  *  y  =  x * sina + x * cosa
-*	0       0   1  0     z        z
-*	0       0   0  1     w        w
-*/
-
-void Renderer::Rotate(MeshModel& Mesh, float degree)
-{
-	glm::fvec3 rotate_vec = glm::vec3(0.0f, 0.0f, 1.0f);
-	float radian = degree * (M_PI / 180);
-	float cs = cos(radian);
-	float sn = sin(radian);
-	// now we have to rotate
-	for (auto i = 0; i < Mesh.RetVerticesSize(); i++)
-	{
-		rotate_vec.x = Mesh.GetVertices(i).x * cs - Mesh.GetVertices(i).y * sn;
-		rotate_vec.y = Mesh.GetVertices(i).x * sn + Mesh.GetVertices(i).y * cs;
-		Mesh.SetVertices(glm::fvec3(rotate_vec.x, rotate_vec.y, 1), i);
-	}
-}
 
 
 void HW1()
