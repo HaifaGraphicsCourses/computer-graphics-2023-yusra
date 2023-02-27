@@ -25,6 +25,7 @@
 #include "Renderer.h"
 #include "Scene.h"
 #include "Utils.h"
+#include "Camera.h"
 
 
 using namespace std;
@@ -76,6 +77,7 @@ int windowHeight = 720;
 char* windowTitle = "OpenGL Demo";
 glm::vec4 clearColor = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 bool zoomChanged = false;
+
 std::shared_ptr<Scene> scene;
 ImGuiIO* imgui;
 GLFWwindow* window;
@@ -86,14 +88,15 @@ ImGuiIO& SetupDearImgui(GLFWwindow* window);
 void StartFrame();
 void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io);
 void Cleanup(GLFWwindow* window);
-void DrawImguiMenus(ImGuiIO& io, Scene& scene);
-
+//void DrawImguiMenus(ImGuiIO& io, Scene& scene);
+void DrawImguiMenus();
 bool Setup(int windowWidth, int windowHeight, const char* windowName);
 
+void glfw_OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 static void GlfwErrorCallback(int error, const char* description);
 
-//float GetAspectRatio();
-//void HandleImguiInput();
+float GetAspectRatio();
+
 
 /**
  * Function implementation
@@ -115,12 +118,21 @@ int main(int argc, char **argv)
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 	
-	//Camera camera = Camera();
+	scene = std::make_shared<Scene>();
+	glm::vec3 eye = glm::vec3(0, 0, 10);
+	glm::vec3 at = glm::vec3(0, 0, 0);
+	glm::vec3 up = glm::vec3(0, 1, 0);
+	Camera camera = Camera(eye, at, up, GetAspectRatio());
+	scene->AddCamera(camera);
+
+	//scene->AddLight(std::make_shared<PointLight>(glm::vec3(0, 0, 15), glm::vec3(1, 1, 1)));
+	//scene->AddLight(std::make_shared<PointLight>(glm::vec3(0, 5, 5), glm::vec3(0, 0, 0)));
+	//scene->AddLight(std::make_shared<PointLight>(glm::vec3(-5, 0, 0), glm::vec3(0, 0, 0)));
+
+
 	Renderer renderer;
 	renderer.LoadShaders();
-	renderer.LoadTextures();
-	Scene scene = Scene();
-	scene.AddCamera(std::make_shared<Camera>());
+	//renderer.LoadTextures();
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
 	
@@ -139,7 +151,8 @@ int main(int argc, char **argv)
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		DrawImguiMenus(io, scene);
+		DrawImguiMenus();
+		//DrawImguiMenus(io, scene);
 		ImGui::Render();
 		//HandleImguiInput();
 
@@ -158,6 +171,11 @@ int main(int argc, char **argv)
 
 	Cleanup(window);
 	return 0;
+}
+
+float GetAspectRatio()
+{
+	return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
 }
 
 static void GlfwErrorCallback(int error, const char* description)
@@ -182,28 +200,65 @@ bool Setup(int windowWidth, int windowHeight, const char* windowName)
 	return true;
 }
 
-
 GLFWwindow* SetupGlfwWindow(int w, int h, const char* window_name)
 {
-	glfwSetErrorCallback(GlfwErrorCallback);
+	// Intialize GLFW
 	if (!glfwInit())
-		return NULL;
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	
-	#if __APPLE__
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	#endif
-	
-	GLFWwindow* window = glfwCreateWindow(w, h, window_name, NULL, NULL);
-	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1); // Enable vsync
-						 // very importent!! initialization of glad
-						 // https://stackoverflow.com/questions/48582444/imgui-with-the-glad-opengl-loader-throws-segmentation-fault-core-dumped
+	{
+		// An error occured
+		std::cerr << "GLFW initialization failed" << std::endl;
+		return false;
+	}
 
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	// forward compatible with newer versions of OpenGL as they become available but not backward compatible (it will not run on devices that do not support OpenGL 3.3
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+	// Create an OpenGL 3.3 core, forward compatible context window
+	window = glfwCreateWindow(windowWidth, windowHeight, window_name, NULL, NULL);
+	if (window == NULL)
+	{
+		std::cerr << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return false;
+	}
+
+	// Make the window's context the current one
+	glfwMakeContextCurrent(window);
+
+	// Setup window events callbacks
+	//glfwSetFramebufferSizeCallback(window, glfw_OnFramebufferSize);
+
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		// An error occured
+		std::cerr << "GLAD initialization failed" << std::endl;
+		return false;
+	}
+
 	return window;
+
+	//glfwSetErrorCallback(GlfwErrorCallback);
+	//if (!glfwInit())
+	//	return NULL;
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	//
+	//#if __APPLE__
+	//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	//#endif
+	//
+	//GLFWwindow* window = glfwCreateWindow(w, h, window_name, NULL, NULL);
+	//glfwMakeContextCurrent(window);
+	//glfwSwapInterval(1); // Enable vsync
+	//					 // very importent!! initialization of glad
+	//					 // https://stackoverflow.com/questions/48582444/imgui-with-the-glad-opengl-loader-throws-segmentation-fault-core-dumped
+	//gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	//return window;
 }
 
 ImGuiIO& SetupDearImgui(GLFWwindow* window)
@@ -219,11 +274,17 @@ ImGuiIO& SetupDearImgui(GLFWwindow* window)
 	// Setup style
 	ImGui::StyleColorsDark();
 
-	//glfwSetScrollCallback(window, glfw_OnMouseScroll);
+	glfwSetScrollCallback(window, glfw_OnMouseScroll);
 
 	return io;
 }
 
+void glfw_OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
+{
+	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
+	zoomFactor = glm::pow(1.1, -yoffset);
+	zoomChanged = true;
+}
 	
 void StartFrame()
 {
@@ -232,68 +293,68 @@ void StartFrame()
 	ImGui::NewFrame();
 }
 
-void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io)
-{
-	ImGui::Render();
-	int frameBufferWidth, frameBufferHeight;
-	glfwMakeContextCurrent(window);
-	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	
-	if (frameBufferWidth != renderer.GetViewportWidth() || frameBufferHeight != renderer.GetViewportHeight())
-	{
-		// TODO: Set new aspect ratio
-		
-	}
-
-	if (!io.WantCaptureKeyboard)
-	{
-		// TODO: Handle keyboard events here
-		// we will use :
-		// W = +y traslate
-		// S = -y traslate
-		// A = -x traslate
-		// D = +x traslate
-		//
-		  
-		if (io.KeysDown[87]) // w = +y traslate
-		{
-			if (scene.GetModelCount() > 0)
-				scene.GetActiveModel().SetOBJTranslate(t_y_w++, 1);
-		}
-		if (io.KeysDown[83]) // S = -y traslate
-		{
-			if (scene.GetModelCount() > 0)
-				scene.GetActiveModel().SetOBJTranslate(t_y_w--, 1);
-		}
-		if (io.KeysDown[65]) // A = -x traslate
-		{
-			if (scene.GetModelCount() > 0)
-				scene.GetActiveModel().SetOBJTranslate(t_x_w--, 0);
-		}
-		if (io.KeysDown[68]) // D = +x traslate
-		{
-			if (scene.GetModelCount() > 0)
-				scene.GetActiveModel().SetOBJTranslate(t_x_w++, 0);
-		}
-	}
-
-	if (!io.WantCaptureMouse)
-	{
-		// TODO: Handle mouse events here
-		if (io.MouseDown[0])
-		{
-			// Left mouse button is down
-		}
-	}
-
-	renderer.ClearColorBuffer(clear_color);
-	renderer.Render(scene);
-	renderer.SwapBuffers();
-
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	glfwMakeContextCurrent(window);
-	glfwSwapBuffers(window);
-}
+//void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io)
+//{
+//	ImGui::Render();
+//	int frameBufferWidth, frameBufferHeight;
+//	glfwMakeContextCurrent(window);
+//	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
+//	
+//	if (frameBufferWidth != renderer.GetViewportWidth() || frameBufferHeight != renderer.GetViewportHeight())
+//	{
+//		// TODO: Set new aspect ratio
+//		
+//	}
+//
+//	if (!io.WantCaptureKeyboard)
+//	{
+//		// TODO: Handle keyboard events here
+//		// we will use :
+//		// W = +y traslate
+//		// S = -y traslate
+//		// A = -x traslate
+//		// D = +x traslate
+//		//
+//		  
+//		if (io.KeysDown[87]) // w = +y traslate
+//		{
+//			if (scene.GetModelCount() > 0)
+//				scene.GetActiveModel().SetOBJTranslate(t_y_w++, 1);
+//		}
+//		if (io.KeysDown[83]) // S = -y traslate
+//		{
+//			if (scene.GetModelCount() > 0)
+//				scene.GetActiveModel().SetOBJTranslate(t_y_w--, 1);
+//		}
+//		if (io.KeysDown[65]) // A = -x traslate
+//		{
+//			if (scene.GetModelCount() > 0)
+//				scene.GetActiveModel().SetOBJTranslate(t_x_w--, 0);
+//		}
+//		if (io.KeysDown[68]) // D = +x traslate
+//		{
+//			if (scene.GetModelCount() > 0)
+//				scene.GetActiveModel().SetOBJTranslate(t_x_w++, 0);
+//		}
+//	}
+//
+//	if (!io.WantCaptureMouse)
+//	{
+//		// TODO: Handle mouse events here
+//		if (io.MouseDown[0])
+//		{
+//			// Left mouse button is down
+//		}
+//	}
+//
+//	renderer.ClearColorBuffer(clear_color);
+//	renderer.Render(scene);
+//	renderer.SwapBuffers();
+//
+//	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+//	glfwMakeContextCurrent(window);
+//	glfwSwapBuffers(window);
+//}
 
 void Cleanup(GLFWwindow* window)
 {
@@ -305,7 +366,9 @@ void Cleanup(GLFWwindow* window)
 	glfwTerminate();
 }
 
-void DrawImguiMenus(ImGuiIO& io, Scene& scene)
+//void DrawImguiMenus(ImGuiIO& io, Scene& scene)
+void DrawImguiMenus()
+
 {
 	/**
 	 * MeshViewer menu
@@ -324,7 +387,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 				if (result == NFD_OKAY)
 				{
-					scene.AddModel(Utils::LoadMeshModel(outPath));
+					scene->AddModel(Utils::LoadMeshModel(outPath));
 					free(outPath);
 				}
 				else if (result == NFD_CANCEL)
@@ -382,17 +445,17 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("LOCAL Rotate Y", &r_y_o, 0.0f, 360.0f);
 			ImGui::SliderFloat("LOCAL Rotate Z", &r_z_o, 0.0f, 360.0f);
 
-			if (scene.GetModelCount() > 0)
+			if (scene->GetModelCount() > 0)
 			{
-				scene.GetActiveModel().SetOBJScale(s_x_o, 0);
-				scene.GetActiveModel().SetOBJScale(s_y_o, 1);
-				scene.GetActiveModel().SetOBJScale(s_z_o, 2);
-				scene.GetActiveModel().SetOBJTranslate(t_x_o, 0);
-				scene.GetActiveModel().SetOBJTranslate(t_y_o, 1);
-				scene.GetActiveModel().SetOBJTranslate(t_z_o, 2);
-				scene.GetActiveModel().SetOBJRotate_X(r_x_o);
-				scene.GetActiveModel().SetOBJRotate_Y(r_y_o);
-				scene.GetActiveModel().SetOBJRotate_Z(r_z_o);
+				scene->GetActiveModel().SetOBJScale(s_x_o, 0);
+				scene->GetActiveModel().SetOBJScale(s_y_o, 1);
+				scene->GetActiveModel().SetOBJScale(s_z_o, 2);
+				scene->GetActiveModel().SetOBJTranslate(t_x_o, 0);
+				scene->GetActiveModel().SetOBJTranslate(t_y_o, 1);
+				scene->GetActiveModel().SetOBJTranslate(t_z_o, 2);
+				scene->GetActiveModel().SetOBJRotate_X(r_x_o);
+				scene->GetActiveModel().SetOBJRotate_Y(r_y_o);
+				scene->GetActiveModel().SetOBJRotate_Z(r_z_o);
 			}
 			//LOCALtransformation_window = false;
 		}
@@ -411,17 +474,17 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("WORLD Rotate Y", &r_y_w, 0.0f, 360.0f);
 			ImGui::SliderFloat("WORLD Rotate Z", &r_z_w, 0.0f, 360.0f);
 
-			if (scene.GetModelCount() > 0)
+			if (scene->GetModelCount() > 0)
 			{
-				scene.GetActiveModel().SetWORLDScale(s_x_w, 0);
-				scene.GetActiveModel().SetWORLDScale(s_y_w, 1);
-				scene.GetActiveModel().SetWORLDScale(s_z_w, 2);
-				scene.GetActiveModel().SetWORLDTranslate(t_x_w, 0);
-				scene.GetActiveModel().SetWORLDTranslate(t_y_w, 1);
-				scene.GetActiveModel().SetWORLDTranslate(t_z_w, 2);
-				scene.GetActiveModel().SetWORLDRotate_X(r_x_w);
-				scene.GetActiveModel().SetWORLDRotate_Y(r_y_w);
-				scene.GetActiveModel().SetWORLDRotate_Z(r_z_w);
+				scene->GetActiveModel().SetWORLDScale(s_x_w, 0);
+				scene->GetActiveModel().SetWORLDScale(s_y_w, 1);
+				scene->GetActiveModel().SetWORLDScale(s_z_w, 2);
+				scene->GetActiveModel().SetWORLDTranslate(t_x_w, 0);
+				scene->GetActiveModel().SetWORLDTranslate(t_y_w, 1);
+				scene->GetActiveModel().SetWORLDTranslate(t_z_w, 2);
+				scene->GetActiveModel().SetWORLDRotate_X(r_x_w);
+				scene->GetActiveModel().SetWORLDRotate_Y(r_y_w);
+				scene->GetActiveModel().SetWORLDRotate_Z(r_z_w);
 			}
 
 			//	WORLDtransformation_window = false;
@@ -438,14 +501,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("CAMERA Rotate Y", &r_y_c, 0.0f, 360.0f);
 			ImGui::SliderFloat("CAMERA Rotate Z", &r_z_c, 0.0f, 360.0f);
 
-			if (scene.GetModelCount() > 0)
+			if (scene->GetModelCount() > 0)
 			{
-				scene.GetActiveModel().SetWORLDTranslate(t_x_c, 0);
-				scene.GetActiveModel().SetWORLDTranslate(t_y_c, 1);
-				scene.GetActiveModel().SetWORLDTranslate(t_z_c, 2);
-				scene.GetActiveModel().SetWORLDRotate_X(r_x_c);
-				scene.GetActiveModel().SetWORLDRotate_Y(r_y_c);
-				scene.GetActiveModel().SetWORLDRotate_Z(r_z_c);
+				scene->GetActiveModel().SetWORLDTranslate(t_x_c, 0);
+				scene->GetActiveModel().SetWORLDTranslate(t_y_c, 1);
+				scene->GetActiveModel().SetWORLDTranslate(t_z_c, 2);
+				scene->GetActiveModel().SetWORLDRotate_X(r_x_c);
+				scene->GetActiveModel().SetWORLDRotate_Y(r_y_c);
+				scene->GetActiveModel().SetWORLDRotate_Z(r_z_c);
 			}
 
 			//	WORLDtransformation_window = false;
@@ -462,10 +525,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("Botton", &botton, -10.0f, 10.0f);
 			ImGui::SliderFloat("Near", &Zn_o, -10.0f, 10.0f);
 			ImGui::SliderFloat("Far", &Zf_o, -10.0f, 10.0f);
-			scene.GetActiveCamera().orth = true;
-			scene.GetActiveCamera().pers = false;
+			scene->GetActiveCamera().orth = true;
+			scene->GetActiveCamera().pers = false;
 			CAMERA_Perspective_window = false;
-			scene.GetActiveCamera().SetOrthographicProjectionMatrix(botton, top, l, r, Zn_o, Zf_o);
+			scene->GetActiveCamera().SetOrthographicProjectionMatrix(botton, top, l, r, Zn_o, Zf_o);
 
 		}
 
@@ -477,10 +540,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("Aspect", &aspect, 1.0f, 5.0f);
 			ImGui::SliderFloat("Near", &Zn_p, 0.0f, 2000.0f);
 			ImGui::SliderFloat("Far", &Zf_p, 0.0f, 2000.0f);
-			scene.GetActiveCamera().pers= true;
-			scene.GetActiveCamera().orth = false;
+			scene->GetActiveCamera().pers= true;
+			scene->GetActiveCamera().orth = false;
 			CAMERA_Orthographic_window = false;
-			scene.GetActiveCamera().SetPerspectiveProjectionMatrix(fov, aspect, Zn_p, Zf_p);
+			scene->GetActiveCamera().SetPerspectiveProjectionMatrix(fov, aspect, Zn_p, Zf_p);
 		}
 		
 
@@ -502,21 +565,21 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("R_m", &red_m, 1.0f, 255.0f);
 			ImGui::SliderFloat("G_m", &green_m, 1.0f, 255.0f);
 			ImGui::SliderFloat("B_m", &blue_m, 1.0f, 255.0f);
-			if (scene.GetModelCount() > 0)
+			if (scene->GetModelCount() > 0)
 			{
-				scene.GetActiveModel().SetColor(glm::vec3(red_m, green_m, blue_m));
+				scene->GetActiveModel().SetColor(glm::vec3(red_m, green_m, blue_m));
 			}
 
 			ImGui::Text("Light Coordinate: ");
 			ImGui::SliderFloat("X", &x_l, 0.0f, 1200.0f);
 			ImGui::SliderFloat("Y", &y_l, 0.0f, 1200.0f);
 			ImGui::SliderFloat("Z", &z_l, 0.0f, 1200.0f);
-			scene.SetLightPosition(glm::vec3(x_l, y_l, z_l));
+			scene->SetLightPosition(glm::vec3(x_l, y_l, z_l));
 			ImGui::Text("Light RGB");
 			ImGui::SliderFloat("R", &red, 1.0f, 255.0f);
 			ImGui::SliderFloat("G", &green, 1.0f, 255.0f);
 			ImGui::SliderFloat("B", &blue, 1.0f, 255.0f);
-			scene.SetColor(glm::vec3(red, green, blue));
+			scene->SetColor(glm::vec3(red, green, blue));
 			
 			ImGui::Text("\nAmbient");
 			ImGui::SliderFloat("Ambient", &ambient, 0.0f, 1.0f);
@@ -524,14 +587,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("R_A", &red_a, 1.0f, 255.0f);
 			ImGui::SliderFloat("G_A", &green_a, 1.0f, 255.0f);
 			ImGui::SliderFloat("B_A", &blue_a, 1.0f, 255.0f);
-			scene.SetAmbientColor(glm::vec3(red_a, green_a, blue_a));
-			scene.SetAmbient(ambient);
+			scene->SetAmbientColor(glm::vec3(red_a, green_a, blue_a));
+			scene->SetAmbient(ambient);
 			
 			ImGui::Text("\nDiffuse RGB");
 			ImGui::SliderFloat("R_D", &red_d, 1.0f, 255.0f);
 			ImGui::SliderFloat("G_D", &green_d, 1.0f, 255.0f);
 			ImGui::SliderFloat("B_D", &blue_d, 1.0f, 255.0f);
-			scene.SetDiffuseColor(glm::vec3(red_d, green_d, blue_d));
+			scene->SetDiffuseColor(glm::vec3(red_d, green_d, blue_d));
 			
 			ImGui::Text("\nSpecular");
 			ImGui::SliderFloat("", &specular,-2.0f, 1.0f);
@@ -540,9 +603,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::SliderFloat("G_S", &green_s, 1.0f, 255.0f);
 			ImGui::SliderFloat("B_S", &blue_s, 1.0f, 255.0f);
 			ImGui::SliderFloat("Power\n", &power, 0.0f, 2.0f);
-			scene.SetSpecularColor(glm::vec3(red_s, green_s, blue_s));
-			scene.SetSpecular(specular);
-			scene.SetPower(power);
+			scene->SetSpecularColor(glm::vec3(red_s, green_s, blue_s));
+			scene->SetSpecular(specular);
+			scene->SetPower(power);
 
 		}
 
