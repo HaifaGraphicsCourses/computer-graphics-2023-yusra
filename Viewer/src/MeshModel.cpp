@@ -20,12 +20,13 @@ using namespace std;
 
 
 
-MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name) :
+MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> textureCoords, const std::string& modelName) :
 	faces(faces),
 	vertices(vertices),
-	normals(normals)
+	normals(normals),
+	modelName(modelName)
 {
-
+	setupMatrics();
 	std::random_device rd;
 	std::mt19937 mt(rd());
 	std::uniform_real_distribution<double> dist(0, 1);
@@ -54,10 +55,9 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 	}
 
 	setupMesh();
-	setupMatrics();
 
 
-	InitializeDepthColor();
+	//InitializeDepthColor();
 }
 
 void MeshModel::setupMatrics()
@@ -224,7 +224,7 @@ void MeshModel::SetOBJRotate_Z(float d)
 
 glm::mat4 MeshModel::Mul_RotateMat_OBJ()
 {
-	glm::mat4  XY = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	/*glm::mat4  XY = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } },
@@ -232,7 +232,6 @@ glm::mat4 MeshModel::Mul_RotateMat_OBJ()
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };;
-
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			float sum = 0.0f;
@@ -242,7 +241,6 @@ glm::mat4 MeshModel::Mul_RotateMat_OBJ()
 			XY[i][j] = sum;
 		}
 	}
-
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			float sum = 0.0f;
@@ -250,10 +248,9 @@ glm::mat4 MeshModel::Mul_RotateMat_OBJ()
 				sum += XY[i][k] * Rotate_obj_z[k][j];
 			}
 			XYZ[i][j] = sum;
-
 		}
-	}
-	return XYZ;
+	}*/
+	return Rotate_obj_x * Rotate_obj_y * Rotate_obj_z;
 
 }
 
@@ -263,32 +260,30 @@ glm::mat4 MeshModel::GetobjectTransform()
 }
 void MeshModel::SetobjectTransform()
 {
-	glm::mat4  SR = { { 1.0f, 0.0f, 0.0f, 0.0f },
-	{ 0.0f, 1.0f, 0.0f, 0.0f },
-	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } }, Rotate_obj = Mul_RotateMat_OBJ();
-
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 4; k++) {
-				sum += Scale_obj[i][k] * Rotate_obj[k][j];
-			}
-			SR[i][j] = sum;
-		}
-	}
-
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 4; k++) {
-				sum += SR[i][k] * Translate_obj[k][j];
-			}
-			objectTransform[i][j] = sum;
-
-		}
-	}
-
+	glm::mat4 Rotate_obj = Mul_RotateMat_OBJ();
+	//glm::mat4  SR = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	//{ 0.0f, 1.0f, 0.0f, 0.0f },
+	//{ 0.0f, 0.0f, 1.0f, 0.0f },
+	//{ 0.0f, 0.0f, 0.0f, 1.0f } }, Rotate_obj = Mul_RotateMat_OBJ();
+	//for (int i = 0; i < 4; i++) {
+	//	for (int j = 0; j < 4; j++) {
+	//		float sum = 0.0f;
+	//		for (int k = 0; k < 4; k++) {
+	//			sum += Scale_obj[i][k] * Rotate_obj[k][j];
+	//		}
+	//		SR[i][j] = sum;
+	//	}
+	//}
+	//for (int i = 0; i < 4; i++) {
+	//	for (int j = 0; j < 4; j++) {
+	//		float sum = 0.0f;
+	//		for (int k = 0; k < 4; k++) {
+	//			sum += SR[i][k] * Translate_obj[k][j];
+	//		}
+	//		objectTransform[i][j] = sum;
+	//	}
+	//}
+	objectTransform = Scale_obj * Rotate_obj * Translate_obj;
 }
 
 
@@ -347,36 +342,33 @@ void MeshModel::SetWORLDRotate_Z(float d)
 
 glm::mat4 MeshModel::Mul_RotateMat_World()
 {
-	glm::mat4  XY = { { 1.0f, 0.0f, 0.0f, 0.0f },
-	{ 0.0f, 1.0f, 0.0f, 0.0f },
-	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } },
-	XYZ = { { 1.0f, 0.0f, 0.0f, 0.0f },
-	{ 0.0f, 1.0f, 0.0f, 0.0f },
-	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } };;
-
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 4; k++) {
-				sum += Rotate_world_x[i][k] * Rotate_world_y[k][j];
-			}
-			XY[i][j] = sum;
-		}
-	}
-
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 4; k++) {
-				sum += XY[i][k] * Rotate_world_z[k][j];
-			}
-			XYZ[i][j] = sum;
-
-		}
-	}
-	return XYZ;
+	//glm::mat4  XY = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	//{ 0.0f, 1.0f, 0.0f, 0.0f },
+	//{ 0.0f, 0.0f, 1.0f, 0.0f },
+	//{ 0.0f, 0.0f, 0.0f, 1.0f } },
+	//XYZ = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	//{ 0.0f, 1.0f, 0.0f, 0.0f },
+	//{ 0.0f, 0.0f, 1.0f, 0.0f },
+	//{ 0.0f, 0.0f, 0.0f, 1.0f } };;
+	//for (int i = 0; i < 4; i++) {
+	//	for (int j = 0; j < 4; j++) {
+	//		float sum = 0.0f;
+	//		for (int k = 0; k < 4; k++) {
+	//			sum += Rotate_world_x[i][k] * Rotate_world_y[k][j];
+	//		}
+	//		XY[i][j] = sum;
+	//	}
+	//}
+	//for (int i = 0; i < 4; i++) {
+	//	for (int j = 0; j < 4; j++) {
+	//		float sum = 0.0f;
+	//		for (int k = 0; k < 4; k++) {
+	//			sum += XY[i][k] * Rotate_world_z[k][j];
+	//		}
+	//		XYZ[i][j] = sum;
+	//	}
+	//}
+	return Rotate_world_x * Rotate_world_y * Rotate_world_z;
 	
 }	
 
@@ -387,46 +379,32 @@ glm::mat4x4 MeshModel::GetworldTransform()
 
 void MeshModel::SetworldTransform()
 {
-	glm::mat4  SR = { { 1.0f, 0.0f, 0.0f, 0.0f },
-	{ 0.0f, 1.0f, 0.0f, 0.0f },
-	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } }, Rotate_world=Mul_RotateMat_World();
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 4; k++) {
-				sum += Scale_world[i][k] * Rotate_world[k][j];
-			}
-			SR[i][j] = sum;
-		}
-	}
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 4; k++) {
-				sum += SR[i][k] * Translate_world[k][j];
-			}
-			worldTransform[i][j] = sum;
-
-		}
-	}
-
+	glm::mat4  Rotate_world=Mul_RotateMat_World();
+	//glm::mat4  SR = { { 1.0f, 0.0f, 0.0f, 0.0f },
+	//{ 0.0f, 1.0f, 0.0f, 0.0f },
+	//{ 0.0f, 0.0f, 1.0f, 0.0f },
+	//{ 0.0f, 0.0f, 0.0f, 1.0f } }, Rotate_world=Mul_RotateMat_World();
+	//for (int i = 0; i < 4; i++) {
+	//	for (int j = 0; j < 4; j++) {
+	//		float sum = 0.0f;
+	//		for (int k = 0; k < 4; k++) {
+	//			sum += Scale_world[i][k] * Rotate_world[k][j];
+	//		}
+	//		SR[i][j] = sum;
+	//	}
+	//}
+	//for (int i = 0; i < 4; i++) {
+	//	for (int j = 0; j < 4; j++) {
+	//		float sum = 0.0f;
+	//		for (int k = 0; k < 4; k++) {
+	//			sum += SR[i][k] * Translate_world[k][j];
+	//		}
+	//		worldTransform[i][j] = sum;
+	//	}
+	//}
+	worldTransform = Scale_world * Rotate_world * Translate_world;
 }
 
-glm::mat4x4 matrix_mul(glm::mat4x4 m1, glm::mat4x4 m2)
-{
-	glm::mat4x4 ret;
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			float sum = 0.0f;
-			for (int k = 0; k < 4; k++) {
-				sum += m1[i][k] * m2[k][j];
-			}
-			ret[i][j] = sum;
-		}
-	}
-	return ret;
-}
 
 glm::mat4x4 MeshModel::GetTransformation()
 {
