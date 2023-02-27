@@ -10,7 +10,62 @@
 
 using namespace std;
 
+
+Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up, const float aspectRatio) :
+	
+	zoom(1.0f),
+	fovy(glm::pi<float>() / 4.0f),
+	height(5),
+	zNear(0.1f),
+	zFar(200.0f),
+	aspectRatio(aspectRatio),
+	pers(true), orth(false),
+	view_transformation(1),
+	eye(eye),
+	at(at),
+	up(up)
+{
+	setupMatrix();
+	UpdateProjectionMatrix();
+	view_transformation = glm::lookAt(eye, at, up);
+}
+
+void Camera::SetOrthographicProjection(float height,float aspectRatio,float zNear, float zFar)
+{
+	orth = true; pers = false;
+	float width = aspectRatio * height;
+	projection_transformation = glm::ortho(-width / 2, width / 2, -height / 2, height / 2, zNear, zFar);
+}
+
+void Camera::SetPerspectiveProjection(float fovy,float aspectRatio,float zNear,float zFar)
+{
+	pers = true; orth = false;
+	projection_transformation = glm::perspective(fovy, aspectRatio, zNear, zFar);
+}
+
+void Camera::UpdateProjectionMatrix()
+{
+	if (pers)
+	{
+		SetPerspectiveProjection(fovy, aspectRatio, zNear, zFar);
+	}
+	else
+	{
+		SetOrthographicProjection(height, aspectRatio, zNear, zFar);
+	}
+}
+
 Camera::Camera()
+{
+	setupMatrix();
+}
+
+Camera::~Camera()
+{
+	
+}
+
+void Camera::setupMatrix()
 {
 	Translate_c = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
@@ -30,7 +85,7 @@ Camera::Camera()
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 
 	Camera_position = glm::fvec3(1.0f, 1.0f, 1.0f);
-	eye = glm::fvec3(1.0f, 1.0f, 1.0f); 
+	eye = glm::fvec3(1.0f, 1.0f, 1.0f);
 	at = glm::fvec3(0.0f, 1.0f, 0.0f);
 	up = glm::fvec3(0.0f, 1.0f, 0.0f);
 
@@ -38,7 +93,7 @@ Camera::Camera()
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
-	orth_mat= { { 1.0f, 0.0f, 0.0f, 0.0f },
+	orth_mat = { { 1.0f, 0.0f, 0.0f, 0.0f },
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
@@ -57,15 +112,7 @@ Camera::Camera()
 	{ 0.0f, 1.0f, 0.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
-
 }
-
-Camera::~Camera()
-{
-	
-}
-
-
 
 void Camera::Set_at(glm::fvec3 a)
 {
@@ -136,17 +183,7 @@ void Camera::SetCAMERARotate_Z(float d)
 
 glm::mat4 Camera::Mul_RotateMat_CAMERA()
 {
-	glm::mat4  XY = { { 1.0f, 0.0f, 0.0f, 0.0f },
-	{ 0.0f, 1.0f, 0.0f, 0.0f },
-	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } },
-		XYZ = { { 1.0f, 0.0f, 0.0f, 0.0f },
-	{ 0.0f, 1.0f, 0.0f, 0.0f },
-	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 	return Rotate_c_x * Rotate_c_y * Rotate_c_z;
-
-
 }
 
  glm::mat4x4& Camera::GetProjectionTransformation() 
