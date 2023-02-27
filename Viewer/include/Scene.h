@@ -52,8 +52,7 @@ public:
 	float GetPower();
 	
 	glm::vec3 CalculateAmbient();
-	glm::vec4 CalculateDiffuse();
-	glm::vec4 CalculateSpecular();
+
 
 
 	
