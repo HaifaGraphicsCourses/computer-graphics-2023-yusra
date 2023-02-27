@@ -7,6 +7,15 @@ class Camera
 public:
 	Camera();
 	virtual ~Camera();
+	Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up, const float aspectRatio);
+
+	void SetOrthographicProjection(float height, float aspectRatio, float zNear, float zFar);
+
+	void SetPerspectiveProjection(float fovy, float aspect, float zNear, float zFar);
+
+	void UpdateProjectionMatrix();
+
+	void setupMatrix();
 
 	void SetCameraLookAt(const glm::fvec3& eye, const glm::fvec3& at, const glm::fvec3& up);
 	void SetOrthographicProjectionMatrix(float b, float t, float l, float r, float Zn, float Zf);
@@ -45,8 +54,8 @@ public:
 	void TransformCamera();
 	glm::mat4x4 GetCamTransformation();
 
-	bool orth = false;
-	bool pers = false;
+	bool orth;
+	bool pers;
 
 
 private:
@@ -63,4 +72,10 @@ private:
 	glm::fvec3 eye;
 	glm::fvec3 at;
 	glm::fvec3 up;
+	float aspectRatio;
+	float zoom;
+	float fovy;
+	float height;
+	float zNear;
+	float zFar;
 };
