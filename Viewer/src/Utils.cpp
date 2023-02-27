@@ -34,6 +34,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	std::vector<Face> faces;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
+	std::vector<glm::vec2> textureCoords;
 	std::ifstream ifile(filePath.c_str());
 
 	// while not end of file
@@ -76,92 +77,64 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		}
 	}
 
-	// print
-	// printing the verstecses 
-	//std::cout << "\n" << " ** VERTICES ** " << "\n";
-	//Print_Vertices(vertices);
-	//printing the faces. For every face we print his the 3 vertecses:
-	//std::cout << "\n" << " ** Faces ** " << "\n";
-	//Print_Faces(vertices, faces);
-
-	// scale:
-	// first we will biuld the matrix:
-	/*
-	*	Sx 0  0  0     x     Sx * x
-	*	0  Sy 0  0  *  y  =	 Sy * y
-	*	0  0  Sz 0     z     Sz * z
-	*	0  0  0  1     w        w
-	*/
-	// Translate:
-	// first we will biuld the matrix:
-	/*
-	*	1  0  0  Tx     x     Tx + x
-	*	0  1  0  Ty  *  y  =  Ty + y
-	*	0  0  1  Tz     z     Tz + z
-	*	0  0  0  1      w        w
-	*/
 	
-	// what we did:
-	// we first did traslate to make all the values positive or equal to 0, 
-	// after that we used scale to make the values up to 1000
 	
 	/*Translations*/
 	// ** Translate **
-	glm::fvec3 scale_vec = glm::fvec3(vertices[0].x, vertices[0].y, vertices[0].z);
-	glm::fvec3 trans_vec = glm::fvec3(vertices[0].x, vertices[0].y, vertices[0].z);
-	for (int i = 0; i < vertices.size(); i++)
-	{
-		// min x
-		if (trans_vec.x > vertices[i].x)
-			trans_vec.x = vertices[i].x;
-		// min y
-		if (trans_vec.y > vertices[i].y)
-			trans_vec.y = vertices[i].y;
-		// min z
-		if (trans_vec.z > vertices[i].z)
-			trans_vec.z = vertices[i].z;
-	}
-	float min = trans_vec.x;
-	if (trans_vec.y < min)
-		min = trans_vec.y;
-	if (trans_vec.z < min)
-		min = trans_vec.z;
-	if (min < 0)
-	{
-		min *= (-1.0f);
-		trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
+	//glm::fvec3 scale_vec = glm::fvec3(vertices[0].x, vertices[0].y, vertices[0].z);
+	//glm::fvec3 trans_vec = glm::fvec3(vertices[0].x, vertices[0].y, vertices[0].z);
+	//for (int i = 0; i < vertices.size(); i++)
+	//{
+	//	// min x
+	//	if (trans_vec.x > vertices[i].x)
+	//		trans_vec.x = vertices[i].x;
+	//	// min y
+	//	if (trans_vec.y > vertices[i].y)
+	//		trans_vec.y = vertices[i].y;
+	//	// min z
+	//	if (trans_vec.z > vertices[i].z)
+	//		trans_vec.z = vertices[i].z;
+	//}
+	//float min = trans_vec.x;
+	//if (trans_vec.y < min)
+	//	min = trans_vec.y;
+	//if (trans_vec.z < min)
+	//	min = trans_vec.z;
+	//if (min < 0)
+	//{
+	//	min *= (-1.0f);
+	//	trans_vec.x = min; trans_vec.y = min; trans_vec.z = min;
+	//	for (auto i = 0; i < vertices.size(); i++)
+	//	{
+	//		vertices[i] = glm::fvec3(vertices[i].x + min, vertices[i].y + min, vertices[i].z + min);
+	//	}
+	//}
+	//// ** Scale ** 
+	//for (int i = 0; i < vertices.size(); i++)
+	//{
+	//	// max x
+	//	if (scale_vec.x < vertices[i].x)
+	//		scale_vec.x = vertices[i].x;
+	//	// max y
+	//	if (scale_vec.y < vertices[i].y)
+	//		scale_vec.y = vertices[i].y;
+	//	// max z
+	//	if (scale_vec.z < vertices[i].z)
+	//		scale_vec.z = vertices[i].z;
+	//}
+	//float max = scale_vec.x;
+	//if (scale_vec.y > max)
+	//	max = scale_vec.y;
+	//if (scale_vec.z > max)
+	//	max = scale_vec.z;
+	//scale_vec.x = 500 / max; scale_vec.y = 500 / max; scale_vec.z = 500 / max;
+	//for (auto i = 0; i < vertices.size(); i++)
+	//{
+	//	vertices[i] = glm::fvec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
+	//	
+	//}
 
-		for (auto i = 0; i < vertices.size(); i++)
-		{
-			vertices[i] = glm::fvec3(vertices[i].x + min, vertices[i].y + min, vertices[i].z + min);
-		}
-	}
-	// ** Scale ** 
-	for (int i = 0; i < vertices.size(); i++)
-	{
-		// max x
-		if (scale_vec.x < vertices[i].x)
-			scale_vec.x = vertices[i].x;
-		// max y
-		if (scale_vec.y < vertices[i].y)
-			scale_vec.y = vertices[i].y;
-		// max z
-		if (scale_vec.z < vertices[i].z)
-			scale_vec.z = vertices[i].z;
-	}
-	float max = scale_vec.x;
-	if (scale_vec.y > max)
-		max = scale_vec.y;
-	if (scale_vec.z > max)
-		max = scale_vec.z;
-	scale_vec.x = 500 / max; scale_vec.y = 500 / max; scale_vec.z = 500 / max;
-	for (auto i = 0; i < vertices.size(); i++)
-	{
-		vertices[i] = glm::fvec3(vertices[i].x * scale_vec.x, vertices[i].y * scale_vec.y, vertices[i].z * scale_vec.z);
-		
-	}
-
-	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath));
+	return std::make_shared<MeshModel>(faces, vertices, CalculateNormals(vertices, faces), textureCoords, Utils::GetFileName(filePath));
 }
 
 void Utils::Print_Vertices(std::vector<glm::vec3> vertices)
@@ -184,9 +157,49 @@ void Utils::Print_Faces(std::vector<glm::vec3> vertices, std::vector<Face> faces
 }
 
 
+std::vector<glm::vec3> Utils::CalculateNormals(std::vector<glm::vec3> vertices, std::vector<Face> faces)
+{
+	std::vector<glm::vec3> normals(vertices.size());
+	std::vector<int> adjacent_faces_count(vertices.size());
 
+	for (int i = 0; i < adjacent_faces_count.size(); i++)
+	{
+		adjacent_faces_count[i] = 0;
+	}
 
+	for (int i = 0; i < faces.size(); i++)
+	{
+		Face currentFace = faces.at(i);
 
+		int index0 = currentFace.GetVertexIndex(0) - 1;
+		int index1 = currentFace.GetVertexIndex(1) - 1;
+		int index2 = currentFace.GetVertexIndex(2) - 1;
+
+		glm::vec3 v0 = vertices.at(index0);
+		glm::vec3 v1 = vertices.at(index1);
+		glm::vec3 v2 = vertices.at(index2);
+
+		glm::vec3 u = v0 - v1;
+		glm::vec3 v = v2 - v1;
+		glm::vec3 face_normal = glm::normalize(-glm::cross(u, v));
+
+		normals.at(index0) += face_normal;
+		normals.at(index1) += face_normal;
+		normals.at(index2) += face_normal;
+
+		adjacent_faces_count.at(index0) += 1;
+		adjacent_faces_count.at(index1) += 1;
+		adjacent_faces_count.at(index2) += 1;
+	}
+
+	for (int i = 0; i < normals.size(); i++)
+	{
+		normals[i] /= adjacent_faces_count[i];
+		normals[i] = glm::normalize(normals[i]);
+	}
+
+	return normals;
+}
 
 std::string Utils::GetFileName(const std::string& filePath)
 {
