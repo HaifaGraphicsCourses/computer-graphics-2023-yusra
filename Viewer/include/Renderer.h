@@ -15,7 +15,7 @@ public:
 	Renderer(int viewportWidth, int viewportHeight);
 	Renderer();
 	~Renderer();
-	void Render( Scene& scene);
+	void Render(const std::shared_ptr<Scene>& scene);
 	void SwapBuffers();
 	void ClearColorBuffer(const glm::vec3& color);
 	int GetViewportWidth() const;	
@@ -25,9 +25,7 @@ public:
 	void LoadTextures();
 	
 	
-	void Scale(MeshModel& Mesh, glm::fvec3 scale_vec);
-	void Translate(MeshModel& Mesh, glm::fvec3 translate_vec);
-	void Rotate(MeshModel& Mesh, float degree);
+
 	void DrawTriangle(MeshModel& Mesh, vector<vector<float>>& z_depth);
 	void FixPoints(MeshModel& Mesh);
 	void Transformation(MeshModel& Mesh);
