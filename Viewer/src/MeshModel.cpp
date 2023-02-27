@@ -53,11 +53,7 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 			modelVertices.push_back(vertex);
 		}
 	}
-
 	setupMesh();
-
-
-	//InitializeDepthColor();
 }
 
 void MeshModel::setupMatrics()
@@ -147,6 +143,34 @@ GLuint MeshModel::GetVAO() const
 {
 	return vao;
 }
+
+glm::vec3  MeshModel::GetAmbientColor()
+{
+	return ambient_color;
+}
+void  MeshModel::SetAmbientColor(glm::vec3 c)
+{
+	ambient_color = c;
+}
+
+glm::vec3  MeshModel::GetDiffuseColor()
+{
+	return diffuse_color;
+}
+void  MeshModel::SetDiffuseColor(glm::vec3 c)
+{
+	diffuse_color = c;
+}
+
+glm::vec3  MeshModel::GetSpecularColor()
+{
+	return specular_color;
+}
+void  MeshModel::SetSpecularColor(glm::vec3 c)
+{
+	specular_color = c;
+}
+
 
 glm::vec3 MeshModel::GetColor() {
 	return color;
