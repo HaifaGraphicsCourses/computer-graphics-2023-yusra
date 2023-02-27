@@ -77,6 +77,15 @@ public:
 	void setupMesh();
 	void setupMatrics();
 
+	glm::vec3 GetAmbientColor();
+	void SetAmbientColor(glm::vec3 c);
+
+	glm::vec3 GetDiffuseColor();
+	void SetDiffuseColor(glm::vec3 c);
+
+	glm::vec3 GetSpecularColor();
+	void SetSpecularColor(glm::vec3 c);
+
 
 protected:
 	std::vector<Face> faces;
@@ -93,6 +102,10 @@ protected:
 	GLuint vbo;
 	GLuint vao;
 	GLuint ebo;
+
+	glm::vec3 ambient_color;
+	glm::vec3 diffuse_color;
+	glm::vec3 specular_color;
 
 	glm::mat4 objectTransform;
 	glm::mat4 Scale_obj;
