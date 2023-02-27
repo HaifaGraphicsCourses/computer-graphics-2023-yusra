@@ -18,7 +18,7 @@ public:
 	MeshModel& GetModel(int index) const;
 	MeshModel& GetActiveModel() const;
 	
-	void AddCamera(const shared_ptr<Camera>& camera);
+	void AddCamera(const Camera& camera);
 	int GetCameraCount() const;
 	Camera& GetCamera(int index);
 	Camera& GetActiveCamera();
@@ -59,7 +59,7 @@ public:
 	
 private:
 	vector<shared_ptr<MeshModel>> mesh_models;
-	vector<shared_ptr<Camera>> cameras;
+	std::vector<Camera> cameras;
 	int active_camera_index;
 	int active_model_index;
 	glm::vec3 light_position;
