@@ -66,6 +66,9 @@ static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 			red_d = 1.0f, green_d = 1.0f, blue_d = 1.0f,
 			red_s = 1.0f, green_s = 1.0f, blue_s = 1.0f,
 			red_m = 1.0f, green_m = 1.0f, blue_m = 1.0f,
+			red_a_m = 1.0f, green_a_m = 1.0f, blue_a_m = 1.0f,
+			red_d_m = 1.0f, green_d_m = 1.0f, blue_d_m = 1.0f,
+			red_s_m = 1.0f, green_s_m = 1.0f, blue_s_m = 1.0f,
 			ambient = 1.0f, specular = 1.0f, power = 1.0f;
 /**
  * Function declarations
@@ -561,13 +564,40 @@ void DrawImguiMenus()
 		//  --- Light
 		if (Light)
 		{
-			ImGui::Text("Mesh RGB");
-			ImGui::SliderFloat("R_m", &red_m, 1.0f, 255.0f);
-			ImGui::SliderFloat("G_m", &green_m, 1.0f, 255.0f);
-			ImGui::SliderFloat("B_m", &blue_m, 1.0f, 255.0f);
+			//ImGui::Text("Mesh RGB ");
+			//ImGui::SliderFloat("R_m", &red_m, 1.0f, 255.0f);
+			//ImGui::SliderFloat("G_m", &green_m, 1.0f, 255.0f);
+			//ImGui::SliderFloat("B_m", &blue_m, 1.0f, 255.0f);
+			//if (scene->GetModelCount() > 0)
+			//{
+			//	scene->GetActiveModel().SetColor(glm::vec3(red_m, green_m, blue_m));
+			//}
+
+			ImGui::Text("Mesh Ambient RGB");
+			ImGui::SliderFloat("R_A_m", &red_a_m, 1.0f, 255.0f);
+			ImGui::SliderFloat("G_A_m", &green_a_m, 1.0f, 255.0f);
+			ImGui::SliderFloat("B_A_m", &blue_a_m, 1.0f, 255.0f);
 			if (scene->GetModelCount() > 0)
 			{
-				scene->GetActiveModel().SetColor(glm::vec3(red_m, green_m, blue_m));
+				scene->GetActiveModel().SetAmbientColor(glm::vec3(red_a_m, green_a_m, blue_a_m));
+			}
+
+			ImGui::Text("\nMesh Diffuse RGB");
+			ImGui::SliderFloat("R_D_m", &red_d_m, 1.0f, 255.0f);
+			ImGui::SliderFloat("G_D_m", &green_d_m, 1.0f, 255.0f);
+			ImGui::SliderFloat("B_D_m", &blue_d_m, 1.0f, 255.0f);
+			if (scene->GetModelCount() > 0)
+			{
+				scene->GetActiveModel().SetDiffuseColor(glm::vec3(red_d_m, green_d_m, blue_d_m));
+			}
+
+			ImGui::Text("Mesh Specular RGB");
+			ImGui::SliderFloat("R_S_m", &red_s_m, 1.0f, 255.0f);
+			ImGui::SliderFloat("G_S_m", &green_s_m, 1.0f, 255.0f);
+			ImGui::SliderFloat("B_S_m", &blue_s_m, 1.0f, 255.0f);
+			if (scene->GetModelCount() > 0)
+			{
+				scene->GetActiveModel().SetSpecularColor(glm::vec3(red_s_m, green_s_m, blue_s_m));
 			}
 
 			ImGui::Text("Light Coordinate: ");
