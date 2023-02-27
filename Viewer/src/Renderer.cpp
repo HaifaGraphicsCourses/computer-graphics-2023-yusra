@@ -42,127 +42,6 @@ Renderer::Renderer()
 	CreateBuffers(viewport_width, viewport_height);
 }
 
-void Renderer::PutPixel(int i, int j, const glm::vec3& color)
-{
-	if (i < 0) return; if (i >= viewport_width) return;
-	if (j < 0) return; if (j >= viewport_height) return;
-	
-	color_buffer[INDEX(viewport_width, i, j, 0)] = color.x;
-	color_buffer[INDEX(viewport_width, i, j, 1)] = color.y;
-	color_buffer[INDEX(viewport_width, i, j, 2)] = color.z;
-}
-
-extern int cnt1 = 0, cnt2 = 0, cnt3 = 0, cnt4 = 0, cnt5 = 0, cnt6 = 0;
-void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color)
-{
-	// TODO: Implement bresenham algorithm
-	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-	double x0 = p1.x, y0 = p1.y, x1 = p2.x, y1 = p2.y;
-	int dx = x1 - x0, dy = y1 - y0, D = 2 * dy - dx, x = x0, y = y0, yi = 1, xi = 1, m;
-	if (dx == 0) m = 200; // so we wont have something undefined
-	else { m = dy / dx; }; // calcutaleing the Incline
-	if (abs(y1 - y0) < abs(x1 - x0))
-	{
-		if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
-		{
-			dx = x0 - x1;
-			dy = y0 - y1;
-			yi = 1;
-			if (dy < 0) {
-				yi = -1;
-				dy = -dy;
-			}
-			D = (2 * dy) - dx;
-			y = y1;
-			cnt3++;
-			for (int x = x1; x <= x0; x++)
-			{
-				PutPixel(x, y, color);
-				if (D > 0)
-				{
-					y = y + yi;
-					D = D + (2 * (dy - dx));
-				}
-				else
-					D = D + 2 * dy;
-			}
-		}
-		else // plotLineLow(x0, y0, x1, y1)
-		{
-			dx = x1 - x0;
-			dy = y1 - y0;
-			yi = 1;
-			if (dy < 0) {
-				yi = -1;
-				dy = -dy;
-			}
-			D = (2 * dy) - dx;
-			y = y0;
-			for (int x = x0; x <= x1; x++)
-			{
-				PutPixel(x, y, color);
-				if (D > 0)
-				{
-					y = y + yi;
-					D = D + (2 * (dy - dx));
-				}
-				else
-					D = D + 2 * dy;
-			}
-		}
-	}
-	else {
-		if (y0 > y1) // plotLineHigh(x1, y1, x0, y0)
-		{
-			dx = x0 - x1;
-			dy = y0 - y1;
-			xi = 1;
-			if (dx < 0)
-			{
-				xi = -1;
-				dx = -dx;
-			}
-			D = (2 * dx) - dy;
-			x = x1;
-			for (int y = y1; y <= y0; y++)
-			{
-				PutPixel(x, y, color);
-				if (D > 0)
-				{
-					x = x + xi;
-					D = D + (2 * (dx - dy));
-				}
-				else
-					D = D + 2 * dx;
-			}
-		}
-		else // plotLineHigh(x0, y0, x1, y1)
-		{
-			dx = x1 - x0;
-			dy = y1 - y0;
-			xi = 1;
-			if (dx < 0)
-			{
-				xi = -1;
-				dx = -dx;
-			}
-			D = (2 * dx) - dy;
-			x = x0;
-			for (int y = y0; y <= y1; y++)
-			{
-				PutPixel(x, y, color);
-				if (D > 0)
-				{
-					x = x + xi;
-					D = D + (2 * (dx - dy));
-				}
-				else
-					D = D + 2 * dx;
-			}
-		}
-	}
-}
-
 void Renderer::CreateBuffers(int w, int h)
 {
 	CreateOpenglBuffer(); //Do not remove this line.
@@ -314,10 +193,15 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene) {
 			colorShader.setUniform("projection", camera.GetProjectionTransformation());
 			colorShader.setUniform("material.textureMap", 0);
 
-			/*colorShader.setUniform("material.objAmbientColor", currentModel.GetAmbientColor());
-			colorShader.setUniform("material.objDiffuseColor", currentModel.GetDiffuseColor());
-			colorShader.setUniform("material.objSpecularColor", currentModel.GetSpecularColor());*/
+			colorShader.setUniform("light.ambient", scene->GetAmbientColor());
+			colorShader.setUniform("light.diffuse", scene->GetDiffuseColor());
+			colorShader.setUniform("light.specular", scene->GetSpecularColor());
+			colorShader.setUniform("light.shininess", scene->GetPower());
+			colorShader.setUniform("Light.pos", scene->GetLightPosition());
 
+			colorShader.setUniform("material.ambient", currentModel.GetAmbientColor());
+			colorShader.setUniform("material.diffuse", currentModel.GetDiffuseColor());
+			colorShader.setUniform("material.specular", currentModel.GetSpecularColor());
 			// Set 'texture1' as the active texture at slot #0
 			texture1.bind(0);
 
@@ -337,6 +221,7 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene) {
 			glBindVertexArray(currentModel.GetVAO());
 			glDrawArrays(GL_TRIANGLES, 0, currentModel.RetVerticesSize());
 			glBindVertexArray(0);
+
 		}
 	}
 }
@@ -351,6 +236,126 @@ void Renderer::LoadTextures()
 	if (!texture1.loadTexture("bin\\Debug\\crate.jpg", true))
 	{
 		texture1.loadTexture("bin\\Release\\crate.jpg", true);
+	}
+}
+void Renderer::PutPixel(int i, int j, const glm::vec3& color)
+{
+	if (i < 0) return; if (i >= viewport_width) return;
+	if (j < 0) return; if (j >= viewport_height) return;
+
+	color_buffer[INDEX(viewport_width, i, j, 0)] = color.x;
+	color_buffer[INDEX(viewport_width, i, j, 1)] = color.y;
+	color_buffer[INDEX(viewport_width, i, j, 2)] = color.z;
+}
+
+extern int cnt1 = 0, cnt2 = 0, cnt3 = 0, cnt4 = 0, cnt5 = 0, cnt6 = 0;
+void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color)
+{
+	// TODO: Implement bresenham algorithm
+	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+	double x0 = p1.x, y0 = p1.y, x1 = p2.x, y1 = p2.y;
+	int dx = x1 - x0, dy = y1 - y0, D = 2 * dy - dx, x = x0, y = y0, yi = 1, xi = 1, m;
+	if (dx == 0) m = 200; // so we wont have something undefined
+	else { m = dy / dx; }; // calcutaleing the Incline
+	if (abs(y1 - y0) < abs(x1 - x0))
+	{
+		if (x0 > x1) //plotLineLow(x1, y1, x0, y0)
+		{
+			dx = x0 - x1;
+			dy = y0 - y1;
+			yi = 1;
+			if (dy < 0) {
+				yi = -1;
+				dy = -dy;
+			}
+			D = (2 * dy) - dx;
+			y = y1;
+			cnt3++;
+			for (int x = x1; x <= x0; x++)
+			{
+				PutPixel(x, y, color);
+				if (D > 0)
+				{
+					y = y + yi;
+					D = D + (2 * (dy - dx));
+				}
+				else
+					D = D + 2 * dy;
+			}
+		}
+		else // plotLineLow(x0, y0, x1, y1)
+		{
+			dx = x1 - x0;
+			dy = y1 - y0;
+			yi = 1;
+			if (dy < 0) {
+				yi = -1;
+				dy = -dy;
+			}
+			D = (2 * dy) - dx;
+			y = y0;
+			for (int x = x0; x <= x1; x++)
+			{
+				PutPixel(x, y, color);
+				if (D > 0)
+				{
+					y = y + yi;
+					D = D + (2 * (dy - dx));
+				}
+				else
+					D = D + 2 * dy;
+			}
+		}
+	}
+	else {
+		if (y0 > y1) // plotLineHigh(x1, y1, x0, y0)
+		{
+			dx = x0 - x1;
+			dy = y0 - y1;
+			xi = 1;
+			if (dx < 0)
+			{
+				xi = -1;
+				dx = -dx;
+			}
+			D = (2 * dx) - dy;
+			x = x1;
+			for (int y = y1; y <= y0; y++)
+			{
+				PutPixel(x, y, color);
+				if (D > 0)
+				{
+					x = x + xi;
+					D = D + (2 * (dx - dy));
+				}
+				else
+					D = D + 2 * dx;
+			}
+		}
+		else // plotLineHigh(x0, y0, x1, y1)
+		{
+			dx = x1 - x0;
+			dy = y1 - y0;
+			xi = 1;
+			if (dx < 0)
+			{
+				xi = -1;
+				dx = -dx;
+			}
+			D = (2 * dx) - dy;
+			x = x0;
+			for (int y = y0; y <= y1; y++)
+			{
+				PutPixel(x, y, color);
+				if (D > 0)
+				{
+					x = x + xi;
+					D = D + (2 * (dx - dy));
+				}
+				else
+					D = D + 2 * dx;
+			}
+		}
 	}
 }
 
