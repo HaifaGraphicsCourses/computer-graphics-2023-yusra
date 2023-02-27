@@ -12,4 +12,6 @@ public:
 	static std::string GetFileName(const std::string& filePath);
 	static void Print_Vertices(std::vector<glm::vec3> vertices);
 	static void Print_Faces(std::vector<glm::vec3> vertices, std::vector<Face> faces);
+	static std::vector<glm::vec3> CalculateNormals(std::vector<glm::vec3> vertices, std::vector<Face> faces);
+
 };
