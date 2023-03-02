@@ -86,6 +86,8 @@ public:
 	glm::vec3 GetSpecularColor();
 	void SetSpecularColor(glm::vec3 c);
 
+	const std::vector<Vertex>& GetModelVertices();
+
 
 protected:
 	std::vector<Face> faces;
