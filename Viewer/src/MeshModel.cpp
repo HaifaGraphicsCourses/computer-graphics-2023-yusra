@@ -21,12 +21,16 @@ using namespace std;
 
 
 MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> textureCoords, const std::string& modelName) :
+	objectTransform(1),
+	worldTransform(1),
+	modelName(modelName),
 	faces(faces),
 	vertices(vertices),
-	normals(normals),
-	modelName(modelName)
+	normals(normals)
 {
+	
 	setupMatrics();
+	worldTransform = glm::mat4x4(1);
 	std::random_device rd;
 	std::mt19937 mt(rd());
 	std::uniform_real_distribution<double> dist(0, 1);
@@ -137,11 +141,18 @@ void MeshModel::setupMesh()
 
 MeshModel::~MeshModel()
 {
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(1, &vbo);
 }
 
 GLuint MeshModel::GetVAO() const
 {
 	return vao;
+}
+
+const std::vector<Vertex>& MeshModel::GetModelVertices()
+{
+	return modelVertices;
 }
 
 glm::vec3  MeshModel::GetAmbientColor()
