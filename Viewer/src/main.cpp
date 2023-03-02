@@ -85,42 +85,40 @@ std::shared_ptr<Scene> scene;
 ImGuiIO* imgui;
 GLFWwindow* window;
 
-static void GlfwErrorCallback(int error, const char* description);
 GLFWwindow* SetupGlfwWindow(int w, int h, const char* window_name);
 ImGuiIO& SetupDearImgui(GLFWwindow* window);
-void StartFrame();
-void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io);
-void Cleanup(GLFWwindow* window);
-//void DrawImguiMenus(ImGuiIO& io, Scene& scene);
-void DrawImguiMenus();
 bool Setup(int windowWidth, int windowHeight, const char* windowName);
+void Cleanup(GLFWwindow* window);
+
+static void GlfwErrorCallback(int error, const char* description);
+void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io);
+
+void StartFrame();
 
 void glfw_OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
+
 static void GlfwErrorCallback(int error, const char* description);
+void RenderFrame(GLFWwindow* window, std::shared_ptr<Scene> scene, Renderer& renderer, ImGuiIO& io);
 
 float GetAspectRatio();
+void DrawImguiMenus();
+
 
 
 /**
  * Function implementation
  */
-void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
-	// TODO: Handle mouse scroll here
-}
 
-int main(int argc, char **argv)
-{
-	int windowWidth = 1280, windowHeight = 720;
-	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
-	if (!window)
-		return 1;
 
-	int frameBufferWidth, frameBufferHeight;
-	glfwMakeContextCurrent(window);
-	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	
+int main(int argc, char** argv)
+{
+
+	if (!Setup(windowWidth, windowHeight, windowTitle))
+	{
+		std::cerr << "Setup failed" << std::endl;
+		return -1;
+	}
+
 	scene = std::make_shared<Scene>();
 	glm::vec3 eye = glm::vec3(0, 0, 10);
 	glm::vec3 at = glm::vec3(0, 0, 0);
@@ -128,25 +126,12 @@ int main(int argc, char **argv)
 	Camera camera = Camera(eye, at, up, GetAspectRatio());
 	scene->AddCamera(camera);
 
-	//scene->AddLight(std::make_shared<PointLight>(glm::vec3(0, 0, 15), glm::vec3(1, 1, 1)));
-	//scene->AddLight(std::make_shared<PointLight>(glm::vec3(0, 5, 5), glm::vec3(0, 0, 0)));
-	//scene->AddLight(std::make_shared<PointLight>(glm::vec3(-5, 0, 0), glm::vec3(0, 0, 0)));
-
-
 	Renderer renderer;
 	renderer.LoadShaders();
-	//renderer.LoadTextures();
-	ImGuiIO& io = SetupDearImgui(window);
-	glfwSetScrollCallback(window, ScrollCallback);
-	
-	while (!glfwWindowShouldClose(window)) /////////
+	renderer.LoadTextures();
+
+	while (!glfwWindowShouldClose(window))
 	{
-		/*glfwPollEvents();
-		StartFrame();
-		glfwSetWindowSize(window, Width, Height);
-		glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
-		DrawImguiMenus(io, scene);
-		RenderFrame(window, scene, renderer, io);*/
 		// Poll and process events
 		glfwPollEvents();
 
@@ -155,7 +140,6 @@ int main(int argc, char **argv)
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		DrawImguiMenus();
-		//DrawImguiMenus(io, scene);
 		ImGui::Render();
 		//HandleImguiInput();
 
@@ -172,19 +156,82 @@ int main(int argc, char **argv)
 		glfwSwapBuffers(window);
 	}
 
-	Cleanup(window);
+	glfwTerminate();
 	return 0;
 }
 
-float GetAspectRatio()
-{
-	return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
-}
+
+//int main(int argc, char** argv)
+//{
+//	int windowWidth = 1280, windowHeight = 720;
+//	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
+//	if (!window)
+//		return 1;
+//
+//	int frameBufferWidth, frameBufferHeight;
+//	glfwMakeContextCurrent(window);
+//	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
+//
+//	scene = std::make_shared<Scene>();
+//	glm::vec3 eye = glm::vec3(0, 0, 10);
+//	glm::vec3 at = glm::vec3(0, 0, 0);
+//	glm::vec3 up = glm::vec3(0, 1, 0);
+//	Camera camera = Camera(eye, at, up, GetAspectRatio());
+//	scene->AddCamera(camera);
+//
+//	//scene->AddLight(std::make_shared<PointLight>(glm::vec3(0, 0, 15), glm::vec3(1, 1, 1)));
+//	//scene->AddLight(std::make_shared<PointLight>(glm::vec3(0, 5, 5), glm::vec3(0, 0, 0)));
+//	//scene->AddLight(std::make_shared<PointLight>(glm::vec3(-5, 0, 0), glm::vec3(0, 0, 0)));
+//
+//
+//	Renderer renderer;
+//	renderer.LoadShaders();
+//	//renderer.LoadTextures();
+//	ImGuiIO& io = SetupDearImgui(window);
+//	glfwSetScrollCallback(window, ScrollCallback);
+//
+//	while (!glfwWindowShouldClose(window)) /////////
+//	{
+//		/*glfwPollEvents();
+//		StartFrame();
+//		glfwSetWindowSize(window, Width, Height);
+//		glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
+//		DrawImguiMenus(io, scene);
+//		RenderFrame(window, scene, renderer, io);*/
+//		// Poll and process events
+//		glfwPollEvents();
+//
+//		// Imgui stuff
+//		ImGui_ImplOpenGL3_NewFrame();
+//		ImGui_ImplGlfw_NewFrame();
+//		ImGui::NewFrame();
+//		DrawImguiMenus();
+//		//DrawImguiMenus(io, scene);
+//		ImGui::Render();
+//		//HandleImguiInput();
+//
+//		// Clear the screen and depth buffer
+//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//		// Render scene
+//		renderer.Render(scene);
+//
+//		// Imgui stuff
+//		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+//
+//		// Swap front and back buffers
+//		glfwSwapBuffers(window);
+//	}
+//
+//	Cleanup(window);
+//	return 0;
+//}
 
 static void GlfwErrorCallback(int error, const char* description)
 {
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
+
 
 bool Setup(int windowWidth, int windowHeight, const char* windowName)
 {
@@ -202,6 +249,7 @@ bool Setup(int windowWidth, int windowHeight, const char* windowName)
 
 	return true;
 }
+
 
 GLFWwindow* SetupGlfwWindow(int w, int h, const char* window_name)
 {
@@ -282,13 +330,28 @@ ImGuiIO& SetupDearImgui(GLFWwindow* window)
 	return io;
 }
 
+void Cleanup(GLFWwindow* window)
+{
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	glfwDestroyWindow(window);
+	glfwTerminate();
+}
+
 void glfw_OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
 {
 	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 	zoomFactor = glm::pow(1.1, -yoffset);
 	zoomChanged = true;
 }
-	
+
+float GetAspectRatio()
+{
+	return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+}
+
 void StartFrame()
 {
 	ImGui_ImplOpenGL3_NewFrame();
@@ -296,6 +359,12 @@ void StartFrame()
 	ImGui::NewFrame();
 }
 
+
+void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
+	// TODO: Handle mouse scroll here
+}
 //void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io)
 //{
 //	ImGui::Render();
@@ -359,15 +428,7 @@ void StartFrame()
 //	glfwSwapBuffers(window);
 //}
 
-void Cleanup(GLFWwindow* window)
-{
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
 
-	glfwDestroyWindow(window);
-	glfwTerminate();
-}
 
 //void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 void DrawImguiMenus()
@@ -450,15 +511,15 @@ void DrawImguiMenus()
 
 			if (scene->GetModelCount() > 0)
 			{
-				scene->GetActiveModel().SetOBJScale(s_x_o, 0);
-				scene->GetActiveModel().SetOBJScale(s_y_o, 1);
-				scene->GetActiveModel().SetOBJScale(s_z_o, 2);
-				scene->GetActiveModel().SetOBJTranslate(t_x_o, 0);
-				scene->GetActiveModel().SetOBJTranslate(t_y_o, 1);
-				scene->GetActiveModel().SetOBJTranslate(t_z_o, 2);
-				scene->GetActiveModel().SetOBJRotate_X(r_x_o);
-				scene->GetActiveModel().SetOBJRotate_Y(r_y_o);
-				scene->GetActiveModel().SetOBJRotate_Z(r_z_o);
+				scene->GetActiveModel()->SetOBJScale(s_x_o, 0);
+				scene->GetActiveModel()->SetOBJScale(s_y_o, 1);
+				scene->GetActiveModel()->SetOBJScale(s_z_o, 2);
+				scene->GetActiveModel()->SetOBJTranslate(t_x_o, 0);
+				scene->GetActiveModel()->SetOBJTranslate(t_y_o, 1);
+				scene->GetActiveModel()->SetOBJTranslate(t_z_o, 2);
+				scene->GetActiveModel()->SetOBJRotate_X(r_x_o);
+				scene->GetActiveModel()->SetOBJRotate_Y(r_y_o);
+				scene->GetActiveModel()->SetOBJRotate_Z(r_z_o);
 			}
 			//LOCALtransformation_window = false;
 		}
@@ -479,15 +540,15 @@ void DrawImguiMenus()
 
 			if (scene->GetModelCount() > 0)
 			{
-				scene->GetActiveModel().SetWORLDScale(s_x_w, 0);
-				scene->GetActiveModel().SetWORLDScale(s_y_w, 1);
-				scene->GetActiveModel().SetWORLDScale(s_z_w, 2);
-				scene->GetActiveModel().SetWORLDTranslate(t_x_w, 0);
-				scene->GetActiveModel().SetWORLDTranslate(t_y_w, 1);
-				scene->GetActiveModel().SetWORLDTranslate(t_z_w, 2);
-				scene->GetActiveModel().SetWORLDRotate_X(r_x_w);
-				scene->GetActiveModel().SetWORLDRotate_Y(r_y_w);
-				scene->GetActiveModel().SetWORLDRotate_Z(r_z_w);
+				scene->GetActiveModel()->SetWORLDScale(s_x_w, 0);
+				scene->GetActiveModel()->SetWORLDScale(s_y_w, 1);
+				scene->GetActiveModel()->SetWORLDScale(s_z_w, 2);
+				scene->GetActiveModel()->SetWORLDTranslate(t_x_w, 0);
+				scene->GetActiveModel()->SetWORLDTranslate(t_y_w, 1);
+				scene->GetActiveModel()->SetWORLDTranslate(t_z_w, 2);
+				scene->GetActiveModel()->SetWORLDRotate_X(r_x_w);
+				scene->GetActiveModel()->SetWORLDRotate_Y(r_y_w);
+				scene->GetActiveModel()->SetWORLDRotate_Z(r_z_w);
 			}
 
 			//	WORLDtransformation_window = false;
@@ -506,12 +567,12 @@ void DrawImguiMenus()
 
 			if (scene->GetModelCount() > 0)
 			{
-				scene->GetActiveModel().SetWORLDTranslate(t_x_c, 0);
-				scene->GetActiveModel().SetWORLDTranslate(t_y_c, 1);
-				scene->GetActiveModel().SetWORLDTranslate(t_z_c, 2);
-				scene->GetActiveModel().SetWORLDRotate_X(r_x_c);
-				scene->GetActiveModel().SetWORLDRotate_Y(r_y_c);
-				scene->GetActiveModel().SetWORLDRotate_Z(r_z_c);
+				scene->GetActiveModel()->SetWORLDTranslate(t_x_c, 0);
+				scene->GetActiveModel()->SetWORLDTranslate(t_y_c, 1);
+				scene->GetActiveModel()->SetWORLDTranslate(t_z_c, 2);
+				scene->GetActiveModel()->SetWORLDRotate_X(r_x_c);
+				scene->GetActiveModel()->SetWORLDRotate_Y(r_y_c);
+				scene->GetActiveModel()->SetWORLDRotate_Z(r_z_c);
 			}
 
 			//	WORLDtransformation_window = false;
@@ -579,7 +640,7 @@ void DrawImguiMenus()
 			ImGui::SliderFloat("B_A_m", &blue_a_m, 1.0f, 255.0f);
 			if (scene->GetModelCount() > 0)
 			{
-				scene->GetActiveModel().SetAmbientColor(glm::vec3(red_a_m, green_a_m, blue_a_m));
+				scene->GetActiveModel()->SetAmbientColor(glm::vec3(red_a_m, green_a_m, blue_a_m));
 			}
 
 			ImGui::Text("\nMesh Diffuse RGB");
@@ -588,7 +649,7 @@ void DrawImguiMenus()
 			ImGui::SliderFloat("B_D_m", &blue_d_m, 1.0f, 255.0f);
 			if (scene->GetModelCount() > 0)
 			{
-				scene->GetActiveModel().SetDiffuseColor(glm::vec3(red_d_m, green_d_m, blue_d_m));
+				scene->GetActiveModel()->SetDiffuseColor(glm::vec3(red_d_m, green_d_m, blue_d_m));
 			}
 
 			ImGui::Text("Mesh Specular RGB");
@@ -597,7 +658,7 @@ void DrawImguiMenus()
 			ImGui::SliderFloat("B_S_m", &blue_s_m, 1.0f, 255.0f);
 			if (scene->GetModelCount() > 0)
 			{
-				scene->GetActiveModel().SetSpecularColor(glm::vec3(red_s_m, green_s_m, blue_s_m));
+				scene->GetActiveModel()->SetSpecularColor(glm::vec3(red_s_m, green_s_m, blue_s_m));
 			}
 
 			ImGui::Text("Light Coordinate: ");
