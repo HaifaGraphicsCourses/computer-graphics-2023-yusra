@@ -5,9 +5,9 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texCoords;
 
 // The model/view/projection matrices
-in mat4 model;
-in mat4 view;
-in mat4 projection;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 // These outputs will be available in the fragment shader as inputs
 out vec3 orig_fragPos;
