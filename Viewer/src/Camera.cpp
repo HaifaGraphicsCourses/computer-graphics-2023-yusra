@@ -25,46 +25,20 @@ Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up, c
 	at(at),
 	up(up)
 {
-	setupMatrix();
+	//setupMatrix();
 	UpdateProjectionMatrix();
 	view_transformation = glm::lookAt(eye, at, up);
 }
 
-void Camera::SetOrthographicProjection(float height,float aspectRatio,float zNear, float zFar)
-{
-	orth = true; pers = false;
-	float width = aspectRatio * height;
-	projection_transformation = glm::ortho(-width / 2, width / 2, -height / 2, height / 2, zNear, zFar);
-}
-
-void Camera::SetPerspectiveProjection(float fovy,float aspectRatio,float zNear,float zFar)
-{
-	pers = true; orth = false;
-	projection_transformation = glm::perspective(fovy, aspectRatio, zNear, zFar);
-}
-
-void Camera::UpdateProjectionMatrix()
-{
-	if (pers)
-	{
-		SetPerspectiveProjection(fovy, aspectRatio, zNear, zFar);
-	}
-	else
-	{
-		SetOrthographicProjection(height, aspectRatio, zNear, zFar);
-	}
-}
-
 Camera::Camera()
 {
-	setupMatrix();
+	//setupMatrix();
 }
 
 Camera::~Camera()
 {
 	
 }
-
 void Camera::setupMatrix()
 {
 	Translate_c = { { 1.0f, 0.0f, 0.0f, 0.0f },
@@ -113,6 +87,33 @@ void Camera::setupMatrix()
 	{ 0.0f, 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 0.0f, 1.0f } };
 }
+
+void Camera::SetOrthographicProjection(float height, float aspectRatio, float zNear, float zFar)
+{
+	orth = true; pers = false;
+	float width = aspectRatio * height;
+	projection_transformation = glm::ortho(-width / 2, width / 2, -height / 2, height / 2, zNear, zFar);
+}
+
+void Camera::SetPerspectiveProjection(float fovy, float aspectRatio, float zNear, float zFar)
+{
+	pers = true; orth = false;
+	projection_transformation = glm::perspective(fovy, aspectRatio, zNear, zFar);
+}
+
+void Camera::UpdateProjectionMatrix()
+{
+	if (pers)
+	{
+		SetPerspectiveProjection(fovy, aspectRatio, zNear, zFar);
+	}
+	else
+	{
+		SetOrthographicProjection(height, aspectRatio, zNear, zFar);
+	}
+}
+
+
 
 void Camera::Set_at(glm::fvec3 a)
 {
@@ -188,30 +189,30 @@ glm::mat4 Camera::Mul_RotateMat_CAMERA()
 
  glm::mat4x4& Camera::GetProjectionTransformation() 
 {
-	 projection_transformation= { { 1.0f, 0.0f, 0.0f, 0.0f },
-	{ 0.0f, 1.0f, 0.0f, 0.0f },
-	{ 0.0f, 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 0.0f, 1.0f } };
-	if (orth)
-	{
-		projection_transformation = orth_mat;
-	}
-	else if (pers) {
-		projection_transformation = pers_mat;
-	}
+	// projection_transformation= { { 1.0f, 0.0f, 0.0f, 0.0f },
+	//{ 0.0f, 1.0f, 0.0f, 0.0f },
+	//{ 0.0f, 0.0f, 1.0f, 0.0f },
+	//{ 0.0f, 0.0f, 0.0f, 1.0f } };
+	//if (orth)
+	//{
+	//	projection_transformation = orth_mat;
+	//}
+	//else if (pers) {
+	//	projection_transformation = pers_mat;
+	//}
 	return projection_transformation;
 }
 
 const glm::mat4x4& Camera::GetViewTransformation()
 {
 	// multupy position * camrea tranformation
-	TransformCamera();
-	glm::fvec4 p,r; float x, y, z, w;
+	//TransformCamera();
+	//glm::fvec4 p,r; float x, y, z, w;
 
-	p = glm::fvec4(Camera_position.x, Camera_position.y, Camera_position.z, 1);
-	r = p * cam_transformation;
-	Camera_position = glm::fvec3(r.x / r.w, r.y / r.w, r.z / r.w);
-	view_transformation = glm::lookAt(Camera_position, at, up);
+	//p = glm::fvec4(Camera_position.x, Camera_position.y, Camera_position.z, 1);
+	//r = p * cam_transformation;
+	//Camera_position = glm::fvec3(r.x / r.w, r.y / r.w, r.z / r.w);
+	//view_transformation = glm::lookAt(Camera_position, at, up);
 	return view_transformation;
 }
 
@@ -220,37 +221,18 @@ void  Camera::SetCameraLookAt(const glm::fvec3& eye, const glm::fvec3& at, const
     glm::mat4x4 look_at = glm::lookAt(eye, at, up);
 }
 
-void Camera::SetOrthographicProjectionMatrix(float b, float t, float l, float r, float Zn, float Zf)
-{
-    
-    orth_mat = glm::ortho(l, r, b, t, Zn, Zf);
-   /* orth_mat[0][0] = 2 / (r - l);
-    orth_mat[0][1] = 0;
-    orth_mat[0][2] = 0;
-    orth_mat[0][3] = 0;
+// need to chek if it takes the right parameters . . .
+//void Camera::SetOrthographicProjectionMatrix(float b, float t, float l, float r, float Zn, float Zf)
+//{
+//	pers = false; orth = true;
+//    orth_mat = glm::ortho(l, r, b, t, Zn, Zf);
+//}
 
-    orth_mat[1][0] = 0;
-    orth_mat[1][1] = 2 / (t - b);
-    orth_mat[1][2] = 0;
-    orth_mat[1][3] = 0;
-
-    orth_mat[2][0] = 0;
-    orth_mat[2][1] = 0;
-    orth_mat[2][2] = -2 / (f - n);
-    orth_mat[2][3] = 0;
-
-    orth_mat[3][0] = -(r + l) / (r - l);
-    orth_mat[3][1] = -(t + b) / (t - b);
-    orth_mat[3][2] = -(f + n) / (f - n);
-    orth_mat[3][3] = 1;*/
-}
-
-
-void Camera::SetPerspectiveProjectionMatrix(float fovy, float aspect, float Zn, float Zf)
-{
-
-	pers_mat = glm::perspective(fovy/180, aspect, Zn, Zf);
-}
+//void Camera::SetPerspectiveProjectionMatrix(float fovy, float aspect, float Zn, float Zf)
+//{
+//	pers = true; orth = false;
+//	pers_mat = glm::perspective(fovy/180, aspect, Zn, Zf);
+//}
 
 glm::mat4x4 Camera::GetOrthMat()
 {
@@ -269,4 +251,15 @@ void Camera::TransformCamera()
 {
 	glm::mat4x4 Rotate_c = Mul_RotateMat_CAMERA();
 	cam_transformation= Rotate_c * Translate_c;
+}
+
+void Camera::Zoom(float factor)
+{
+	fovy = fovy * factor;
+	if (fovy > glm::pi<float>())
+	{
+		fovy = glm::pi<float>();
+	}
+
+	UpdateProjectionMatrix();
 }
