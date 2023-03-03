@@ -47,28 +47,29 @@ bool CAMERA_window = false;
 bool Light = false;
 int Width = 1280, Height = 720;
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+glm::vec4 color_m = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+glm::vec4 color_a_m = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+glm::vec4 color_d_m = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+glm::vec4 color_s_m = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+glm::vec4 color_l = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+glm::vec4 color_a_l = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+glm::vec4 color_d_l = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+glm::vec4 color_s_l = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 static float s_x_o = 1.0f, s_y_o = 1.0f, s_z_o = 1.0f,
 			t_x_o = 0.0f, t_y_o = 0.0f, t_z_o = 0.0f,
 			r_x_o = 0.0f, r_y_o = 0.0f, r_z_o = 0.0f,
 			s_x_w = 1.0f, s_y_w = 1.0f, s_z_w = 1.0f,
 			t_x_w = 0.0f, t_y_w = 0.0f, t_z_w = 0.0f,
 			r_x_w = 0.0f, r_y_w = 0.0f, r_z_w = 0.0f,
-			l = -1.0f, r = 1.0f, Zf_o = -1.0f, Zn_o = 1.0f, top = 1.0f, botton = -1.0f,
+			Zf_o, Zn_o, height,
 			t_x_c = 0.0f, t_y_c = 0.0f, t_z_c = 0.0f,
 			r_x_c = 0.0f, r_y_c = 0.0f, r_z_c = 0.0f,
-			Zn_p = 1.0f, Zf_p = 10.0f, fov = 45.0f, aspect = 1280/720,
+			Zn_p, Zf_p , fov, aspectRatio = 1200/800,
 			eyeX = 0.0f, eyeY = 0.0f, eyeZ = 0.0f,
 			atX = 0.0f, atY = 0.0f, atZ = 0.0f,
 			upX = 0.0f, upY = 0.0f, upZ = 0.0f,
 			x_l = 1.0f, y_l = 1.0f, z_l = 1.0f, 
 			red = 1.0f, green = 1.0f, blue = 1.0f,
-			red_a = 1.0f, green_a = 1.0f, blue_a = 1.0f,
-			red_d = 1.0f, green_d = 1.0f, blue_d = 1.0f,
-			red_s = 1.0f, green_s = 1.0f, blue_s = 1.0f,
-			red_m = 1.0f, green_m = 1.0f, blue_m = 1.0f,
-			red_a_m = 1.0f, green_a_m = 1.0f, blue_a_m = 1.0f,
-			red_d_m = 1.0f, green_d_m = 1.0f, blue_d_m = 1.0f,
-			red_s_m = 1.0f, green_s_m = 1.0f, blue_s_m = 1.0f,
 			ambient = 1.0f, specular = 1.0f, power = 1.0f;
 /**
  * Function declarations
@@ -451,6 +452,11 @@ void DrawImguiMenus()
 
 				if (result == NFD_OKAY)
 				{
+					//glm::vec3 modelColor;
+					//if (ImGui::ColorEdit3("Model Color", (float*)&modelColor))
+					//{
+					//	scene->GetActiveModel()->SetColor(modelColor);
+					//}
 					scene->AddModel(Utils::LoadMeshModel(outPath));
 					free(outPath);
 				}
@@ -583,16 +589,13 @@ void DrawImguiMenus()
 		//  --- ORTHOGRAPHIC
 		if (CAMERA_Orthographic_window)
 		{
-			ImGui::SliderFloat("Left", &l, -10.0f, 10.0f);
-			ImGui::SliderFloat("Right", &r, -10.0f, 10.0f);
-			ImGui::SliderFloat("Top", &top, -10.0f, 10.0f);
-			ImGui::SliderFloat("Botton", &botton, -10.0f, 10.0f);
-			ImGui::SliderFloat("Near", &Zn_o, -10.0f, 10.0f);
-			ImGui::SliderFloat("Far", &Zf_o, -10.0f, 10.0f);
+			ImGui::SliderFloat("Height", &height, 0.0f, M_PI);
+			ImGui::SliderFloat("Near", &Zn_o, 1.0f, 10.0f);
+			ImGui::SliderFloat("Far", &Zf_o, 1.0f, 10.0f);
 			scene->GetActiveCamera().orth = true;
 			scene->GetActiveCamera().pers = false;
 			CAMERA_Perspective_window = false;
-			scene->GetActiveCamera().SetOrthographicProjectionMatrix(botton, top, l, r, Zn_o, Zf_o);
+			scene->GetActiveCamera().SetOrthographicProjection(height, aspectRatio, Zn_o, Zf_o);
 
 		}
 
@@ -600,14 +603,13 @@ void DrawImguiMenus()
 		//  --- PERSPECTIVE
 		if (CAMERA_Perspective_window)
 		{
-			ImGui::SliderFloat("Fov", &fov, 0.0f, 360.0f);
-			ImGui::SliderFloat("Aspect", &aspect, 1.0f, 5.0f);
-			ImGui::SliderFloat("Near", &Zn_p, 0.0f, 2000.0f);
-			ImGui::SliderFloat("Far", &Zf_p, 0.0f, 2000.0f);
+			ImGui::SliderFloat("Fov", &fov, 0.0f, M_PI);
+			ImGui::SliderFloat("Near", &Zn_p, 0.0f, 10.0f);
+			ImGui::SliderFloat("Far", &Zf_p, 0.0f, 10.0f);
 			scene->GetActiveCamera().pers= true;
 			scene->GetActiveCamera().orth = false;
 			CAMERA_Orthographic_window = false;
-			scene->GetActiveCamera().SetPerspectiveProjectionMatrix(fov, aspect, Zn_p, Zf_p);
+			scene->GetActiveCamera().SetPerspectiveProjection(fov, aspectRatio, Zn_p, Zf_p);
 		}
 		
 
@@ -625,40 +627,32 @@ void DrawImguiMenus()
 		//  --- Light
 		if (Light)
 		{
-			//ImGui::Text("Mesh RGB ");
-			//ImGui::SliderFloat("R_m", &red_m, 1.0f, 255.0f);
-			//ImGui::SliderFloat("G_m", &green_m, 1.0f, 255.0f);
-			//ImGui::SliderFloat("B_m", &blue_m, 1.0f, 255.0f);
-			//if (scene->GetModelCount() > 0)
-			//{
-			//	scene->GetActiveModel().SetColor(glm::vec3(red_m, green_m, blue_m));
-			//}
-
-			ImGui::Text("Mesh Ambient RGB");
-			ImGui::SliderFloat("R_A_m", &red_a_m, 1.0f, 255.0f);
-			ImGui::SliderFloat("G_A_m", &green_a_m, 1.0f, 255.0f);
-			ImGui::SliderFloat("B_A_m", &blue_a_m, 1.0f, 255.0f);
+			ImGui::Text("Mesh RGB ");
+			ImGui::ColorEdit3("clear color", (float*)&clear_color);
 			if (scene->GetModelCount() > 0)
 			{
-				scene->GetActiveModel()->SetAmbientColor(glm::vec3(red_a_m, green_a_m, blue_a_m));
+				scene->GetActiveModel()->SetColor(clear_color);
+			}
+
+			ImGui::Text("Mesh Ambient RGB");
+			ImGui::ColorEdit3("color_a_m", (float*)&color_a_m);
+			if (scene->GetModelCount() > 0)
+			{
+				scene->GetActiveModel()->SetAmbientColor(color_a_m);
 			}
 
 			ImGui::Text("\nMesh Diffuse RGB");
-			ImGui::SliderFloat("R_D_m", &red_d_m, 1.0f, 255.0f);
-			ImGui::SliderFloat("G_D_m", &green_d_m, 1.0f, 255.0f);
-			ImGui::SliderFloat("B_D_m", &blue_d_m, 1.0f, 255.0f);
+			ImGui::ColorEdit3("color_d_m", (float*)&color_d_m);
 			if (scene->GetModelCount() > 0)
 			{
-				scene->GetActiveModel()->SetDiffuseColor(glm::vec3(red_d_m, green_d_m, blue_d_m));
+				scene->GetActiveModel()->SetDiffuseColor(color_d_m);
 			}
 
 			ImGui::Text("Mesh Specular RGB");
-			ImGui::SliderFloat("R_S_m", &red_s_m, 1.0f, 255.0f);
-			ImGui::SliderFloat("G_S_m", &green_s_m, 1.0f, 255.0f);
-			ImGui::SliderFloat("B_S_m", &blue_s_m, 1.0f, 255.0f);
+			ImGui::ColorEdit3("color_s_m", (float*)&color_s_m);
 			if (scene->GetModelCount() > 0)
 			{
-				scene->GetActiveModel()->SetSpecularColor(glm::vec3(red_s_m, green_s_m, blue_s_m));
+				scene->GetActiveModel()->SetSpecularColor(color_s_m);
 			}
 
 			ImGui::Text("Light Coordinate: ");
@@ -667,62 +661,37 @@ void DrawImguiMenus()
 			ImGui::SliderFloat("Z", &z_l, 0.0f, 1200.0f);
 			scene->SetLightPosition(glm::vec3(x_l, y_l, z_l));
 			ImGui::Text("Light RGB");
-			ImGui::SliderFloat("R", &red, 1.0f, 255.0f);
-			ImGui::SliderFloat("G", &green, 1.0f, 255.0f);
-			ImGui::SliderFloat("B", &blue, 1.0f, 255.0f);
-			scene->SetColor(glm::vec3(red, green, blue));
+			ImGui::ColorEdit3("color_l", (float*)&color_l);
+			scene->SetColor(color_l);
 			
 			ImGui::Text("\nAmbient");
 			ImGui::SliderFloat("Ambient", &ambient, 0.0f, 1.0f);
 			ImGui::Text("Ambient RGB");
-			ImGui::SliderFloat("R_A", &red_a, 1.0f, 255.0f);
-			ImGui::SliderFloat("G_A", &green_a, 1.0f, 255.0f);
-			ImGui::SliderFloat("B_A", &blue_a, 1.0f, 255.0f);
-			scene->SetAmbientColor(glm::vec3(red_a, green_a, blue_a));
+			ImGui::ColorEdit3("color_a_l", (float*)&color_a_l);
+			scene->SetAmbientColor(color_a_l);
 			scene->SetAmbient(ambient);
 			
 			ImGui::Text("\nDiffuse RGB");
-			ImGui::SliderFloat("R_D", &red_d, 1.0f, 255.0f);
-			ImGui::SliderFloat("G_D", &green_d, 1.0f, 255.0f);
-			ImGui::SliderFloat("B_D", &blue_d, 1.0f, 255.0f);
-			scene->SetDiffuseColor(glm::vec3(red_d, green_d, blue_d));
+			ImGui::ColorEdit3("color_d_l", (float*)&color_d_l);
+			scene->SetDiffuseColor(color_d_l);
 			
 			ImGui::Text("\nSpecular");
 			ImGui::SliderFloat("", &specular,-2.0f, 1.0f);
 			ImGui::Text("Specular RGB");
-			ImGui::SliderFloat("R_S", &red_s, 1.0f, 255.0f);
-			ImGui::SliderFloat("G_S", &green_s, 1.0f, 255.0f);
-			ImGui::SliderFloat("B_S", &blue_s, 1.0f, 255.0f);
+			ImGui::ColorEdit3("color_s_l", (float*)&color_s_l);
 			ImGui::SliderFloat("Power\n", &power, 0.0f, 2.0f);
-			scene->SetSpecularColor(glm::vec3(red_s, green_s, blue_s));
+			scene->SetSpecularColor(color_s_l);
 			scene->SetSpecular(specular);
 			scene->SetPower(power);
 
 		}
 
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+		//ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		//ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
-		
-		
-		
-		
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	
 		ImGui::End();
 	}
 
-	// 3. Show another simple window.
-	if (show_another_window)
-	{
-		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
-		if (ImGui::Button("Close Me"))
-			show_another_window = false;
-		ImGui::End();
-	}
+
 }
