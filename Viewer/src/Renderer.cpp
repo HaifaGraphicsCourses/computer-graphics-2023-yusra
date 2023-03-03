@@ -173,6 +173,8 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 	}
 }
 
+
+
 void Renderer::Render(const std::shared_ptr<Scene>& scene)
 {
 	int cameraCount = scene->GetCameraCount();
