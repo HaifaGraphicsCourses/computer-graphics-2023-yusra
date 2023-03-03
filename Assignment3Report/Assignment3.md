@@ -580,13 +580,13 @@ Renderer:
     	}
     }
     
-![6_1.png]()
+![6_1.png](Assignment3Report/Photos/6_1.png)
 
-![6_2.png]()
+![6_2.png](Assignment3Report/Photos/6_2.png)
 
 ### 7.
 
-![7.1.png]()
+![7.1.png](Assignment3Report/Photos/7.1.png)
 
 ![7.2.png]()
 
