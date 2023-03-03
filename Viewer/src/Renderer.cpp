@@ -194,6 +194,19 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene)
 			colorShader.setUniform("projection", camera.GetProjectionTransformation());
 			colorShader.setUniform("material.textureMap", 0);
 
+			colorShader.setUniform("light.ambient", scene->GetAmbientColor());
+			colorShader.setUniform("light.diffuse", scene->GetDiffuseColor());
+			colorShader.setUniform("light.specular", scene->GetSpecularColor());
+			colorShader.setUniform("light.shininess", scene->GetPower());
+			colorShader.setUniform("light.pos", scene->GetLightPosition());
+			//colorShader.setUniform("light.color", scene->GetColor());
+
+			colorShader.setUniform("material.ambient", currentModel->GetAmbientColor());
+			colorShader.setUniform("material.diffuse", currentModel->GetDiffuseColor());
+			colorShader.setUniform("material.specular", currentModel->GetSpecularColor());
+			//colorShader.setUniform("material.color", currentModel->GetColor());
+
+
 			// Set 'texture1' as the active texture at slot #0
 			texture1.bind(0);
 
@@ -206,7 +219,7 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene)
 			// Unset 'texture1' as the active texture at slot #0
 			texture1.unbind(0);
 
-			colorShader.setUniform("color", glm::vec3(0, 0, 0));
+			//colorShader.setUniform("color", glm::vec3(0, 0, 0));
 
 			// Drag our model's faces (triangles) in line mode (wireframe)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
