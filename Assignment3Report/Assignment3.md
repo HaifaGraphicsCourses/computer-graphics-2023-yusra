@@ -580,19 +580,19 @@ Renderer:
     	}
     }
     
-![6_1.png](Assignment3Report/Photos/6_1.png)
+![6_1.png](https://github.com/HaifaGraphicsCourses/computer-graphics-2023-yusra/blob/c4e3af695293540975c51f3a6d052bea51e7ddf2/Assignment3Report/Photos/6_1.png)
 
-![6_2.png](Assignment3Report/Photos/6_2.png)
+![6_2.png](https://github.com/HaifaGraphicsCourses/computer-graphics-2023-yusra/blob/44d54329c7cfe9ade94c77f00d71ca4dac6ca3db/Assignment3Report/Photos/6_2.png)
 
 ### 7.
 
-![7.1.png](Assignment3Report/Photos/7.1.png)
+![7.1.png](https://github.com/HaifaGraphicsCourses/computer-graphics-2023-yusra/blob/44d54329c7cfe9ade94c77f00d71ca4dac6ca3db/Assignment3Report/Photos/7.1.png)
 
-![7.2.png]()
+![7.2.png](https://github.com/HaifaGraphicsCourses/computer-graphics-2023-yusra/blob/44d54329c7cfe9ade94c77f00d71ca4dac6ca3db/Assignment3Report/Photos/7.2.png)
 
-![7.3.png]()
+![7.3.png](https://github.com/HaifaGraphicsCourses/computer-graphics-2023-yusra/blob/44d54329c7cfe9ade94c77f00d71ca4dac6ca3db/Assignment3Report/Photos/7.3.png)
 
-![7.4.png]()
+![7.4.png](https://github.com/HaifaGraphicsCourses/computer-graphics-2023-yusra/blob/44d54329c7cfe9ade94c77f00d71ca4dac6ca3db/Assignment3Report/Photos/7.4.png)
 
 
 ### 8.
@@ -719,10 +719,11 @@ the levels:
 
     colorShader.setUniform("material.levels", 1.0f*currentModel->GetModelVertices().size());
 
-![8.1.png]()
+![8.1.png](https://github.com/HaifaGraphicsCourses/computer-graphics-2023-yusra/blob/44d54329c7cfe9ade94c77f00d71ca4dac6ca3db/Assignment3Report/Photos/8.1.png)
 
-![8.2.png]()
+![8.2.png](https://github.com/HaifaGraphicsCourses/computer-graphics-2023-yusra/blob/44d54329c7cfe9ade94c77f00d71ca4dac6ca3db/Assignment3Report/Photos/8.2.png)
 
+![8.3.png](https://github.com/HaifaGraphicsCourses/computer-graphics-2023-yusra/blob/44d54329c7cfe9ade94c77f00d71ca4dac6ca3db/Assignment3Report/Photos/8.3.png)
 
 
 
