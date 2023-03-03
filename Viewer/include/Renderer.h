@@ -53,6 +53,8 @@ public:
 	void Reflect(glm::vec3 light_pos, float specular, float power, glm::vec3 specular_color, MeshModel& Mesh, glm::vec3 viewPos);
 
 
+	void Renderer::display();	
+
 private:
 	void PutPixel(const int i, const int j, const glm::vec3& color);
 	void DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color);
