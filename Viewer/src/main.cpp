@@ -147,6 +147,7 @@ int main(int argc, char** argv)
 		// Clear the screen and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
 		// Render scene
 		renderer.Render(scene);
 
