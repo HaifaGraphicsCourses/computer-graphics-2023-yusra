@@ -194,17 +194,19 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene)
 			colorShader.setUniform("projection", camera.GetProjectionTransformation());
 			colorShader.setUniform("material.textureMap", 0);
 
-			colorShader.setUniform("light.ambient", scene->GetAmbientColor());
+			colorShader.setUniform("light.ambient", scene->GetAmbientColor());	
 			colorShader.setUniform("light.diffuse", scene->GetDiffuseColor());
 			colorShader.setUniform("light.specular", scene->GetSpecularColor());
 			colorShader.setUniform("light.shininess", scene->GetPower());
 			colorShader.setUniform("light.pos", scene->GetLightPosition());
-			//colorShader.setUniform("light.color", scene->GetColor());
+			colorShader.setUniform("light.color", scene->GetColor());
 
 			colorShader.setUniform("material.ambient", currentModel->GetAmbientColor());
 			colorShader.setUniform("material.diffuse", currentModel->GetDiffuseColor());
 			colorShader.setUniform("material.specular", currentModel->GetSpecularColor());
-			//colorShader.setUniform("material.color", currentModel->GetColor());
+			colorShader.setUniform("material.mesh_color", currentModel->GetColor());
+			colorShader.setUniform("material.levels", 1.0f*currentModel->GetModelVertices().size());
+
 
 
 			// Set 'texture1' as the active texture at slot #0
