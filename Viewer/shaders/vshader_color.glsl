@@ -34,6 +34,14 @@ void main()
 	gl_Position = projection * view *  model * vec4(pos, 1.0f);
 
 	surface_normal = vec3(model * vec4(normal, 1.0));
+
+	float pi = 3.141592654;
+	fragTexCoords = vec2(fragPos);
+	float theta = (atan(fragPos.y, 1.5*fragPos.x) + pi*0.5)/pi ; 
+	fragTexCoords = vec2(theta, -(-fragPos.z+0.5));
+	float u = 0.5 + atan(fragPos.x, fragPos.z) / (2 * pi);
+	float v = 0.5 + asin(fragPos.y / 3 ) / pi ; 
+	fragTexCoords = vec2(u,v);
 }
 
 
